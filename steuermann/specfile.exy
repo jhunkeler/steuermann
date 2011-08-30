@@ -1,0 +1,68 @@
+
+# Parse a Steuermann Spec file
+#
+# This is an exyapps grammer in specfile.exy
+
+%%
+parser specfile:
+    ignore: "[ \r\t\n]+"
+    ignore: "#.*\n"
+
+    token END: "$"
+    token TABLE: "TABLE"
+    token HOST : "HOST"
+    token CMD: "CMD"
+    token OPT: "OPT"
+    token AFTER: "AFTER"
+    token name: "[a-zA-Z0-9_.-]+"
+    token STAR: "\*"
+    token cmdname: "[a-zA-Z0-9_.-]+"
+    token tablename: "[a-zA-Z0-9_.-]+"
+    token wildname: "[*?a-zA-Z0-9_.-]+"
+    token RUN: "RUN"
+    token string: '"[^"]*"'
+    token SLASH: "/"
+    token COLON: ":"
+
+    rule start: table_list END {{ return table_list }}
+
+    rule table_list:  table_section [ table_list ]
+
+    rule table_section:
+        TABLE tablename {{ table_name = tablename }}
+             HOST 
+                {{ hostlist = [ ] }}
+                ( name {{ hostlist.append(name) }} )+  
+            command_list  
+		# command_list is a list of (command, pos) where command is the text from the file and pos is the location in the file
+                {{ self.data.add_command_list( table_name, hostlist, command_list )  }}
+
+    rule command_list:  
+	# one or more commands, appended together into a list
+        {{ cmlist = [ ] }} 
+        command {{ cmlist.append( command ) }} 
+        [ command_list {{ cmlist += command_list }} ] 
+        {{ return cmlist }} 
+
+           | {{ return [ ] }}
+
+    rule command: 
+	# a single command, including any number of AFTER clauses
+        CMD  {{ cmd_pos = self._scanner.get_pos() }} cmdname  {{ cmd_name=cmdname; script=cmdname; x_after_clause = [ ] }} 
+            [ RUN string {{ script = string[1:-1] }} ]
+            ( {{ after_pos = self._scanner.get_pos() }} AFTER optword after_spec {{ x_after_clause.append( (after_spec,optword, after_pos) ) }}  )*
+            {{ return ( cmd_name, script, x_after_clause, cmd_pos ) }}  
+
+    # in the AFTER clause, you can say OPT to mean the node is optional (not an error if it does not exist)
+    rule optword:
+        OPT {{ return 0 }}
+        | {{ return 1 }}
+
+    rule after_spec: 
+        wildname {{ rval = wildname }} 
+        [ COLON  wildname {{ rval = rval + ':' + wildname }} ]
+        [ SLASH  wildname {{ rval = rval + '/' + wildname }} ]
+        {{ return rval }}
+
+%%
+

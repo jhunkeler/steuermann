@@ -1,0 +1,4 @@
+#! python
+import steuermann.run_all as run_all
+
+run_all.main()

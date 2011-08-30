@@ -1,0 +1,303 @@
+'''
+Stuff related to the tree structure of the command set
+'''
+
+import fnmatch
+import exyapps.runtime
+
+
+#####
+#####
+
+class command_tree(object):
+
+    # a dict that maps currently known node names to node objects
+    node_index = None
+
+    # This is a list if (before, after) showing names of node orders;
+    # the individual nodes do not store this information while the
+    # parsing is happening.
+    node_order = None
+
+    # call init() once before parsing, then call parse for each file, then call finish()
+    def __init__( self ) :
+        self.node_index = { }
+        self.node_order = [ ]
+
+    def finish( self ) :
+        # This links up the nodes according to the (before, after) information
+        # in node_order.  before and after are fully qualified node names.
+        # We do this at the end so that 
+        #  - we can have forward references
+        #  - we can use wild cards in our AFTER clauses
+
+        # before is the predecessor, after comes AFTER the predecessor
+        for before, after, required, pos in self.node_order :
+            if ( '*' in before ) or ( '?' in before ) or ( '[' in before ):
+                host, table, cmd = crack_name(before)
+                for x in self.node_index :
+                    hl, tl, cl = crack_name(x)
+                    if ( fnmatch.fnmatchcase(hl,host ) and 
+                         fnmatch.fnmatchcase(tl,table) and 
+                         fnmatch.fnmatchcase(cl,cmd  ) ) :
+                        self.connect(x, after, required, pos)
+            else :
+                self.connect(before, after, required, pos)
+
+        # work out the depths of each node
+        compute_depths( self.node_index )
+        
+
+    # make the actual connection between nodes
+    def connect( self, after, before, required, line ) :
+        if not after in self.node_index :
+            if required :
+                print "error: %s happens after non-existant %s - line %s"%(before,after,line)
+            return
+
+        if not before in self.node_index :
+            print "error: before node %s does not exist %s"%(before,line)
+            return
+
+        if not after in self.node_index :
+            print "error: after node %s does not exist %s"%(after,line)
+            return
+
+        # tell the after node that the other one comes first
+
+        self.node_index[after].predecessors.append(self.node_index[before])
+
+        # tell the after node about the before node and note that
+        # the before node is not done yet.
+        self.node_index[after].released[before] = False
+
+
+    # create a set of nodes for a particular command - called from within the parser
+    def add_command_list( self, table, hostlist, command_list ) :
+        for host in hostlist :
+            this_table = '%s:%s' % ( host, table )
+            for command, script, after, pos in command_list :
+                # this happens once for each CMD clause
+                # command is the name of this command
+                # script is the script to run
+                # after is a list of AFTER clauses
+                # pos is where in this file this command was defined
+
+                command = normalize_name( host, table, command )
+
+                if command in self.node_index :
+                    # bug: should be error
+                    print "# warning: %s already used on line %s"%(command,self.node_index[command].input_line)
+
+                # create the node
+                self.node_index[command]=node(command, script, nice_pos( current_file_name, pos)  )
+
+                for before_name, required, pos in after :
+                    # this happens once for each AFTER clause
+                    # before is the name of a predecessor that this one comes after
+                    # required is a boolean, whether the predecessor must exist
+                    # pos is where in the file the AFTER clause begins
+
+                    before_name = normalize_name( host, table, before_name )
+
+                    # list of ( before, after, required, pos )
+                    self.node_order.append( (before_name, command, required, pos) )
+
+
+
+#####
+
+# crack open host:table/cmd
+def crack_name(name) :
+    t = name.split(':')
+    host = t[0]
+    t = t[1].split('/')
+    table = t[0]
+    cmd = t[1]
+    return (host, table, cmd)
+
+#####
+
+def join_name( host, table, cmd ) :
+    return '%s:%s/%s'%(host,table,cmd)
+
+#####
+
+def normalize_name( host, table, name ) :
+
+    if not '/' in name :
+        name = table + '/' + name
+
+    if name.startswith('.:') :
+        name = name[2:]
+
+    if not ':' in name :
+        name = host + ':' + name
+    # print "## return %s"%name
+    return name
+
+#####
+
+
+_wildcard_cache = ( None, None )
+
+def wildcard_name( wild, name ) :
+    global _wildcard_cache
+
+    if wild != _wildcard_cache :
+        host, table, cmd = crack_name(wild)
+        _wildcard_cache = ( name, ( host, table, cmd ) )
+
+    host, table, cmd = _wildcard_cache[1]
+
+    hl, tl, cl = crack_name(name)
+
+    return ( fnmatch.fnmatchcase(hl,host ) and
+         fnmatch.fnmatchcase(tl,table) and
+         fnmatch.fnmatchcase(cl,cmd  ) )
+
+
+#####
+
+
+#####
+
+    
+# a node object for each command instance that will be run.  The name is
+# "host:table/command".  The shell command to execute on the target host
+# is "script".
+#
+# predecessors[] is a list of everything that this node must definitely come after.
+#
+# released is a dict indexed by each of the "before" nodes; the value is
+# true if the before node is finished running.
+#
+class node(object) :
+    def __init__(self, name, script, input_line) :
+        # the fully qualified name of the node
+        self.name = name
+
+        # the command script that this node runs
+        self.script = script
+
+        # what line of the input file specified this node; this is
+        # a string of the form "foo.bar 123"
+        self.input_line = input_line
+
+        # crack open host:table/cmd
+        self.host, self.table, self.cmd = crack_name(name)
+
+        # this command runs after every node in this list
+        self.predecessors = [ ]
+
+        # this is a dict of everything that comes before us
+        # The key is the name of the other node.
+        # The value is true/false for whether the other node
+        # is finished running.
+        self.released = { }
+
+        # These flags are 1 or 0 so we can sum() them
+        self.finished = 0
+        self.running = 0
+
+#####
+
+# debug - make a string representation of all the nodes
+
+def show_nodes( node_index ) :
+    import cStringIO as StringIO
+    s = StringIO.StringIO()
+    for x in sorted( [ x for x in node_index ] ) :    
+        x = node_index[x]
+
+        # show the node name and the command it runs
+        s.write( "NODE  %s  %s  %s\n"%(x.name, x.script, x.input_line) )
+
+        # show each node that this one comes After, and show the flag
+        # whether the previous node has run yet.
+        for y in x.predecessors :
+            s.write( "        AFTER %s\n"%y.name )
+
+    return s.getvalue()
+
+#####
+
+def nice_pos( filename, yapps_pos ) :
+    # filename is the file name to use
+    # yapps_pos is a tuple of (file, line, col) except that file
+    # is a file-like object with no traceability to an actual file1
+    return "%s:%s col %s"%(filename, yapps_pos[1], yapps_pos[2])
+
+#####
+
+
+#####
+#
+# calculating depths of a node tree
+
+def c_d_fn(x,depth) :
+
+    # if it is already deeper than where we are now, we can (must)
+    # prune the tree walk here.
+    if x.depth  >= depth :
+        return
+
+    if depth > 100 :
+        # bug: proxy for somebody wrote a loop
+        print "error: depth > 100"
+        return
+
+    # assign the depth
+    x.depth = depth
+
+    # make all the successors one deeper
+    depth = depth + 1
+    for y in x.successors :
+        c_d_fn(y,depth)
+
+def compute_depths(nodes) :
+
+    # init everything
+    for x in nodes :
+        x = nodes[x]
+        x.depth = 0
+        x.successors = [ ]
+
+    # walk the nodes in an arbitrary order; make a list of successors
+    for x in nodes :
+        x = nodes[x]
+        for y in x.predecessors :
+            if not x in y.successors :
+                y.successors.append(x)
+
+    # recursively walk down the tree assigning depth values, starting
+    # with depth=1 for the highest level
+    for x in nodes :
+        c_d_fn(nodes[x],1)
+
+
+#####
+
+import specfile
+
+current_file_name = None
+
+def read_file_list( file_list ) :
+    global current_file_name
+    di = command_tree( ) 
+    for x in file_list :
+        current_file_name = x
+        print x
+        sc = specfile.specfileScanner( open(x,'r').read() )
+        p = specfile.specfile( scanner=sc, data=di )
+        result = exyapps.runtime.wrap_error_reporter( p, 'start' )
+    di.finish()
+    return di
+
+if __name__=='__main__':
+    import sys
+    n = read_file_list( sys.argv[1:] )
+    print show_nodes(n.node_index)
+
+
+
