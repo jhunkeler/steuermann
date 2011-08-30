@@ -1,0 +1,9 @@
+Steuermann 2.0
+--
+
+requires exyapps, pandokia
+
+make
+
+python setup.py install
+
