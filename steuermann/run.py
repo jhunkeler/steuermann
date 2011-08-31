@@ -32,14 +32,15 @@ class runner(object):
     host_info = { }
 
     # dir where we write our logs
-    logdir = 'logs'
+    logdir = ''
 
     #####
     #
 
-    def __init__( self, nodes ) :
+    def __init__( self, nodes, logdir ) :
         self.node_index = nodes
         self.load_host_info()
+        self.logdir = logdir
 
     #####
     # start a process
@@ -85,7 +86,7 @@ class runner(object):
             pass
 
         # create a name for the log file, but do not use / in the name
-        logfile_name = "%s/%s.log"%( logdir, node.name.replace('/','+') )
+        logfile_name = "%s/%s.log"%( logdir, node.name.replace('/','.') )
 
         # open the log file, write initial notes
         logfile=open(logfile_name,"w")
@@ -197,8 +198,22 @@ class runner(object):
             if x == 'ALL' :
                 continue
 
+            # start with a dict that contains what is in ALL
             d = all_dict.copy()
+
+            # get what there is to know about host x
             self._host_get_names(cfg, x, d)
+
+            # if it is like some other host, start over using ALL, then
+            # the LIKE host, then our own information
+            if 'like' in d :
+                like = d['like']
+                d = all_dict.copy()
+                self._host_get_names(cfg, like, d)
+                self._host_get_names(cfg, x, d)
+                del d['like']
+
+            print x,d
             self.host_info[x] = d
 
         del cfg

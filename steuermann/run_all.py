@@ -5,13 +5,14 @@ run everything in a set of command files
 
 import time
 import sys
-import sqlite3
 import os.path
 import datetime
 
 import run
 import report
 import nodes
+
+import steuermann.config
 
 
 try :
@@ -39,8 +40,8 @@ def main() :
     di_nodes = nodes.read_file_list( sys.argv[2:] )
 
     xnodes = di_nodes.node_index
-    run_name = 'arf' + str(datetime.datetime.now())
-    db = sqlite3.connect('sr.db')
+    run_name = str(datetime.datetime.now()).replace(' ','_')
+    db = steuermann.config.open_db()
     register_database(db, run_name, xnodes)
 
     n = sys.argv[1]
@@ -113,7 +114,7 @@ pre node            show what must come before a node
 
 def run_interactive( xnodes, run_name, db) :
 
-    runner = run.runner( xnodes )
+    runner = run.runner( xnodes, steuermann.config.logdir )
 
     for x in xnodes :
         xnodes[x].finished = 0
@@ -329,6 +330,7 @@ def run_step( runner, xnodes, run_name, db ) :
             if not who_exited :
                 break
 
+            print "SOMETHING EXITED",who_exited
             # yes, something exited - no sleep, and keep running
             no_sleep = 1
             keep_running = 1
@@ -340,7 +342,7 @@ def run_step( runner, xnodes, run_name, db ) :
 
             db.execute("UPDATE status SET end_time = ?, status = ?  WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
                     ( str(datetime.datetime.now()), who_exited[1], run_name, x_host, x_table, x_cmd ) )
-
+            db.commit()
 
         runner.display_procs()
 
