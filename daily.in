@@ -1,0 +1,76 @@
+# one approach we might use for ssb builds
+
+TABLE assemble HOST thor
+	CMD svnsync RUN "svnsync"
+		AFTER OPT assemble/irafx_update
+	CMD stsci_python RUN "assemble_stsci_python"
+		AFTER svnsync
+	CMD stsci_iraf RUN "assemble_stsci_iraf"
+		AFTER svnsync
+	CMD astrolib RUN "assemble_astrolib"
+		AFTER svnsync
+	CMD axe RUN "assemble_axe"
+		AFTER svnsync
+	CMD hstcal RUN "assemble_hstcal"
+		AFTER svnsync
+
+# all machines
+TABLE build HOST rhe4-32 rhe4-64 rhe5-64 leopard snow_leopard
+
+	CMD python2.7 RUN "build_stsci_python dev2.7"
+		AFTER *:assemble/stsci_python
+
+	CMD hstcal RUN "build_hstcal"
+		AFTER *:assemble/hstcal
+
+TABLE build HOST rhe-64
+
+	CMD python2.6 RUN "build_stsci_python dev2.6"
+		AFTER *:assemble/stsci_python
+
+	CMD python2.5 RUN "build_stsci_python dev2.5"
+		AFTER *:assemble/stsci_python
+
+
+# 32 bit
+TABLE build32 HOST rhe4-32 leopard
+
+	CMD stsci_iraf RUN "build_stsci_iraf"
+		AFTER *:assemble/stsci_iraf
+
+	CMD axe RUN "build_axe" 
+		AFTER *:assemble/axe
+		AFTER build32/stsci_iraf
+
+# copy 32 bit exe to 64 bit machine
+TABLE build64 HOST rhe4-64 
+	CMD iraf32_hack RUN "iraf32hack rhe4-32"
+
+TABLE build64 HOST rhe5-64 
+	CMD iraf32_hack RUN "iraf32hack rhe4-32"
+
+TABLE build64 HOST snow_leopard
+	CMD iraf32_hack RUN "iraf32hack leopard"
+
+
+# 
+TABLE build_finished HOST rhe4-32 leopard
+	CMD finished2.7 RUN "echo done"
+		AFTER build/python2.7
+		AFTER build/hstcal
+		AFTER build32/stsci_iraf
+		AFTER build32/axe
+
+TABLE build_finished HOST rhe4-64 rhe5-64 snow_leopard
+	CMD finished2.7 RUN "echo done"
+		AFTER build/python2.7
+		AFTER build/hstcal
+		AFTER build64/iraf32_hack
+
+
+#
+TABLE web_updates HOST thor
+	CMD pyraf RUN "exit 1"
+		AFTER *:assemble/svnsync
+	CMD pyfits RUN "exit 1"
+		AFTER *:assemble/svnsync

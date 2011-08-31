@@ -160,7 +160,7 @@ class runner(object):
 
     def display_procs( self ) :
         # display currently active child processes
-        print "procs:",
+        print "procs:"
         for x in sorted(self.all_procs) :
             print "    ",x
         print ""

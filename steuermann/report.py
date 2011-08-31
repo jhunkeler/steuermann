@@ -1,146 +1,92 @@
 '''
-prototype of report
-
+Generate reports from the database
+ 
 '''
-import subprocess
+
 import time
 import sys
+import sqlite3
+import pandokia.text_table as text_table
+import StringIO
 
-try :
-    import CStringIO as StringIO
-except ImportError :
-    import StringIO as StringIO
 
-#####
+def get_table_list( db, run_name ) :
+    c = db.cursor()
+    c.execute("select max(depth) as d, tablename from status where run = ? group by tablename order by d asc",(run_name,))
+    table_list = [ x for x in c ]
+        # table_list contains ( depth, tablename )
+    return table_list
 
-def c_d_fn(x,depth) :
-    if x.depth  >= depth :
-        return
-    x.depth = depth
-    depth = depth + 1
-    for y in x.children :
-        c_d_fn(y,depth)
-    
+def get_table( db, run_name, tablename, info_callback ) :
 
-def compute_depths(nodes) :
-    for x in nodes :
-        x = nodes[x]
-        x.depth = 0
-        x.in_recurse = 0
-        x.parents = [ ]
-        x.children = [ ]
-    for x in nodes :
-        x = nodes[x]
-        for y in x.precursors :
-            if not x in y.children :
-                y.children.append(x)
-    for x in nodes :
-        c_d_fn(nodes[x],1)
-        
-#####
+    t = text_table.text_table()
 
-def compute_table(nodes) :
-    # find the depths
-    compute_depths(nodes)
-
-    # sort the nodes by depth
-    l = [ x.split(':') for x in nodes ]
-    l = [ [ x[0] ] + x[1].split('/') for x in l ]
-    l = [ [ x[1], x[2], x[0] ] for x in l ]
-    l = sorted(l)
-
-    # table_content is a list of nodes in each table
-    table_content = { }
-
-    # table_hosts is a list of hosts in each table
-    table_hosts = { }
-
-    # table_depth is how deep the deepest row of each table is
-    table_depth = { }
-
-    for x in nodes  :
-        host, table = x.split(':')
-        table, cmd = table.split('/')
-
-        table_content[table] = table_content.get(table,[]) + [ x ]
-
-        table_hosts  [table] = table_hosts  .get(table,[]) + [ host ]
-
-        if table_depth.get(table,0) < nodes[x].depth :
-            table_depth[table] = nodes[x].depth
-
-    for x in table_hosts :
-        table_hosts[x] = list(set(table_hosts[x]))
-
-    return table_content, table_hosts, table_depth
-
-#####
-
-# html of one table
-
-def html_table(nodes, table, host_list ) :
-    s=StringIO.StringIO()
-
-    # this is all the nodes in this table
-    pat = ':%s/' % table
-    l = [ x for x in nodes if pat in x ]
-
-    # d[x] is the max depth of command x
-    d = { }
-    for x in l :
-        depth = nodes[x].depth
-        x = x.split('/')[1]
-        if d.get(x,0) < depth :
-            d[x] = depth
-
-    # this is the order of the rows of the table
-    cmd_order = sorted( [ (d[x], x) for x in d ] )
-
-    # this is the table
-    s.write( "<table border=1>" )
-
-    # heading
-    s.write( "<tr> <td>&nbsp;</td> " )
-    for host in host_list :
-        s.write( "<th>%s</th>" % host )
-    s.write( "</tr>\n" )
-
-    # loop over the commands in the order they appear
-    for depth, cmd in cmd_order :
-        s.write( "<tr>\n\t<td>%s/%s</td>\n"%(table,cmd) )
-        for host in host_list :
-            name = host + ':' + table + '/' + cmd
-            if name in nodes :
-                s.write( "\t<td class=%%(class!%s)s> %%(text!%s)s </td>\n"%(name,name) )
-            else :
-                s.write( "\t<td class=nothing> . </td>\n" )
-        s.write( "</tr>\n" )
-    s.write( "</table>" )
-    return s.getvalue()
-
-class struct(object): 
-    pass
-
-#####
-
-def main() :
-    import sqlite3
-    db = sqlite3.connect('sr.db')
+    row = 0
+    t.define_column('-')    # the command name in column 0
 
     c = db.cursor()
-    c.execute('select run from runs')
-    for (run,) in c :
+    c.execute("select distinct host from status where tablename = ? and run = ? order by host asc",(tablename, run_name))
+    for host, in c :
+        t.define_column(host)
+        t.set_value(row, host, host)
 
-        all = [ ]
-        c1 = db.cursor()
-        c1.execute('select host, tablename, cmd, depth, status, start_time, end_time, notes from status where run = ? ',(run,) )
-        for x in c1 :
-            n = struct()
-            n.host, n.tablename, n.cmd, n.depth, n.status, n.start_time, n.ent_time, n.notes = x
-            all.append(n)
 
-        print "RUN",run
-        for x in all :
-            print x.host, x.tablename, x.cmd, x.status
+    c.execute("""select cmd, host, depth, status, start_time, end_time, notes from status
+        where tablename = ? and run = ?  order by depth, cmd asc
+        """, ( tablename, run_name ) )
 
-main()
+    prev_cmd = None
+    for x in c :
+        cmd, host, depth, status, start_time, end_time, notes = x
+        if cmd != prev_cmd :
+            row = row + 1
+            t.set_value(row, 0, cmd)
+            prev_cmd = cmd
+        t.set_value( row, host, info_callback( tablename, cmd, host, status ) )
+
+    t.pad()
+
+    return t
+
+def info_callback_status( tablename, cmd, host, status ) :
+    return status
+
+def report_text( db, run_name, info_callback = info_callback_status ) :
+
+    s = StringIO.StringIO()
+
+    table_list = get_table_list(db, run_name)
+
+    for depth, tablename in table_list :
+        s.write("------\n")
+        s.write(tablename)
+        s.write('\n')
+
+        t = get_table( db, run_name, tablename, info_callback )
+
+        s.write( t.get_trac_wiki() )
+
+    return s.getvalue()
+
+def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) :
+    s = StringIO.StringIO()
+    s.write('<h%d>%s</h%d>\n'%(hlevel,run_name,hlevel))
+
+    hlevel = hlevel + 1
+    
+    table_list = get_table_list(db, run_name)
+
+    for depth, tablename in table_list :
+        s.write('<h%d>%s</h%d>\n'%(hlevel,tablename,hlevel))
+        t = get_table( db, run_name, tablename, info_callback )
+        s.write(t.get_html())
+
+    return s.getvalue()
+
+def main() :
+    db = sqlite3.connect('sr.db')
+    print report_html( db, 'arf2011-08-30 16:52:23.928381' )
+
+if __name__ == '__main__' :
+    main()
+

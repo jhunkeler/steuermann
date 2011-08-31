@@ -6,13 +6,18 @@ run everything in a set of command files
 import time
 import sys
 import sqlite3
-
-import run
-
+import os.path
 import datetime
 
+import run
+import report
 import nodes
 
+
+try :
+    import readline
+except ImportError :
+    readline = None
 
 #####
 
@@ -20,6 +25,17 @@ def main() :
     global xnodes
     # read all the input files
     
+    if readline :
+        history = os.path.join(os.path.expanduser("~"), ".steuermann_history")
+        try :
+            readline.read_history_file(history)
+        except IOError :
+            pass
+        import atexit
+        atexit.register(readline.write_history_file, history)
+
+    #
+
     di_nodes = nodes.read_file_list( sys.argv[2:] )
 
     xnodes = di_nodes.node_index
@@ -30,11 +46,10 @@ def main() :
     n = sys.argv[1]
     if n == '-a' :
         run_all(xnodes, run_name, db)
-    elif n == '-i' :
-        run_interactive( xnodes, run_name, db )
     else :
-        print "%s ?"%n
+        run_interactive( xnodes, run_name, db )
 
+#
 
 def do_flag( xnodes, name, recursive, fn, verbose ) :
     if verbose :
@@ -81,6 +96,8 @@ def cmd_flagging( l, xnodes, func ) :
     for x in l :
         do_flag( xnodes, x, recursive, func, 1 )
 
+#
+
 helpstr = """
 report              show report 
 want [-r] node      declare that we want that node
@@ -89,8 +106,9 @@ list -a
 list node
 start
 wait
-wr                  report want/skip values
-wd                  report depth
+wr                  want/skip report
+dr                  depth report
+pre node            show what must come before a node
 """
 
 def run_interactive( xnodes, run_name, db) :
@@ -106,10 +124,11 @@ def run_interactive( xnodes, run_name, db) :
     keep_running = 0
 
     while 1 :
-        print "action?"
-        l = sys.stdin.readline()
-        if l == '' :
+        try :
+            l = raw_input("smc>")
+        except EOFError :
             break
+
         l = l.strip()
         l = l.split()
         if len(l) > 0 :
@@ -121,13 +140,16 @@ def run_interactive( xnodes, run_name, db) :
             print helpstr
 
         elif n == 'report' :
-            report( db, run_name )
+            print report.report_text( db, run_name )
 
         elif n == 'wr' :
-            report( db, run_name, info_callback_want )
+            print report.report_text( db, run_name, info_callback_want )
 
-        elif n == 'wd' :
-            report( db, run_name, info_callback_depth )
+        elif n == 'dr' :
+            print report.report_text( db, run_name, info_callback_depth )
+
+        elif n == 'pre' :
+            pre_cmd( l[1:], xnodes )
 
         elif n == 'want' :
             cmd_flagging( l, xnodes, set_want )
@@ -175,6 +197,44 @@ def run_interactive( xnodes, run_name, db) :
                     print "no processes running - some prereq not satisfiable"
         
 
+#
+
+def match_all_nodes( l, xnodes ) :
+
+    # all will be the list of all nodes that we want to process
+    all = [ ]
+
+    # for all the names they said on the command line
+    for x in l :
+
+        # use wild cards for unspecified prefix parts.  i.e. "arf" means "*:*/arf"
+        x = nodes.normalize_name('*','*',x)
+
+        # find all the nodes that match the pattern
+        for y in xnodes :
+            if nodes.wildcard_name( x, y ) :
+                all.append(y)
+
+    return sorted(all)
+
+#
+
+def pre_cmd( l, xnodes ) :
+
+    for x in match_all_nodes( l, xnodes ) :
+        print "-----"
+        print x
+        print_pre(x, xnodes, 1)
+            
+
+def print_pre(who, xnodes, depth) :
+    pre = xnodes[who].predecessors 
+    for x in pre :
+        x = x.name
+        print '  '*depth+ x
+        print_pre( x, xnodes, depth+1)
+
+#
 
 def register_database(db, run, xnodes ) :
     c = db.cursor()
@@ -188,6 +248,8 @@ def register_database(db, run, xnodes ) :
             "( ?, ?, ?, ?, ?, 'N' )", ( run, host, tablename, cmd, depth ) )
 
     db.commit()
+
+#
 
 def run_all(xnodes, run_name, db) :
 
@@ -204,6 +266,8 @@ def run_all(xnodes, run_name, db) :
             break
         if not no_sleep :
             time.sleep(1)
+
+#
 
 def run_step( runner, xnodes, run_name, db ) :
     
@@ -299,9 +363,6 @@ def keypress() :
 
 #####
 
-def info_callback_status( tablename, cmd, host, status ) :
-    return status
-
 def info_callback_want( tablename, cmd, host, status ) :
     n = xnodes['%s:%s/%s'%(host,tablename,cmd)]
     s = ''
@@ -316,51 +377,6 @@ def info_callback_want( tablename, cmd, host, status ) :
 def info_callback_depth( tablename, cmd, host, status ) :
     n = xnodes['%s:%s/%s'%(host,tablename,cmd)]
     return n.depth
-
-def report( db, run_name, info_callback = info_callback_status ) :
-    import pandokia.text_table as tt
-
-    c = db.cursor()
-    c.execute("select max(depth) as d, tablename from status where run = ? group by tablename order by d asc",(run_name,))
-    table_list = [ x for x in c ]
-        # table_list contains ( depth, tablename )
-
-    print """
-                -- N = not started
-                -- S = started, not finished
-                -- P = prereq not satisfied, so not attempted
-                -- 0-255 = exit code
-"""
-
-    for depth, tablename in table_list :
-        print "------"
-        print tablename
-        t = tt.text_table()
-
-        row = 0
-        t.define_column('-')    # the command name in column 0
-
-        c.execute("select distinct host from status where tablename = ? and run = ? order by host asc",(tablename, run_name))
-        for host, in c :
-            t.define_column(host)
-            t.set_value(row, host, host)
-
-        c.execute("""select cmd, host, depth, status, start_time, end_time, notes from status
-            where tablename = ? and run = ?  order by depth, cmd asc
-            """, ( tablename, run_name ) )
-
-        prev_cmd = None
-        for x in c :
-            cmd, host, depth, status, start_time, end_time, notes = x
-            if cmd != prev_cmd :
-                row = row + 1
-                t.set_value(row, 0, cmd)
-                prev_cmd = cmd
-            t.set_value( row, host, info_callback( tablename, cmd, host, status ) )
-
-        t.pad()
-
-        print t.get_trac_wiki()
 
 #####
 

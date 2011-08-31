@@ -40,16 +40,21 @@ class command_tree(object):
                     if ( fnmatch.fnmatchcase(hl,host ) and 
                          fnmatch.fnmatchcase(tl,table) and 
                          fnmatch.fnmatchcase(cl,cmd  ) ) :
-                        self.connect(x, after, required, pos)
+                        # yes, the wild card matches this one; connect them
+                        # (but don't let a node come before itself because the wild card is too loose)
+                        if x != after :
+                            self.connect(x, after, required, pos)
             else :
                 self.connect(before, after, required, pos)
 
-        # work out the depths of each node
+        # Work out the depths of each node.
+        # Since we are walking the graph, we also detect dependency loops here.
         compute_depths( self.node_index )
         
 
     # make the actual connection between nodes
-    def connect( self, after, before, required, line ) :
+    def connect( self, before, after, required, line ) :
+
         if not after in self.node_index :
             if required :
                 print "error: %s happens after non-existant %s - line %s"%(before,after,line)
@@ -76,7 +81,7 @@ class command_tree(object):
     def add_command_list( self, table, hostlist, command_list ) :
         for host in hostlist :
             this_table = '%s:%s' % ( host, table )
-            for command, script, after, pos in command_list :
+            for command, script, after_clause, pos in command_list :
                 # this happens once for each CMD clause
                 # command is the name of this command
                 # script is the script to run
@@ -92,7 +97,7 @@ class command_tree(object):
                 # create the node
                 self.node_index[command]=node(command, script, nice_pos( current_file_name, pos)  )
 
-                for before_name, required, pos in after :
+                for before_name, required, pos in after_clause :
                     # this happens once for each AFTER clause
                     # before is the name of a predecessor that this one comes after
                     # required is a boolean, whether the predecessor must exist
@@ -237,6 +242,10 @@ def nice_pos( filename, yapps_pos ) :
 
 def c_d_fn(x,depth) :
 
+    if x.in_recursion :
+        print "error: loop detected at",x.name
+        return
+
     # if it is already deeper than where we are now, we can (must)
     # prune the tree walk here.
     if x.depth  >= depth :
@@ -244,8 +253,10 @@ def c_d_fn(x,depth) :
 
     if depth > 100 :
         # bug: proxy for somebody wrote a loop
-        print "error: depth > 100"
+        print "error: depth > 100, node = ",x.name
         return
+
+    x.in_recursion = 1
 
     # assign the depth
     x.depth = depth
@@ -255,6 +266,8 @@ def c_d_fn(x,depth) :
     for y in x.successors :
         c_d_fn(y,depth)
 
+    x.in_recursion = 0
+
 def compute_depths(nodes) :
 
     # init everything
@@ -262,6 +275,7 @@ def compute_depths(nodes) :
         x = nodes[x]
         x.depth = 0
         x.successors = [ ]
+        x.in_recursion = 0
 
     # walk the nodes in an arbitrary order; make a list of successors
     for x in nodes :
@@ -275,6 +289,11 @@ def compute_depths(nodes) :
     for x in nodes :
         c_d_fn(nodes[x],1)
 
+    #
+    for x in nodes :
+        x = nodes[x]
+        del x.in_recursion
+
 
 #####
 
@@ -287,7 +306,6 @@ def read_file_list( file_list ) :
     di = command_tree( ) 
     for x in file_list :
         current_file_name = x
-        print x
         sc = specfile.specfileScanner( open(x,'r').read() )
         p = specfile.specfile( scanner=sc, data=di )
         result = exyapps.runtime.wrap_error_reporter( p, 'start' )
