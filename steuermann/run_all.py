@@ -37,15 +37,18 @@ def main() :
 
     #
 
-    di_nodes = nodes.read_file_list( sys.argv[2:] )
+    all = sys.argv[1] == '-a' 
+    if all :
+        di_nodes = nodes.read_file_list( sys.argv[2:] )
+    else :
+        di_nodes = nodes.read_file_list( sys.argv[1:] )
 
     xnodes = di_nodes.node_index
     run_name = str(datetime.datetime.now()).replace(' ','_')
     db = steuermann.config.open_db()
     register_database(db, run_name, xnodes)
 
-    n = sys.argv[1]
-    if n == '-a' :
+    if all :
         run_all(xnodes, run_name, db)
     else :
         run_interactive( xnodes, run_name, db )
@@ -55,6 +58,8 @@ def main() :
 def do_flag( xnodes, name, recursive, fn, verbose ) :
     if verbose :
         verbose = verbose + 1
+    if not (':' in name ) and not ('/' in name) :
+        name = '*:*/'+name
     if not ':' in name :
         name = '*:' + name
     if ( '*' in name )  or ( '?' in name ) or ( '[' in name ) :
@@ -180,7 +185,6 @@ def run_interactive( xnodes, run_name, db) :
                 if keypress() :
                     print "wait interrupted (processes continue)"
                     break
-            print "wait finished"
 
         if keep_running :
             print "run step"
@@ -279,7 +283,6 @@ def run_step( runner, xnodes, run_name, db ) :
         no_sleep = 0
 
         # Loop, polling for work to do, or for finishing processes
-        print "loop"
         for x_name in xnodes :
             x=xnodes[x_name]
 
@@ -317,7 +320,7 @@ def run_step( runner, xnodes, run_name, db ) :
             # of predecessors, we can run this one
             if released == len(x.released) :
                 host, table, cmd = nodes.crack_name(x_name)
-                print "RUN", x_name
+                # print "RUN NODE", x_name
 
                 db.execute("UPDATE status SET start_time = ?, status = 'S' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
                     ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
@@ -330,7 +333,7 @@ def run_step( runner, xnodes, run_name, db ) :
             if not who_exited :
                 break
 
-            print "SOMETHING EXITED",who_exited
+            # print "SOMETHING EXITED",who_exited
             # yes, something exited - no sleep, and keep running
             no_sleep = 1
             keep_running = 1
@@ -344,7 +347,7 @@ def run_step( runner, xnodes, run_name, db ) :
                     ( str(datetime.datetime.now()), who_exited[1], run_name, x_host, x_table, x_cmd ) )
             db.commit()
 
-        runner.display_procs()
+        # runner.display_procs()
 
         return ( keep_running, no_sleep )
 
@@ -365,7 +368,7 @@ def keypress() :
 
 #####
 
-def info_callback_want( tablename, cmd, host, status ) :
+def info_callback_want( db, run, tablename, host, cmd ) :
     n = xnodes['%s:%s/%s'%(host,tablename,cmd)]
     s = ''
     if n.skip :
@@ -376,7 +379,7 @@ def info_callback_want( tablename, cmd, host, status ) :
         s = '-'
     return s
 
-def info_callback_depth( tablename, cmd, host, status ) :
+def info_callback_depth( db, run, tablename, host, cmd ) :
     n = xnodes['%s:%s/%s'%(host,tablename,cmd)]
     return n.depth
 

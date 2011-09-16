@@ -91,7 +91,8 @@ def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
         if cmd != prev_cmd :
             row = row + 1
             t.set_value(row, 0, cmd)
-            t.set_value(row, 'depth', depth)
+            if showdepth :
+                t.set_value(row, 'depth', depth)
             prev_cmd = cmd
             
         info = info_callback( db, run_name, tablename, host, cmd )

@@ -7,3 +7,7 @@ make
 
 python setup.py install
 
+smc test.sm
+?
+
+

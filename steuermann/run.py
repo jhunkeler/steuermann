@@ -23,24 +23,26 @@ class struct :
 class runner(object): 
 
     # dict of all current running processes, indexed by node name
-    all_procs = { }
+    all_procs = None
 
     # index of nodes
-    node_index = { }
-
-    # info about hosts we can run on
-    host_info = { }
+    node_index = None
 
     # dir where we write our logs
     logdir = ''
+
+    # 
+    host_info_cache = None
 
     #####
     #
 
     def __init__( self, nodes, logdir ) :
+        self.all_procs = { }
         self.node_index = nodes
         self.load_host_info()
         self.logdir = logdir
+        self.host_info_cache = { }
 
     #####
     # start a process
@@ -53,16 +55,16 @@ class runner(object):
             print "....%s:%s/%s\n"%(node.host, node.table, node.cmd)
 
         try :
-            args = self.host_info[node.host]
+            args = self.get_host_info(node.host)
         except :
             print "ERROR: do not know how to run on %s"%node.host
             raise
 
-        run = args['run']
 
         args = args.copy()
         args.update( 
             script=node.script,
+            script_type=node.script_type,
             host=node.host,
             table=node.table,
             cmd=node.cmd
@@ -73,7 +75,21 @@ class runner(object):
             for x in sorted([x for x in args]) :
                 print '%s=%s'%(x,args[x])
 
-        run = [ x % args for x in run ]
+        args['script'] = args['script'] % args
+
+        if args['script_type'] == 'r' :
+            run = args['run']
+        elif  args['script_type'] == 'l' :
+            run = args['local']
+        else :
+            raise Exception()
+
+        t = [ ]
+        for x in run :
+            # bug: what to do in case of keyerror
+            t.append( x % args )
+
+        run = t
 
         if debug :
             print "RUN",run
@@ -169,53 +185,37 @@ class runner(object):
     #####
 
 
-    def _host_get_names( self, cfg, section, d ) :
+    def _host_get_names( self, cfg, section ) :
+        d = { }
         # pick all the variables out of this section
         for name, value in cfg.items(section) :
-            if name == 'run' :
-                # run is a list
+            if value.startswith('[') :
+                # it is a list
                 d[name] = eval(value)
             else :
                 # everything else is plain text
                 d[name] = value
+        return d
 
     def load_host_info( self, filename=None ) : 
-        self.host_info = { }
 
         # read the config file
         if filename is None :
             filename = os.path.dirname(__file__) + '/hosts.ini'
-        cfg = ConfigParser.RawConfigParser()
-        cfg.read(filename)
+        self.cfg = ConfigParser.RawConfigParser()
+        self.cfg.read(filename)
 
-	    # this dict holds the set of values that are defined as
-	    # applying to all hosts
-        all_dict = { }
-        self._host_get_names(cfg, 'ALL', all_dict)
+    def get_host_info(self, host) :
+        if not host in self.host_info_cache :
 
-        # for all the sections (except ALL) get the names from that section
-        for x in cfg.sections() :
-            if x == 'ALL' :
-                continue
-
-            # start with a dict that contains what is in ALL
-            d = all_dict.copy()
-
-            # get what there is to know about host x
-            self._host_get_names(cfg, x, d)
-
-            # if it is like some other host, start over using ALL, then
-            # the LIKE host, then our own information
+            d = self._host_get_names(self.cfg, host)
             if 'like' in d :
-                like = d['like']
-                d = all_dict.copy()
-                self._host_get_names(cfg, like, d)
-                self._host_get_names(cfg, x, d)
+                d1 = self.get_host_info(d['like'])
                 del d['like']
+                d1.update(d)
+                self.host_info_cache[host] = d1
+            else :
+                self.host_info_cache[host] = d
 
-            print x,d
-            self.host_info[x] = d
-
-        del cfg
-
+        return self.host_info_cache[host]
     #####
