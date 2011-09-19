@@ -145,6 +145,22 @@ def run_interactive( xnodes, run_name, db) :
         if n == '?' :
             print helpstr
 
+        elif n == 'd' :
+            run.debug=0
+            if len(l) > 1 :
+                for x in l[1:] :
+                    print "XXXXXXXXXX"
+                    print "SECTION",x
+                    print runner.get_host_info(x)
+                    print ""
+            else :
+                for x in runner.cfg.sections() :
+                    print "XXXXXXXXXX"
+                    print "SECTION",x
+                    print runner.get_host_info(x)
+                    print ""
+            run.debug=0
+
         elif n == 'report' :
             print report.report_text( db, run_name )
 
@@ -320,12 +336,12 @@ def run_step( runner, xnodes, run_name, db ) :
             # of predecessors, we can run this one
             if released == len(x.released) :
                 host, table, cmd = nodes.crack_name(x_name)
-                # print "RUN NODE", x_name
 
-                db.execute("UPDATE status SET start_time = ?, status = 'S' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
-                    ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
-                db.commit()
-                runner.run(x, run_name)
+                if runner.run(x, run_name) :
+                    # returns true/false whether it actually ran it - it may not because of resource limits
+                    db.execute("UPDATE status SET start_time = ?, status = 'S' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
+                        ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
+                    db.commit()
 
         # if anything has exited, we process it and update the status in the database
         while 1 :
