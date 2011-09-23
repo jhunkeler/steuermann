@@ -6,6 +6,7 @@ Generate reports from the database
 import time
 import sys
 import pandokia.text_table as text_table
+import pandokia.common
 import StringIO
 
 # this will be reset by the cgi main program if we are in a real cgi
@@ -21,6 +22,10 @@ def info_callback_status( db, run, tablename, host, cmd ) :
     return status
 
 #
+
+ok_status = ( '0', 'N', 'S' )
+
+simple_status = ( 'N', 'P', 'S', 'W' )
 
 def info_callback_gui( db, run, tablename, host, cmd ) :
     c = db.cursor()
@@ -38,16 +43,32 @@ def info_callback_gui( db, run, tablename, host, cmd ) :
     # t_result = '%s %s %s'%(status, start_time, end_time )
     t_result = status
 
-    if status != '0' and status != 'N' :
-        status = '<font color=red>%s</font>'%status
-
-    if status != 'N' and status != 'P' :
-        link = "<a href='%s?action=log&name=%s/%s:%s/%s'>*</a>"%(cginame, run, host, tablename, cmd )
+    if status not in ok_status :
+        d_status = '<font color=red>%s</font>'%status
     else :
-        link = ''
+        d_status = status
 
-    # h_result = '%s %s %s %s'%(link, status, start_time, end_time)
-    h_result = '%s %s'%(link, status )
+    if status in simple_status :
+        link = '%s'%d_status
+    else :
+        link = " <a href='%s?action=log&name=%s/%s:%s/%s'>%s</a>"%(cginame, run, host, tablename, cmd, d_status )
+
+    if not status in simple_status :
+        try :
+            st = pandokia.common.parse_time(start_time)
+            st = '%d:%02d'%(st.hour,st.minute)
+        except ValueError :
+            st = '?'
+        try :
+            et = pandokia.common.parse_time(end_time  )
+            et = '%d:%02d'%(et.hour,et.minute)
+        except ValueError :
+            et = '?'
+
+        link = link + " : " + st + " - " + et
+
+    # h_result = '%s %s %s %s'%(link, d_status, start_time, end_time)
+    h_result = link
 
     return ( t_result, h_result )
 

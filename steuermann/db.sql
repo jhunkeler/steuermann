@@ -16,7 +16,8 @@ CREATE TABLE status (
 
 	status	VARCHAR(5),
 		-- N = not started
-		-- S = started, not finished
+		-- R = started, not finished
+		-- S = skipped
 		-- P = prereq not satisfied, so not attempted
 		-- 0-255 = exit code
 

@@ -1,0 +1,61 @@
+
+TABLE assemble HOST rhe5-64
+	CMD dev.stsci_python RUN "assemble_stsci_python dev"
+		AFTER init/*
+
+	CMD dev.stsci_iraf RUN "assemble_stsci_iraf dev"
+		AFTER init/*
+
+	CMD dev.axe RUN "assemble_axe dev"
+		AFTER init/*
+
+	CMD dev.hstcal RUN "assemble_hstcal dev"
+		AFTER init/*
+
+TABLE build HOST rhe4-32 rhe4-64 rhe5-64 leopard snow-leopard
+	CMD dev.py2.7 RUN "build_stsci_python dev 2.7"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
+	CMD dev.hstcal RUN "build_hstcal dev"
+		AFTER init/*
+		AFTER *:assemble/dev.hstcal
+
+TABLE build HOST rhe5-64 
+	CMD dev.py2.6 RUN "build_stsci_python dev 2.6"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
+
+	CMD dev.py2.5 RUN "build_stsci_python dev 2.5"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
+
+TABLE build HOST rhe4-32 leopard
+	CMD dev.axe RUN "build_axe dev"
+		AFTER init/*
+		AFTER *:assemble/dev.axe
+
+	CMD dev.stsci_iraf RUN "build_stsci_iraf dev"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_iraf
+		AFTER build/dev.axe
+
+	CMD dev.stsci_iraf_log RUN "build_stsci_iraf_log dev"
+		AFTER init/*
+		AFTER build/dev.stsci_iraf
+
+	CMD dev.stsci_iraf_help RUN "build_stsci_iraf_help dev"
+		AFTER init/*
+		AFTER build/dev.stsci_iraf
+
+
+TABLE build HOST rhe4-64 rhe5-64
+	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev herbert"
+	AFTER rhe4-32:build/dev.stsci_iraf*
+
+TABLE build HOST snow-leopard
+	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev cadeau"
+	AFTER rhe4-32:build/dev.stsci_iraf*
+
+TABLE build HOST rhe5-64
+	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7"
+	AFTER build/dev.py2.7

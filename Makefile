@@ -9,4 +9,5 @@ sr.db:	steuermann/db.sql
 
 clean:
 	rm -f sr.db
+	rm -f steuermann/specfile.py
 

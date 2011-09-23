@@ -86,7 +86,8 @@ class runner(object):
             script_type=node.script_type,
             host=node.host,
             table=node.table,
-            cmd=node.cmd
+            cmd=node.cmd,
+            node=node.name,
             )
 
         if debug :

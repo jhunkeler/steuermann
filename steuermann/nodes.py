@@ -3,7 +3,7 @@ Stuff related to the tree structure of the command set
 '''
 
 import fnmatch
-import exyapps.runtime
+#import exyapps.runtime
 
 
 #####
@@ -55,13 +55,9 @@ class command_tree(object):
     # make the actual connection between nodes
     def connect( self, before, after, required, line ) :
 
-        if not after in self.node_index :
+        if not before in self.node_index :
             if required :
                 print "error: %s happens after non-existant %s - line %s"%(before,after,line)
-            return
-
-        if not before in self.node_index :
-            print "error: before node %s does not exist %s"%(before,line)
             return
 
         if not after in self.node_index :
@@ -309,7 +305,7 @@ def read_file_list( file_list ) :
         current_file_name = x
         sc = specfile.specfileScanner( open(x,'r').read() )
         p = specfile.specfile( scanner=sc, data=di )
-        result = exyapps.runtime.wrap_error_reporter( p, 'start' )
+        result = specfile.wrap_error_reporter( p, 'start' )
     di.finish()
     return di
 
