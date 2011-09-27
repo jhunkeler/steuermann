@@ -1,5 +1,11 @@
+## TODO:
+##  add builds on ssbwebv1 for those things that we actually care about
 
-TABLE assemble HOST rhe5-64
+####################
+####################
+
+# arzach assembles all the source code
+TABLE assemble HOST arzach
 	CMD dev.stsci_python RUN "assemble_stsci_python dev"
 		AFTER init/*
 
@@ -12,7 +18,16 @@ TABLE assemble HOST rhe5-64
 	CMD dev.hstcal RUN "assemble_hstcal dev"
 		AFTER init/*
 
-TABLE build HOST rhe4-32 rhe4-64 rhe5-64 leopard snow-leopard
+	CMD nop RUN "sleep 1"
+		AFTER init/*
+
+####################
+####################
+
+# install stsci_python into default environment
+# build hstcal
+#	- everywhere
+TABLE build HOST herbert thor arzach bond cadeau
 	CMD dev.py2.7 RUN "build_stsci_python dev 2.7"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
@@ -20,7 +35,9 @@ TABLE build HOST rhe4-32 rhe4-64 rhe5-64 leopard snow-leopard
 		AFTER init/*
 		AFTER *:assemble/dev.hstcal
 
-TABLE build HOST rhe5-64 
+# older python environments
+#	- arzach only
+TABLE build HOST arzach 
 	CMD dev.py2.6 RUN "build_stsci_python dev 2.6"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
@@ -29,7 +46,9 @@ TABLE build HOST rhe5-64
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 
-TABLE build HOST rhe4-32 leopard
+# stsdas and friends
+#	- 32 bit only
+TABLE build HOST herbert bond
 	CMD dev.axe RUN "build_axe dev"
 		AFTER init/*
 		AFTER *:assemble/dev.axe
@@ -48,14 +67,166 @@ TABLE build HOST rhe4-32 leopard
 		AFTER build/dev.stsci_iraf
 
 
-TABLE build HOST rhe4-64 rhe5-64
+# stsdas for 64 bit machines - get it from a related 32 bit system
+TABLE build HOST thor arzach
 	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev herbert"
-	AFTER rhe4-32:build/dev.stsci_iraf*
+	AFTER herbert:build/dev.stsci_iraf*
 
-TABLE build HOST snow-leopard
+TABLE build HOST cadeau
 	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev cadeau"
-	AFTER rhe4-32:build/dev.stsci_iraf*
+	AFTER bond:build/dev.stsci_iraf*
 
-TABLE build HOST rhe5-64
+# stsci_python documentation
+#	- one machine only
+TABLE build HOST arzach
 	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7"
 	AFTER build/dev.py2.7
+
+# old epydoc documentation - only works on thor; hope we can get rid of
+# epydoc sooner than we have to do anything about this.
+TABLE build HOST thor
+	CMD dev.stsci_python_epydoc RUN "/thor/data2/iraf/epydoc_test/nightly"
+	AFTER build/dev.py2.7
+
+# stamp the IRAF banner file when the builds are complete
+TABLE stamp HOST herbert thor arzach bond cadeau
+	CMD dev RUN "build_stamp dev"
+		AFTER build/*
+
+####################
+####################
+
+# regular distributions
+
+TABLE distribute HOST herbert thor arzach
+	CMD dev.iraf RUN "synctool - irafdev"
+		AFTER stamp/dev
+	CMD dev.pyssg RUN "synctool - pyssgdev"
+		AFTER stamp/dev
+	CMD dev.stsci_iraf RUN "synctool - stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD dev.hstcal RUN "synctool - hstcal_dev"
+		AFTER stamp/dev
+	CMD dev.motd RUN "synctool - irafdev/iraf/unix/hlib/motd"
+		AFTER distribute/dev.iraf
+
+TABLE distribute HOST bond cadeau
+	CMD irafdev.pkg RUN "cd $HOME/daily_build/mac_package; ./clean ; ./build dev " AFTER stamp/dev
+	CMD irafdev.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute dev" AFTER irafdev.pkg
+
+# wads of special cases
+
+# jwcalibdev has local disk - some day it may do its own builds
+TABLE distribute HOST arzach
+	CMD jwcalibdev.iraf RUN "synctool jwcalibdev: irafdev"
+		AFTER stamp/dev
+	CMD jwcalibdev.pyssg RUN "synctool jwcalibdev: pyssgdev"
+		AFTER stamp/dev
+	CMD jwcalibdev.stsci_iraf RUN "synctool jwcalibdev: stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD jwcalibdev.hstcal RUN "synctool jwcalibdev: hstcal_dev"
+		AFTER stamp/dev
+	CMD jwcalibdev.motd RUN "synctool jwcalibdev: irafdev/iraf/unix/hlib/motd"
+		AFTER jwcalibdev.iraf
+
+# goods - has RHE 5 only now
+
+TABLE distribute_other HOST arzach
+	CMD goods.iraf RUN "synctool goods12: irafdev"
+		AFTER stamp/dev
+	CMD goods.pyssg RUN "synctool goods12: pyssgdev"
+		AFTER stamp/dev
+	CMD goods.stsci_iraf RUN "synctool goods12: stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD goods.hstcal RUN "synctool goods12: hstcal_dev"
+		AFTER stamp/dev
+	CMD goods.motd RUN "synctool goods12: irafdev/iraf/unix/hlib/motd"
+		AFTER goods.iraf
+
+# witserv1 - who are these guys?
+
+TABLE distribute_other HOST arzach
+	CMD witserv1.iraf RUN "synctool witserv1: irafdev"
+		AFTER stamp/dev
+	CMD witserv1.pyssg RUN "synctool witserv1: pyssgdev"
+		AFTER stamp/dev
+	CMD witserv1.stsci_iraf RUN "synctool witserv1: stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD witserv1.hstcal RUN "synctool witserv1: hstcal_dev"
+		AFTER stamp/dev
+	CMD witserv1.motd RUN "synctool witserv1: irafdev/iraf/unix/hlib/motd"
+		AFTER witserv1.iraf
+
+# dmsinsvm - have a pipeline and irafx/irafdev on the same machine for INS
+
+TABLE distribute_other HOST arzach
+	CMD dmsinsvm.iraf RUN "synctool dmsinsvm: irafdev"
+		AFTER stamp/dev
+	CMD dmsinsvm.pyssg RUN "synctool dmsinsvm: pyssgdev"
+		AFTER stamp/dev
+	CMD dmsinsvm.stsci_iraf RUN "synctool dmsinsvm: stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD dmsinsvm.hstcal RUN "synctool dmsinsvm: hstcal_dev"
+		AFTER stamp/dev
+	CMD dmsinsvm.motd RUN "synctool dmsinsvm: irafdev/iraf/unix/hlib/motd"
+		AFTER dmsinsvm.iraf
+
+# UDF - another funded project with their own machines
+
+TABLE distribute_other HOST thor
+	CMD udf1.iraf RUN "synctool udf1: irafdev"
+		AFTER stamp/dev
+	CMD udf1.pyssg RUN "synctool udf1: pyssgdev"
+		AFTER stamp/dev
+	CMD udf1.stsci_iraf RUN "synctool udf1: stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD udf1.hstcal RUN "synctool udf1: hstcal_dev"
+		AFTER stamp/dev
+	CMD udf1.motd RUN "synctool udf1: irafdev/iraf/unix/hlib/motd"
+		AFTER udf1.iraf
+
+# royal - a beowulf cluster
+
+TABLE distribute_other HOST thor
+	CMD royal.iraf RUN "synctool royal: irafdev"
+		AFTER stamp/dev
+	CMD royal.pyssg RUN "synctool royal: pyssgdev"
+		AFTER stamp/dev
+	CMD royal.stsci_iraf RUN "synctool royal: stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD royal.hstcal RUN "synctool royal: hstcal_dev"
+		AFTER stamp/dev
+	CMD royal.motd RUN "synctool royal: irafdev/iraf/unix/hlib/motd"
+		AFTER royal.iraf
+
+####################
+####################
+
+# This structure is meant to serialize the regtests so that nothing else
+# is going on at the same time.  The regtests can consume all the CPUs.
+TABLE regtest HOST herbert thor arzach bond cadeau
+	CMD okify RUN "test_okify"
+		AFTER distribute/*
+	CMD dev.test2.7 RUN "test_rt dev 2.7"
+		AFTER okify
+
+TABLE regtest HOST arzach 
+	CMD dev.test2.6 RUN "test_rt dev 2.6"
+		AFTER dev.test2.7
+	CMD dev.test2.5 RUN "test_rt dev 2.5"
+		AFTER dev.test2.6
+
+TABLE regtest HOST thor
+	CMD dev.contact RUN "test_contact"
+		AFTER dev.test2.7
+
+	# change this to have each test batch import independently
+TABLE regtest_import HOST ssb
+	CMD dev.import RUN "test_import daily"
+		AFTER *:regtest/*
+	CMD dev.notify RUN "test_notify daily"
+		AFTER dev.import
+	CMD dev.sqlite_watch RUN "test_sqlite_watch"
+		AFTER dev.import
+	CMD dev.mysql_watch RUN "test_mysql_watch"
+		AFTER dev.import

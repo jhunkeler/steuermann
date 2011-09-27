@@ -26,6 +26,7 @@ except ImportError :
 
 def main() :
     global xnodes
+    global no_run
     # read all the input files
     
     if readline :
@@ -37,19 +38,38 @@ def main() :
         import atexit
         atexit.register(readline.write_history_file, history)
 
-    opt, args = easyargs.get( { '-a' : '--all',
-        '--all' : '-a',
+
+# easyargs spec definition:
+#
+#        '-v' : '',              # arg takes no parameter, opt['-v'] is
+#                                # how many times it occurred
+#        '-f' : '=',             # arg takes a parameter
+#        '-mf' : '=+',           # arg takes a parameter, may be specified 
+#                                # several times to get a list
+#        '--verbose' : '-v',     # arg is an alias for some other arg
+
+    opt, args = easyargs.get( { 
+        '--all' : '-a'      ,
+        '-a'    : ''        ,   # run all nodes non-interactively
+        '-r'    : '='       ,   # give run name
+        '-n'    : ''        ,   # do not actually execute any processes
         } )
 
     #
     #
 
-    all = '--all' in opt
+    all = opt['-a']
+    no_run = opt['-n']
 
     di_nodes = nodes.read_file_list( args )
 
     xnodes = di_nodes.node_index
-    run_name = str(datetime.datetime.now()).replace(' ','_')
+
+    if '-r' in opt :
+        run_name = opt['-r']
+    else :
+        run_name = str(datetime.datetime.now()).replace(' ','_')
+
     db = steuermann.config.open_db()
 
     if all :
@@ -57,6 +77,16 @@ def main() :
     else :
         run_interactive( xnodes, run_name, db )
 
+#
+
+def find_wild_names( xnodes, name ) :
+    print "find_wild",name
+    l = [ ]
+    for x in xnodes :
+        if nodes.wildcard_name( name, x ) :
+            print "...",x
+            l.append(x)
+    return l
 #
 
 def do_flag( xnodes, name, recursive, fn, verbose ) :
@@ -84,7 +114,6 @@ def do_flag( xnodes, name, recursive, fn, verbose ) :
     else :
             if verbose :
                 print '  '*verbose, "not in list", name
-            raise Exception()
 
 def set_want( node ) :
     # if we said we want it, mark it as wanted and don't skip
@@ -111,6 +140,17 @@ def cmd_flagging( l, xnodes, func ) :
     for x in l :
         do_flag( xnodes, x, recursive, func, 1 )
 
+
+#
+def print_node(xnodes, x, print_recursive, print_all, indent=0):
+    print ' '*indent, xnodes[x].wanted, xnodes[x].finished, xnodes[x].skip,  x
+    if print_all :
+        l = [ a.name for a in xnodes[x].predecessors ]
+        print ' '*indent, "       AFTER", '  '.join(l)
+        if print_recursive :
+            for x in l :
+                print_node( xnodes, x, print_recursive, print_all, indent=indent+8)
+
 #
 
 helpstr = """
@@ -127,6 +167,9 @@ pre node            show what must come before a node
 """
 
 def run_interactive( xnodes, run_name, db) :
+
+    org_run_name = run_name
+    run_count = 0
 
     register_database(db, run_name, xnodes)
 
@@ -195,18 +238,37 @@ def run_interactive( xnodes, run_name, db) :
             for x in xnodes :
                 xnodes[x].finished = 0
             
-            run_name = str(datetime.datetime.now()).replace(' ','_')
+            run_name = org_run_name + '.%d'%run_count
+            run_count = run_count + 1
             print "new run name",run_name
             register_database(db, run_name, xnodes)
 
         elif n == 'list' :
-            print_all = '-a' in l
-            l = sorted ( [ x for x in xnodes ] )
+            l = l[1:]
+            if len(l) > 0 and l[0] == '-a' :
+                l = l[1:]
+                print_all = 1
+            else :
+                print_all = 0
+
+            if len(l) > 0 and l[0] == '-r' :
+                l = l[1:]
+                print_recursive=1
+            else :
+                print_recursive=0
+
+            if len(l) == 0 :
+                all = [ x for x in xnodes ]
+            else :
+                all = [ ]
+                for x in l :
+                    all = all + find_wild_names( xnodes, x )
+
+            all = sorted(all)
+            print "recursive",print_recursive
             print "w f s name"
-            for x in l :
-                print xnodes[x].wanted, xnodes[x].finished, xnodes[x].skip,  x
-                if print_all :
-                    print "       AFTER", '  '.join([ a.name for a in xnodes[x].predecessors ])
+            for x in all :
+                print_node(xnodes, x, print_recursive, all)
 
         elif n == 'wait' :
             c = db.cursor()
@@ -214,7 +276,7 @@ def run_interactive( xnodes, run_name, db) :
                 host, tablename, cmd = nodes.crack_name(x)
                 if xnodes[x].wanted :
                     status = 'W'
-                    c.execute("UPDATE status SET status = 'W' WHERE run = ? AND host = ? AND tablename = ? AND cmd = ? AND status = 'N'",
+                    c.execute("UPDATE sm_status SET status = 'W' WHERE run = ? AND host = ? AND tablename = ? AND cmd = ? AND status = 'N'",
                         (run_name, host, tablename, cmd) )
 
             db.commit()
@@ -286,13 +348,13 @@ def print_pre(who, xnodes, depth) :
 
 def register_database(db, run, xnodes ) :
     c = db.cursor()
-    c.execute('INSERT INTO runs ( run ) VALUES ( ? )', ( run, ) )
+    c.execute('INSERT INTO sm_runs ( run ) VALUES ( ? )', ( run, ) )
     
     c = db.cursor()
     for x in xnodes :
         host, tablename, cmd = nodes.crack_name(x)
         depth = xnodes[x].depth
-        c.execute("INSERT INTO status ( run, host, tablename, cmd, depth, status ) VALUES "
+        c.execute("INSERT INTO sm_status ( run, host, tablename, cmd, depth, status ) VALUES "
             "( ?, ?, ?, ?, ?, 'N' )", ( run, host, tablename, cmd, depth ) )
 
     db.commit()
@@ -365,16 +427,26 @@ def run_step( runner, xnodes, run_name, db ) :
                     x.finished = 1
                     no_sleep = 1
                     keep_running = 1
-                    db.execute("UPDATE status SET start_time = ?, status = 'S' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
+                    db.execute("UPDATE sm_status SET start_time = ?, status = 'S' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
                             ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
                     db.commit()
 
                 else :
-                    if runner.run(x, run_name) :
-                        # returns true/false whether it actually ran it - it may not because of resource limits
-                        db.execute("UPDATE status SET start_time = ?, status = 'R' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
-                            ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
-                        db.commit()
+                    try :
+                        if runner.run(x, run_name, no_run=no_run) :
+                            # returns true/false whether it actually ran it - it may not because of resource limits
+                            db.execute("UPDATE sm_status SET start_time = ?, status = 'R' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
+                                ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
+                    except run.run_exception, e :
+                        now = str(datetime.datetime.now())
+                        db.execute("UPDATE sm_status SET start_time=?, end_time=?, status='E', notes=? WHERE ( run=? AND host=? AND tablename=? AND cmd=? )",
+                                ( now, now, repr(e), run_name, host, table, cmd ) )
+                        x.finished = 1
+                        no_sleep = 1
+                        keep_running = 1
+
+                    db.commit()
+                        
 
         # if anything has exited, we process it and update the status in the database
         while 1 :
@@ -390,7 +462,7 @@ def run_step( runner, xnodes, run_name, db ) :
             # note who and log it
             x_host, x_table, x_cmd = nodes.crack_name(who_exited[0])
 
-            db.execute("UPDATE status SET end_time = ?, status = ?  WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
+            db.execute("UPDATE sm_status SET end_time = ?, status = ?  WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
                     ( str(datetime.datetime.now()), who_exited[1], run_name, x_host, x_table, x_cmd ) )
             db.commit()
 

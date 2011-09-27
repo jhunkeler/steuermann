@@ -1,9 +1,9 @@
-TABLE init HOST leopard snow-leopard rhe5-64 rhe4-64 rhe4-32
+TABLE init HOST bond cadeau arzach thor herbert
 	CMD sendscripts LOCAL "/eng/ssb/auto/steuermann_scripts/init_sendscripts %(hostname)s %(workdir)s"
 	CMD sysstat RUN "sysstat"
 		AFTER sendscripts
 
-TABLE init HOST rhe5-64
+TABLE init HOST arzach
         CMD svnsync RUN "assemble_svnsync"
                 AFTER OPT init/irafx_update
 		AFTER sendscripts

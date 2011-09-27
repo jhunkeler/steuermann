@@ -9,6 +9,21 @@ import pandokia.text_table as text_table
 import pandokia.common
 import StringIO
 
+# maybe the output is html 3.2 - in any case, it is way simpler than
+# more recent standards.
+html_header='''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>%(title)s</TITLE>
+</HEAD>
+<BODY>
+'''
+
+html_trailer='''
+</BODY>
+</HTML>
+'''
+
 # this will be reset by the cgi main program if we are in a real cgi
 cginame = 'arf.cgi'
 
@@ -16,7 +31,7 @@ cginame = 'arf.cgi'
 
 def info_callback_status( db, run, tablename, host, cmd ) :
     c = db.cursor()
-    c.execute("SELECT status FROM status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
+    c.execute("SELECT status FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
             run, host, tablename, cmd ) )
     status, = c.fetchone()
     return status
@@ -29,7 +44,7 @@ simple_status = ( 'N', 'P', 'S', 'W' )
 
 def info_callback_gui( db, run, tablename, host, cmd ) :
     c = db.cursor()
-    c.execute("SELECT status, start_time, end_time FROM status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
+    c.execute("SELECT status, start_time, end_time FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
             run, host, tablename, cmd ) )
     x = c.fetchone()
     if x is None :
@@ -81,7 +96,7 @@ def info_callback_debug_table_cell( db, run, tablename, cmd, host ) :
 
 def get_table_list( db, run_name ) :
     c = db.cursor()
-    c.execute("select max(depth) as d, tablename from status where run = ? group by tablename order by d asc",(run_name,))
+    c.execute("select max(depth) as d, tablename from sm_status where run = ? group by tablename order by d asc",(run_name,))
     table_list = [ x for x in c ]
         # table_list contains ( depth, tablename )
     return table_list
@@ -97,25 +112,28 @@ def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
         t.define_column('depth')
 
     c = db.cursor()
-    c.execute("select distinct host from status where tablename = ? and run = ? order by host asc",(tablename, run_name))
+    c.execute("select distinct host from sm_status where tablename = ? and run = ? order by host asc",(tablename, run_name))
     for host, in c :
         t.define_column(host)
 
-    c.execute("""select cmd, host, depth, status, start_time, end_time, notes from status
-        where tablename = ? and run = ?  order by depth, cmd asc
+    c.execute("select cmd, max(depth) as d from sm_status where tablename = ? and run = ? group by cmd order by d asc",(tablename, run_name))
+    row = -1
+    cmd_to_row = { }
+    for cmd, depth in c :
+        row = row + 1
+        cmd_to_row[cmd] = row
+        t.set_value(row, 0, cmd)
+        if showdepth :
+            t.set_value(row, 'depth', depth)
+
+    c.execute("""select cmd, host, status, start_time, end_time, notes from sm_status
+        where tablename = ? and run = ?  order by cmd asc
         """, ( tablename, run_name ) )
 
-    row = -1
-    prev_cmd = None
+    row = 0
     for x in c :
-        cmd, host, depth, status, start_time, end_time, notes = x
-        if cmd != prev_cmd :
-            row = row + 1
-            t.set_value(row, 0, cmd)
-            if showdepth :
-                t.set_value(row, 'depth', depth)
-            prev_cmd = cmd
-            
+        cmd, host, status, start_time, end_time, notes = x
+        row = cmd_to_row[cmd]
         info = info_callback( db, run_name, tablename, host, cmd )
         if isinstance(info, tuple) :
             t.set_value( row, host, text=info[0], html=info[1] )
@@ -149,6 +167,7 @@ def report_text( db, run_name, info_callback = info_callback_status ) :
 
 def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) :
     s = StringIO.StringIO()
+    s.write(html_header % { 'title' : run_name } )
     s.write('<h%d>%s</h%d>\n'%(hlevel,run_name,hlevel))
 
     hlevel = hlevel + 1
@@ -159,6 +178,8 @@ def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) 
         s.write('<h%d>%s</h%d>\n'%(hlevel,tablename,hlevel))
         t = get_table( db, run_name, tablename, info_callback, showdepth=1 )
         s.write(t.get_html())
+
+    s.write(html_trailer)
 
     return s.getvalue()
 

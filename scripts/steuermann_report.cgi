@@ -35,18 +35,23 @@ def sqltime(arg) :
     return d
 
 
+##########
+# if no action specified, show the list of runs
+#
 if not 'action' in form :
     print 'content-type: text/html'
     print ''
     db = steuermann.config.open_db()
     c = db.cursor()
-    c.execute('SELECT DISTINCT run FROM status ORDER BY run DESC')
+    c.execute('SELECT DISTINCT run FROM sm_status ORDER BY run DESC')
     for run, in c :
         print "<a href=%s?action=status&run=%s>%s</a><br>"%(cginame, run, run)
     sys.exit(0)
 
 action = form['action'].value
-
+##########
+# status means show the status of a particular run
+#
 if action == 'status' :
     db = steuermann.config.open_db()
     import steuermann.report
@@ -57,6 +62,9 @@ if action == 'status' :
     print steuermann.report.report_html( db, run, info_callback=steuermann.report.info_callback_gui )
     sys.exit(0)
 
+##########
+# log means show the result of a particular node from a run
+#
 elif action == 'log' :
     print 'content-type: text/plain'
     print ''
@@ -71,7 +79,7 @@ elif action == 'log' :
 
     db = steuermann.config.open_db()
     c = db.cursor()
-    c.execute("SELECT status, start_time, end_time, notes FROM status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
+    c.execute("SELECT status, start_time, end_time, notes FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
             run, host, table, cmd ) )
     x = c.fetchone()
     if x is None :
@@ -95,17 +103,43 @@ elif action == 'log' :
         for x in [ '    ' + x for x in notes.split('\n') ] :
             print x
     print ""
-    print "--------------------"
     filename = '%s/%s/%s:%s.%s.log'%(steuermann.config.logdir,run,host,table,cmd)
-    f=open(filename,'r')
-    while 1 :
-        x = f.read(65536)
-        if x == '' :
-            break
-        sys.stdout.write(x)
+    try :
+        f=open(filename,'r')
+    except IOError:
+        print "No log file %s" %filename
+        f = None
+    print "--------------------"
+
+    if f :
+        while 1 :
+            x = f.read(65536)
+            if x == '' :
+                break
+            sys.stdout.write(x)
+
     sys.exit(0)
+
+##########
+# info means show information about the system
+#
+elif action == 'info' :
+    print 'content-type: text/html\n'
+    print 'db credentials: ',steuermann.config.db_creds,'<br>'
+    print 'logdir: ',steuermann.config.logdir,'<br>'
+    db = steuermann.config.open_db()
+    cur = db.cursor()
+    cur.execute("select count(*) from sm_status")
+    l = cur.fetchone()
+    print "database records: %s\n"%l[0],'<br>'
+    cur.execute("select count(*) from sm_runs")
+    l = cur.fetchone()
+    print "runs: %s\n"%l[0],'<br>'
+    sys.exit(0)
+
+##########
 
 print 'content-type: text/html'
 print ''
-print 'no action?'
+print 'no recognized action?'
 

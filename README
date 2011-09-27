@@ -7,7 +7,5 @@ make
 
 python setup.py install
 
-smc test.sm
-?
-
+smc [ -a ] [ -r run_name ] file.sm
 

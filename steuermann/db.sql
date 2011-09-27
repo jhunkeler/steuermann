@@ -2,7 +2,7 @@
 -- Before we start running anything, we insert a record for every
 -- command in the test run.  The initial status is 'S'.
 
-CREATE TABLE status ( 
+CREATE TABLE sm_status ( 
 	run	VARCHAR(100),
 		-- name of this run
 
@@ -19,6 +19,7 @@ CREATE TABLE status (
 		-- R = started, not finished
 		-- S = skipped
 		-- P = prereq not satisfied, so not attempted
+		-- E = error internal to steuermann
 		-- 0-255 = exit code
 
 	start_time	VARCHAR(30),
@@ -37,13 +38,13 @@ CREATE TABLE status (
 	);
 
 
-create unique index idx_status_1 on status ( run, host, tablename, cmd );
+create unique index sm_status_idx1 on sm_status ( run, host, tablename, cmd );
 
 
 -- table lists all run names in the system
-CREATE TABLE runs (
+CREATE TABLE sm_runs (
 	run	VARCHAR(100)
 	);
 
-CREATE UNIQUE INDEX idx_runs_run ON runs(run);
+CREATE UNIQUE INDEX sm_runs_idx1 ON sm_runs(run);
 

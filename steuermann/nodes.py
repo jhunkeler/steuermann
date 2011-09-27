@@ -110,11 +110,21 @@ class command_tree(object):
 
 # crack open host:table/cmd
 def crack_name(name) :
-    t = name.split(':')
-    host = t[0]
-    t = t[1].split('/')
-    table = t[0]
-    cmd = t[1]
+    if ':' in name :
+        t = name.split(':')
+        host = t[0]
+        name = t[1]
+    else :
+        host = '*'
+
+    if '/' in name :
+        t = name.split('/')
+        table = t[0]
+        cmd = t[1]
+    else :
+        table = '*'
+        cmd = name
+
     return (host, table, cmd)
 
 #####
