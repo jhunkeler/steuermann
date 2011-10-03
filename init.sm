@@ -1,12 +1,6 @@
-TABLE init HOST bond cadeau arzach thor herbert
+TABLE init HOST bond cadeau arzach thor herbert ssb
 	CMD sendscripts LOCAL "/eng/ssb/auto/steuermann_scripts/init_sendscripts %(hostname)s %(workdir)s"
 	CMD sysstat RUN "sysstat"
 		AFTER sendscripts
-
-TABLE init HOST arzach
-        CMD svnsync RUN "assemble_svnsync"
-                AFTER OPT init/irafx_update
-		AFTER sendscripts
-		AFTER sysstat
 
 

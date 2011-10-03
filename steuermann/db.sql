@@ -43,8 +43,31 @@ create unique index sm_status_idx1 on sm_status ( run, host, tablename, cmd );
 
 -- table lists all run names in the system
 CREATE TABLE sm_runs (
-	run	VARCHAR(100)
+	run		VARCHAR(100),
+	create_time	VARCHAR(26)
 	);
 
 CREATE UNIQUE INDEX sm_runs_idx1 ON sm_runs(run);
+
+
+-- table lists scheduled cron events - sort of like the old sr
+-- 	smcron name script
+CREATE TABLE sm_crons (
+	host		VARCHAR,
+		-- what host we ran this on
+	name		VARCHAR(100),
+		-- a descriptive name, not necessarily unique
+	decollision	VARCHAR(10),
+		-- a cookie to make (host,name,decollision) unique
+	start_time	VARCHAR(30),
+	end_time	VARCHAR(30),
+	duration	REAL,
+		-- 
+	status		VARCHAR(5),
+		-- exit status 
+	logfile		VARCHAR(1000)
+		-- log file name, relative to config logdir+'/cron/'
+	);
+
+CREATE INDEX sm_crons_idx1 ON sm_crons( host, name, decollision );
 

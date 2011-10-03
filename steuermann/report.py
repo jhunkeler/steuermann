@@ -11,18 +11,6 @@ import StringIO
 
 # maybe the output is html 3.2 - in any case, it is way simpler than
 # more recent standards.
-html_header='''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML>
-<HEAD>
-<TITLE>%(title)s</TITLE>
-</HEAD>
-<BODY>
-'''
-
-html_trailer='''
-</BODY>
-</HTML>
-'''
 
 # this will be reset by the cgi main program if we are in a real cgi
 cginame = 'arf.cgi'
@@ -167,7 +155,6 @@ def report_text( db, run_name, info_callback = info_callback_status ) :
 
 def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) :
     s = StringIO.StringIO()
-    s.write(html_header % { 'title' : run_name } )
     s.write('<h%d>%s</h%d>\n'%(hlevel,run_name,hlevel))
 
     hlevel = hlevel + 1
@@ -178,8 +165,6 @@ def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) 
         s.write('<h%d>%s</h%d>\n'%(hlevel,tablename,hlevel))
         t = get_table( db, run_name, tablename, info_callback, showdepth=1 )
         s.write(t.get_html())
-
-    s.write(html_trailer)
 
     return s.getvalue()
 

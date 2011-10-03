@@ -212,6 +212,10 @@ class node(object) :
         self.finished = 0
         self.running = 0
 
+        #
+        self.wanted = 1
+        self.skip = 1
+
 #####
 
 # debug - make a string representation of all the nodes

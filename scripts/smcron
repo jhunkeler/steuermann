@@ -3,5 +3,5 @@ import sys
 STEUERMANN_DIR_HERE
 sys.path.insert(0, addpath)
 
-import steuermann.run_all as run_all
-run_all.main()
+import steuermann.run_cron as run_cron
+run_cron.main()

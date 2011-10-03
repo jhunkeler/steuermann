@@ -1,11 +1,23 @@
 Steuermann 2.0
 --
 
-requires exyapps, pandokia
+To install:
 
-make
+	requires exyapps, pandokia
 
-python setup.py install
+	make
+		# compiles the parser
 
-smc [ -a ] [ -r run_name ] file.sm
+	python setup.py install
+		# installs
+
+	Put the installed script steuermann_report.cgi on your web server.
+	It remembers where the rest was installed.
+
+To run:
+
+	requires pandokia
+
+	smc [ -a ] [ -r run_name ] file.sm
+
 

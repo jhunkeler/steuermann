@@ -11,6 +11,7 @@ import datetime
 import run
 import report
 import nodes
+import getpass
 
 import steuermann.config
 
@@ -21,6 +22,9 @@ try :
     import readline
 except ImportError :
     readline = None
+
+
+username=getpass.getuser()
 
 #####
 
@@ -68,7 +72,7 @@ def main() :
     if '-r' in opt :
         run_name = opt['-r']
     else :
-        run_name = str(datetime.datetime.now()).replace(' ','_')
+        run_name = "user_%s_%s"%(username,str(datetime.datetime.now()).replace(' ','_'))
 
     db = steuermann.config.open_db()
 
@@ -348,7 +352,7 @@ def print_pre(who, xnodes, depth) :
 
 def register_database(db, run, xnodes ) :
     c = db.cursor()
-    c.execute('INSERT INTO sm_runs ( run ) VALUES ( ? )', ( run, ) )
+    c.execute('INSERT INTO sm_runs ( run, create_time ) VALUES ( ?, ? )', ( run, str(datetime.datetime.now()).replace(' ','_')) )
     
     c = db.cursor()
     for x in xnodes :
@@ -363,14 +367,17 @@ def register_database(db, run, xnodes ) :
 
 def run_all(xnodes, run_name, db) :
 
+    for x in xnodes :
+        x = xnodes[x]
+        x.finished = 0
+        x.running  = 0
+        x.wanted   = 1
+        x.skip     = 0
+
     register_database(db, run_name, xnodes)
 
-    runner = run.runner( xnodes )
+    runner = run.runner( xnodes, steuermann.config.logdir )
 
-    for x in xnodes :
-        xnodes[x].finished = 0
-        xnodes[x].running  = 0
-        xnodes[x].wanted   = 1
 
     while 1 :
         ( keep_running, no_sleep ) = run_step( runner, xnodes, run_name, db )

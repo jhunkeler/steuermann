@@ -6,20 +6,27 @@
 
 # arzach assembles all the source code
 TABLE assemble HOST arzach
+
+        CMD svnsync RUN "assemble_svnsync"
+                AFTER init/*
+                AFTER OPT irafx_update
+
 	CMD dev.stsci_python RUN "assemble_stsci_python dev"
 		AFTER init/*
+		AFTER svnsync
 
 	CMD dev.stsci_iraf RUN "assemble_stsci_iraf dev"
 		AFTER init/*
+		AFTER svnsync
 
 	CMD dev.axe RUN "assemble_axe dev"
 		AFTER init/*
+		AFTER svnsync
 
 	CMD dev.hstcal RUN "assemble_hstcal dev"
 		AFTER init/*
+		AFTER svnsync
 
-	CMD nop RUN "sleep 1"
-		AFTER init/*
 
 ####################
 ####################
@@ -73,7 +80,7 @@ TABLE build HOST thor arzach
 	AFTER herbert:build/dev.stsci_iraf*
 
 TABLE build HOST cadeau
-	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev cadeau"
+	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev bond"
 	AFTER bond:build/dev.stsci_iraf*
 
 # stsci_python documentation
@@ -105,7 +112,7 @@ TABLE distribute HOST herbert thor arzach
 		AFTER stamp/dev
 	CMD dev.stsci_iraf RUN "synctool - stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD dev.hstcal RUN "synctool - hstcal_dev"
+	CMD dev.hstcal RUN "synctool - hstcaldev"
 		AFTER stamp/dev
 	CMD dev.motd RUN "synctool - irafdev/iraf/unix/hlib/motd"
 		AFTER distribute/dev.iraf
@@ -124,7 +131,7 @@ TABLE distribute HOST arzach
 		AFTER stamp/dev
 	CMD jwcalibdev.stsci_iraf RUN "synctool jwcalibdev: stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD jwcalibdev.hstcal RUN "synctool jwcalibdev: hstcal_dev"
+	CMD jwcalibdev.hstcal RUN "synctool jwcalibdev: hstcaldev"
 		AFTER stamp/dev
 	CMD jwcalibdev.motd RUN "synctool jwcalibdev: irafdev/iraf/unix/hlib/motd"
 		AFTER jwcalibdev.iraf
@@ -138,7 +145,7 @@ TABLE distribute_other HOST arzach
 		AFTER stamp/dev
 	CMD goods.stsci_iraf RUN "synctool goods12: stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD goods.hstcal RUN "synctool goods12: hstcal_dev"
+	CMD goods.hstcal RUN "synctool goods12: hstcaldev"
 		AFTER stamp/dev
 	CMD goods.motd RUN "synctool goods12: irafdev/iraf/unix/hlib/motd"
 		AFTER goods.iraf
@@ -152,7 +159,7 @@ TABLE distribute_other HOST arzach
 		AFTER stamp/dev
 	CMD witserv1.stsci_iraf RUN "synctool witserv1: stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD witserv1.hstcal RUN "synctool witserv1: hstcal_dev"
+	CMD witserv1.hstcal RUN "synctool witserv1: hstcaldev"
 		AFTER stamp/dev
 	CMD witserv1.motd RUN "synctool witserv1: irafdev/iraf/unix/hlib/motd"
 		AFTER witserv1.iraf
@@ -166,7 +173,7 @@ TABLE distribute_other HOST arzach
 		AFTER stamp/dev
 	CMD dmsinsvm.stsci_iraf RUN "synctool dmsinsvm: stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD dmsinsvm.hstcal RUN "synctool dmsinsvm: hstcal_dev"
+	CMD dmsinsvm.hstcal RUN "synctool dmsinsvm: hstcaldev"
 		AFTER stamp/dev
 	CMD dmsinsvm.motd RUN "synctool dmsinsvm: irafdev/iraf/unix/hlib/motd"
 		AFTER dmsinsvm.iraf
@@ -180,7 +187,7 @@ TABLE distribute_other HOST thor
 		AFTER stamp/dev
 	CMD udf1.stsci_iraf RUN "synctool udf1: stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD udf1.hstcal RUN "synctool udf1: hstcal_dev"
+	CMD udf1.hstcal RUN "synctool udf1: hstcaldev"
 		AFTER stamp/dev
 	CMD udf1.motd RUN "synctool udf1: irafdev/iraf/unix/hlib/motd"
 		AFTER udf1.iraf
@@ -194,7 +201,7 @@ TABLE distribute_other HOST thor
 		AFTER stamp/dev
 	CMD royal.stsci_iraf RUN "synctool royal: stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD royal.hstcal RUN "synctool royal: hstcal_dev"
+	CMD royal.hstcal RUN "synctool royal: hstcaldev"
 		AFTER stamp/dev
 	CMD royal.motd RUN "synctool royal: irafdev/iraf/unix/hlib/motd"
 		AFTER royal.iraf
