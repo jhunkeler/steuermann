@@ -119,7 +119,7 @@ TABLE distribute HOST herbert thor arzach
 
 TABLE distribute HOST bond cadeau
 	CMD irafdev.pkg RUN "cd $HOME/daily_build/mac_package; ./clean ; ./build dev " AFTER stamp/dev
-	CMD irafdev.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute dev" AFTER irafdev.pkg
+	CMD irafdev.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute dev -" AFTER irafdev.pkg
 
 # wads of special cases
 

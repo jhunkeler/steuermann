@@ -15,7 +15,7 @@ TABLE distribute HOST herbert thor arzach
 
 TABLE distribute HOST bond cadeau
 	CMD irafx.pkg RUN "cd $HOME/daily_build/mac_package; ./clean ; ./build x " AFTER stamp/x
-	CMD irafx.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute x" AFTER irafx.pkg
+	CMD irafx.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute x -" AFTER irafx.pkg
 
 # wads of special cases
 
