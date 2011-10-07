@@ -177,7 +177,7 @@ def run_interactive( xnodes, run_name, db) :
 
     register_database(db, run_name, xnodes)
 
-    runner = run.runner( xnodes, steuermann.config.logdir )
+    runner = run.runner( xnodes )
 
     for x in xnodes :
         xnodes[x].finished = 0
@@ -440,10 +440,7 @@ def run_step( runner, xnodes, run_name, db ) :
 
                 else :
                     try :
-                        if runner.run(x, run_name, no_run=no_run) :
-                            # returns true/false whether it actually ran it - it may not because of resource limits
-                            db.execute("UPDATE sm_status SET start_time = ?, status = 'R' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
-                                ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
+                        tmp = runner.run(x, run_name, no_run=no_run, logfile = make_log_file_name(run_name, host, table, cmd) ) 
                     except run.run_exception, e :
                         now = str(datetime.datetime.now())
                         db.execute("UPDATE sm_status SET start_time=?, end_time=?, status='E', notes=? WHERE ( run=? AND host=? AND tablename=? AND cmd=? )",
@@ -451,6 +448,11 @@ def run_step( runner, xnodes, run_name, db ) :
                         x.finished = 1
                         no_sleep = 1
                         keep_running = 1
+                    else :
+                        if tmp :
+                            # returns true/false whether it actually ran it - it may not because of resource limits
+                            db.execute("UPDATE sm_status SET start_time = ?, status = 'R' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
+                                ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
 
                     db.commit()
                         
@@ -510,6 +512,10 @@ def info_callback_depth( db, run, tablename, host, cmd ) :
     return n.depth
 
 #####
+def make_log_file_name( run_name, table, host, cmd ) :
+        return '%s/run/%s/%s/%s/%s.log'%(steuermann.config.logdir, run_name, table, host, cmd)
+
 
 if __name__ == '__main__' :
     main()
+

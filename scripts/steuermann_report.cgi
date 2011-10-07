@@ -8,11 +8,11 @@ import re
 import datetime
 import pandokia.text_table
 
-
 STEUERMANN_DIR_HERE
 sys.path.insert(0, addpath)
 
 import steuermann.config
+import steuermann.run_all
 
 cgitb.enable()
 
@@ -216,7 +216,7 @@ elif action == 'cronlog' :
         print end_time
         print "status=",status
         print "----------"
-        f=open(steuermann.config.logdir + '/cron/' + logfile,"r")
+        f=open( steuermann.config.logdir + '/cron/' + logfile,"r")
         sys.stdout.write(f.read())
         f.close()
     sys.exit(0)
@@ -262,20 +262,30 @@ elif action == 'log' :
         for x in [ '    ' + x for x in notes.split('\n') ] :
             print x
     print ""
-    filename = '%s/run/%s/%s:%s.%s.log'%(steuermann.config.logdir,run,host,table,cmd)
-    try :
-        f=open(filename,'r')
-    except IOError:
-        print "No log file %s" %filename
-        f = None
-    print "--------------------"
+    loglist = [ steuermann.run_all.make_log_file_name( run, host, table, cmd),
+        # compat mode until we delete the old files
+        '%s/%s/%s:%s.%s.log'%(steuermann.config.logdir,run,host,table,cmd),
+        # more compat mode
+        '%s/run/%s/%s:%s.%s.log'%(steuermann.config.logdir,run,host,table,cmd),
+        ]
 
+    for filename in loglist :
+        try :
+            f=open(filename,'r')
+            break
+        except IOError:
+            f = None
+        
     if f :
+        print "--------------------"
         while 1 :
             x = f.read(65536)
             if x == '' :
                 break
             sys.stdout.write(x)
+    else :
+        print "No log file found.  tried "
+        print loglist
 
     sys.exit(0)
 

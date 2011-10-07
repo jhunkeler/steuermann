@@ -10,8 +10,8 @@ case "$p"
 in
 /usr/stsci/*) : ;;
 *)
-	echo why is python set to $p
 	echo path = $PATH
+	echo why is python set to $p
 	exit 1
 	;;
 esac
@@ -22,7 +22,7 @@ there=/ssbwebv1/data2/steuermann/s$n
 
 rm -rf $there
 
-python setup.py -q install --home $there
+python setup.py $quiet install --home $there
 
 rm -f /eng/ssb/websites/ssb/steuermann/s$n.cgi
 

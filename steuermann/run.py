@@ -53,9 +53,6 @@ class runner(object):
     # index of nodes
     node_index = None
 
-    # dir where we write our logs
-    logdir = ''
-
     # 
     host_info_cache = None
 
@@ -65,18 +62,17 @@ class runner(object):
     #####
     #
 
-    def __init__( self, nodes, logdir ) :
+    def __init__( self, nodes ) :
         self.all_procs = { }
         self.node_index = nodes
         self.load_host_info()
-        self.logdir = logdir
         self.host_info_cache = { }
         self.howmany = { }
 
     #####
     # start a process
 
-    def run( self, node, run_name, no_run = False, logfile_name = None ):
+    def run( self, node, run_name, logfile_name, no_run = False ):
 
         try :
             try :
@@ -144,13 +140,6 @@ class runner(object):
             if debug :
                 print "RUN",run
 
-            if logfile_name is None :
-                # make sure the log directory is there
-                logdir= self.logdir + "/%s"%(run_name)
-
-                # create a name for the log file, but do not use / in the name
-                logfile_name = "%s/%s.log"%( logdir, node.name.replace('/','.') )
-            
             try :
                 os.makedirs( os.path.dirname(logfile_name) )
             except OSError, e :
@@ -160,6 +149,7 @@ class runner(object):
                     raise
 
             # open the log file, write initial notes
+            print "LOGFILE",logfile_name
             logfile=open(logfile_name,"w")
             logfile.write('%s %s\n'%(datetime.datetime.now(),run))
             logfile.flush()

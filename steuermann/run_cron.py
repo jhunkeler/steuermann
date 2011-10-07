@@ -57,7 +57,7 @@ def main() :
     else :
         node.script_type = 'r'  # remote
     
-    runner = steuermann.run.runner( nodes = { node.name : node }, logdir=None )
+    runner = steuermann.run.runner( nodes = { node.name : node } )
     runner.run( node=node, run_name='', logfile_name = steuermann.config.logdir + '/cron/' + logfile )
 
     n = 0.1
