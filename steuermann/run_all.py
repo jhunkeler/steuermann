@@ -183,7 +183,9 @@ def run_interactive( xnodes, run_name, db) :
         xnodes[x].finished = 0
         xnodes[x].running  = 0
         xnodes[x].wanted   = 0
-        xnodes[x].skip     = 0
+        xnodes[x].skip     = 1
+
+    print "Defaulting all to SKIP"
 
     keep_running = 0
 
