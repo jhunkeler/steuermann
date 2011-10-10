@@ -149,7 +149,6 @@ class runner(object):
                     raise
 
             # open the log file, write initial notes
-            print "LOGFILE",logfile_name
             logfile=open(logfile_name,"w")
             logfile.write('%s %s\n'%(datetime.datetime.now(),run))
             logfile.flush()

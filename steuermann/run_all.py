@@ -376,7 +376,7 @@ def run_all(xnodes, run_name, db) :
 
     register_database(db, run_name, xnodes)
 
-    runner = run.runner( xnodes, steuermann.config.logdir )
+    runner = run.runner( xnodes )
 
 
     while 1 :
@@ -440,7 +440,7 @@ def run_step( runner, xnodes, run_name, db ) :
 
                 else :
                     try :
-                        tmp = runner.run(x, run_name, no_run=no_run, logfile = make_log_file_name(run_name, host, table, cmd) ) 
+                        tmp = runner.run(x, run_name, no_run=no_run, logfile_name = make_log_file_name(run_name, host, table, cmd) ) 
                     except run.run_exception, e :
                         now = str(datetime.datetime.now())
                         db.execute("UPDATE sm_status SET start_time=?, end_time=?, status='E', notes=? WHERE ( run=? AND host=? AND tablename=? AND cmd=? )",

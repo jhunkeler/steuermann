@@ -179,6 +179,7 @@ elif action == 'delete' :
             filename = '%s/run/%s'%(steuermann.config.logdir,run)
             print "rm -rf ",filename
         c.execute("DELETE FROM sm_runs WHERE run LIKE ?",(in_run,))
+        c.execute("DELETE FROM sm_status WHERE run LIKE ?",(in_run,))
         db.commit()
         sys.exit(0)
 
