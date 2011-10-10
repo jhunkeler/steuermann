@@ -147,7 +147,7 @@ def report_text( db, run_name, info_callback = info_callback_status ) :
 
         t = get_table( db, run_name, tablename, info_callback )
 
-        s.write( t.get_trac_wiki() )
+        s.write( t.get_trac_wiki(headings=True) )
 
     return s.getvalue()
 
