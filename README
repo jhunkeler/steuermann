@@ -4,6 +4,7 @@ Steuermann 2.0
 To install:
 
 	requires exyapps, pandokia
+		( https://svn.stsci.edu/svn/ssb/etal/ )
 
 	make
 		# compiles the parser
