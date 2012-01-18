@@ -58,18 +58,32 @@ def main() :
         node.script_type = 'r'  # remote
     
     runner = steuermann.run.runner( nodes = { node.name : node } )
-    runner.run( node=node, run_name='', logfile_name = steuermann.config.logdir + '/cron/' + logfile )
+    logname = logfile_name = steuermann.config.logdir + '/cron/' + logfile
+    st = runner.run( node=node, run_name='', logfile_name = logname )
 
-    n = 0.1
-    while 1 :
-        exited = runner.poll()
-        if exited :
-            break
-        if n < 2.0 :
-            n = n * 2.0
-        time.sleep(n)
-    
-    status = exited[1]
+    if st == 'D' :
+        fp = open(logname,"w")
+        fp.write('execution on host is disabled in hosts.ini\n')
+        fp.close()
+        status = 'S'
+
+    elif st == 'M' :
+        fp = open(logname,"w")
+        fp.write('host is at max proc limit - how did this happen?')
+        fp.close()
+        status = '?'
+
+    elif st == 'R' :
+        n = 0.1
+        while 1 :
+            exited = runner.poll()
+            if exited :
+                break
+            if n < 2.0 :
+                n = n * 2.0
+            time.sleep(n)
+
+        status = exited[1]
 
     end_time = datetime.datetime.now()
     td = end_time - start_time

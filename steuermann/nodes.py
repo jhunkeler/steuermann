@@ -11,6 +11,11 @@ import fnmatch
 
 class command_tree(object):
 
+    # list of additional files to import after this one; this is just
+    # here so we have a place to put it.  It is appended by the parser
+    # and consumed by read_file_list()
+    import_list = [ ]
+
     # a dict that maps currently known node names to node objects
     node_index = None
 
@@ -315,11 +320,34 @@ current_file_name = None
 def read_file_list( file_list ) :
     global current_file_name
     di = command_tree( ) 
-    for x in file_list :
-        current_file_name = x
-        sc = specfile.specfileScanner( open(x,'r').read() )
+    imported = { }
+    while len(file_list) > 0 : 
+
+        print "START",file_list
+        # first name off the list
+        current_file_name = file_list[0]
+        file_list = file_list[1:]
+        print "LIST",file_list
+
+        # see if it imported already
+        if current_file_name in imported :
+            print "SKIP",current_file_name
+            continue
+        imported[current_file_name] = 1
+
+        print "READING ",current_file_name
+        # read/parse
+        sc = specfile.specfileScanner( open(current_file_name,'r').read() )
         p = specfile.specfile( scanner=sc, data=di )
+        
         result = specfile.wrap_error_reporter( p, 'start' )
+
+        # if there were any import statements in the file, add those files to the list
+        file_list += di.import_list
+        di.import_list = [ ]
+
+        print "END",file_list
+
     di.finish()
     return di
 
@@ -327,6 +355,4 @@ if __name__=='__main__':
     import sys
     n = read_file_list( sys.argv[1:] )
     print show_nodes(n.node_index)
-
-
 

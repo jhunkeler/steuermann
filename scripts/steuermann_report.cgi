@@ -19,7 +19,7 @@ cgitb.enable()
 form = cgi.FieldStorage(keep_blank_values=1)
 cginame = os.getenv("SCRIPT_NAME")
 
-permission_modify=1
+permission_modify=0
 
 html_header='''Content-type: text/html
 

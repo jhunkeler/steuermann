@@ -24,6 +24,7 @@ parser specfile:
     token string: '"[^"]*"'
     token SLASH: "/"
     token COLON: ":"
+    token IMPORT: "IMPORT"
 
     rule start: table_list END {{ return table_list }}
 
@@ -38,6 +39,7 @@ parser specfile:
 	        command_list  
 		# command_list is a list of (command, pos) where command is the text from the file and pos is the location in the file
                 {{ self.data.add_command_list( table_name, hostlist, command_list )  }}
+	| IMPORT string {{ self.data.import_list.append( string[1:-1] ) }}
 
     rule command_list:  
 	# one or more commands, appended together into a list

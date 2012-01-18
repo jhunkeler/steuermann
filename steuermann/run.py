@@ -29,8 +29,13 @@ import os.path
 import traceback
 import sys
 import errno
-
 import ConfigParser
+
+def config_yes_no(d,which) :
+    if not which in d :
+        return False
+    s = d[which]
+    return s.strip()[0].lower() in ( 'y', 't', '1' )
 
 debug=0
 
@@ -73,8 +78,15 @@ class runner(object):
     # start a process
 
     def run( self, node, run_name, logfile_name, no_run = False ):
+        '''run a process
+    return is:
+        D - host disabled
+        M - not run max proc limit
+        R - running
+'''
 
         try :
+
             try :
                 args = self.get_host_info(node.host)
             except Exception, e :
@@ -83,13 +95,16 @@ class runner(object):
                 print e
                 raise
 
+            if ( config_yes_no(args,'disable') ) :
+                return 'D'
+
             hostname = args['hostname']
             if 'maxproc' in args :
 
                 n = int(self.howmany.get(hostname,0))
                 if n >= int(args['maxproc']) :
                     # print "decline to run %s - %d other already running"%(node.name,n)
-                    return False
+                    return 'M'
 
                 n = n + 1
                 self.howmany[hostname] = n
@@ -154,8 +169,9 @@ class runner(object):
             logfile.flush()
 
             # debug - just say the name of the node we would run
-            if no_run :
-                run = [ 'echo', 'no_run - node=', node.name ]
+
+            if ( no_run ) :
+                run = [ 'echo', 'disable run - node=', node.name ]
             
             # start running the process
             if debug :
@@ -174,7 +190,7 @@ class runner(object):
             # remember the process is running
             self.all_procs[node.name] = n
 
-            return True
+            return 'R'
 
         except Exception, e :
             log_traceback()

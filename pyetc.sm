@@ -1,0 +1,20 @@
+####################
+####################
+
+TABLE pyetc HOST etcbrady 
+
+	CMD trunk RUN "/data1/nightly/trunk/test-ppsetc -d trunk "
+		AFTER init/*
+
+	CMD refactored RUN  "/data1/nightly/refactored/test-ppsetc -d refactored "
+		AFTER trunk
+		AFTER init/*
+
+	CMD jwst RUN "/data1/nightly/jwpetc_dev/test-ppsetc -d"
+		AFTER refactored
+		AFTER init/*
+
+	CMD rt RUN "/data1/nightly/rt/rt.csh 7"
+		AFTER jwst
+		AFTER init/*
+

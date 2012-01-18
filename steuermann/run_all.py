@@ -451,10 +451,21 @@ def run_step( runner, xnodes, run_name, db ) :
                         no_sleep = 1
                         keep_running = 1
                     else :
-                        if tmp :
-                            # returns true/false whether it actually ran it - it may not because of resource limits
+                        if tmp == 'R' :
                             db.execute("UPDATE sm_status SET start_time = ?, status = 'R' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
                                 ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
+                        elif tmp == 'D' :
+                            # same as skip above
+                            x.finished = 1
+                            no_sleep = 1
+                            keep_running = 1
+                            db.execute("UPDATE sm_status SET start_time = ?, status = 'S' WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
+                                    ( str(datetime.datetime.now()), run_name, host, table, cmd ) )
+                        elif tmp == 'M' :
+                            # hit max proc - not run, but try again later
+                            pass
+                        else :
+                            print "WARNING: runner.run() returned unknown code %s"%str(tmp)
 
                     db.commit()
                         
