@@ -4,33 +4,6 @@
 ####################
 ####################
 
-# arzach assembles all the source code
-TABLE assemble HOST arzach
-
-        CMD svnsync RUN "assemble_svnsync"
-                AFTER init/*
-                AFTER OPT irafx_update
-
-	CMD x.stsci_python RUN "assemble_stsci_python x"
-		AFTER init/*
-		AFTER svnsync
-
-	CMD x.stsci_iraf RUN "assemble_stsci_iraf x"
-		AFTER init/*
-		AFTER svnsync
-
-	CMD x.axe RUN "assemble_axe x"
-		AFTER init/*
-		AFTER svnsync
-
-	CMD x.hstcal RUN "assemble_hstcal x"
-		AFTER init/*
-		AFTER svnsync
-
-
-####################
-####################
-
 # install stsci_python into default environment
 # build hstcal
 #	- everywhere

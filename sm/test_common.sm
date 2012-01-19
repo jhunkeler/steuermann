@@ -1,16 +1,11 @@
 TABLE test_setup HOST herbert thor arzach bond cadeau banana
         CMD okify RUN "test_okify"
-                AFTER distribute/*
+		AFTER init/*
 
 # each of test_run_* says AFTER test_setup/*
 
 TABLE test_final HOST ssb
-	CMD import RUN "test_import daily"
-		AFTER *:test_run_*/*
-	CMD notify RUN "test_notify daily"
-		AFTER import
-	CMD sqlite_watch RUN "test_sqlite_watch"
-		AFTER import
 	CMD mysql_watch RUN "test_mysql_watch"
-		AFTER import
-
+		AFTER OPT dev.import
+		AFTER OPT x.import
+		AFTER init/*

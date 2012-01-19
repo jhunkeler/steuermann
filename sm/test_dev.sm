@@ -8,16 +8,26 @@ IMPORT "test_common.sm"
 # is going on at the same time.  The regtests can consume all the CPUs.
 TABLE test_run_dev HOST herbert thor arzach bond cadeau banana
 	CMD test2.7 RUN "test_rt dev 2.7"
+		AFTER stamp/dev
 		AFTER test_setup/okify
 		AFTER test_setup/*
 
 TABLE test_run_dev HOST arzach 
 	CMD test2.6 RUN "test_rt dev 2.6"
+		AFTER stamp/dev
 		AFTER test2.7
 	CMD test2.5 RUN "test_rt dev 2.5"
+		AFTER stamp/dev
 		AFTER test2.6
 
 TABLE test_run_dev HOST thor
 	CMD contact RUN "test_contact"
+		AFTER stamp/dev
 		AFTER test2.7
+
+TABLE test_final HOST ssb
+        CMD dev.import RUN "test_import daily"
+                AFTER *:test_run_dev/*
+        CMD dev.notify RUN "test_notify daily"
+                AFTER dev.import
 
