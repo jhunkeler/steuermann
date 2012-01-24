@@ -39,6 +39,12 @@ TABLE x_distribute HOST arzach
 	CMD x.jwcalibdev.motd RUN "synctool jwcalibdev: irafx/iraf/unix/hlib/motd"
 		AFTER x.jwcalibdev.iraf
 
+TABLE x_distribute HOST herbert bond
+	CMD x.web RUN "do_irafx_web"
+		AFTER x_distribute/gate
+
+
+
 # goods - has RHE 5 only now
 
 TABLE x_distribute_other HOST arzach
