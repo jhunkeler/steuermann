@@ -21,7 +21,7 @@ TABLE x_distribute HOST herbert thor arzach
 		AFTER x_distribute/x.iraf
 
 TABLE x_distribute HOST bond cadeau banana
-	CMD irafx.pkg RUN "cd $HOME/daily_build/mac_package; ./clean ; ./build x " AFTER x_distribute/gate
+	CMD irafx.pkg RUN "cd $HOME/daily_build/mac_package; ./build x " AFTER x_distribute/gate
 	CMD irafx.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute x -" AFTER irafx.pkg
 
 # wads of special cases
