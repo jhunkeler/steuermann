@@ -16,9 +16,9 @@ TABLE test_run_x HOST arzach
 		AFTER stamp/x
 		AFTER test2.7
 
-TABLE test_final HOST ssb
-        CMD x.import RUN "test_import daily"
+TABLE test_import HOST ssb
+        CMD x.import RUN "test_import irafx"
                 AFTER *:test_run_x/*
-        CMD x.notify RUN "test_notify daily"
-                AFTER x.import
+        CMD x.expect RUN "test_expected irafx"
+                AFTER test_import/x.import
 

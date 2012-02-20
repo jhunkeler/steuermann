@@ -25,9 +25,9 @@ TABLE test_run_dev HOST thor
 		AFTER stamp/dev
 		AFTER test2.7
 
-TABLE test_final HOST ssb
-        CMD dev.import RUN "test_import daily"
+TABLE test_import HOST ssb
+        CMD dev.import RUN "test_import irafdev"
                 AFTER *:test_run_dev/*
-        CMD dev.notify RUN "test_notify daily"
-                AFTER dev.import
-
+		AFTER *:pyetc/*
+        CMD dev.expect RUN "test_expected irafdev"
+                AFTER test_import/dev.import
