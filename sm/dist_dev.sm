@@ -79,15 +79,15 @@ TABLE distribute_other HOST arzach
 # UDF - another funded project with their own machines
 
 TABLE distribute_other HOST thor
-	CMD udf1.iraf RUN "synctool udf1: irafdev"
+	CMD udf1.iraf RUN "synctool udf1:/ustsciEWS4_x64 irafdev"
 		AFTER stamp/dev
-	CMD udf1.pyssg RUN "synctool udf1: pyssgdev"
+	CMD udf1.pyssg RUN "synctool udf1:/ustsciEWS4_x64 pyssgdev"
 		AFTER stamp/dev
-	CMD udf1.stsci_iraf RUN "synctool udf1: stsci_iraf_dev"
+	CMD udf1.stsci_iraf RUN "synctool udf1:/ustsciEWS4_x64 stsci_iraf_dev"
 		AFTER stamp/dev
-	CMD udf1.hstcal RUN "synctool udf1: hstcaldev"
+	CMD udf1.hstcal RUN "synctool udf1:/ustsciEWS4_x64 hstcaldev"
 		AFTER stamp/dev
-	CMD udf1.motd RUN "synctool udf1: irafdev/iraf/unix/hlib/motd"
+	CMD udf1.motd RUN "synctool udf1:/ustsciEWS4_x64 irafdev/iraf/unix/hlib/motd"
 		AFTER udf1.iraf
 
 # royal - a beowulf cluster

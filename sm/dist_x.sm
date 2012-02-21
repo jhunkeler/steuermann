@@ -90,15 +90,15 @@ TABLE x_distribute_other HOST arzach
 # UDF - another funded project with their own machines
 
 TABLE x_distribute_other HOST thor
-	CMD udf1.iraf RUN "synctool udf1: irafx"
+	CMD udf1.iraf RUN "synctool udf1:/ustsciEWS4_x64 irafx"
 		AFTER x_distribute/gate
-	CMD udf1.pyssg RUN "synctool udf1: pyssgx"
+	CMD udf1.pyssg RUN "synctool udf1:/ustsciEWS4_x64 pyssgx"
 		AFTER x_distribute/gate
-	CMD udf1.stsci_iraf RUN "synctool udf1: stsci_iraf_x"
+	CMD udf1.stsci_iraf RUN "synctool udf1:/ustsciEWS4_x64 stsci_iraf_x"
 		AFTER x_distribute/gate
-	CMD udf1.hstcal RUN "synctool udf1: hstcalx"
+	CMD udf1.hstcal RUN "synctool udf1:/ustsciEWS4_x64 hstcalx"
 		AFTER x_distribute/gate
-	CMD udf1.motd RUN "synctool udf1: irafx/iraf/unix/hlib/motd"
+	CMD udf1.motd RUN "synctool udf1:/ustsciEWS4_x64 irafx/iraf/unix/hlib/motd"
 		AFTER udf1.iraf
 
 # royal - a beowulf cluster
