@@ -14,7 +14,7 @@ TABLE pyetc HOST etcbrady
 		AFTER refactored
 		AFTER init/*
 
-	CMD rt RUN "/data1/nightly/rt/rt.csh 7"
+	CMD rt RUN "/data1/nightly/rt/rt.csh pyetc"
 		AFTER jwst
 		AFTER init/*
 
