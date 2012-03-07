@@ -128,6 +128,7 @@ class runner(object):
                 table=node.table,
                 cmd=node.cmd,
                 node=node.name,
+                w_node=node.name.replace("/","_").replace(":","_"),
                 runname=run_name,
                 )
 
@@ -328,9 +329,11 @@ def log_traceback() :
     # strings.  I want each line of output logged separately so the log
     # file remains easy to process, so I reverse engineered this out of
     # the logging module.
+    print "LOG TRACEBACK:"
     try:
         etype, value, tb = sys.exc_info()
         tbex = traceback.extract_tb( tb )
+        print tbex
         for filename, lineno, name, line in tbex :
             print '%s:%d, in %s'%(filename,lineno,name)
             if line:

@@ -380,12 +380,21 @@ def run_all(xnodes, run_name, db) :
 
     runner = run.runner( xnodes )
 
+    none_running = 0    
+        # will count how many times through there was nothing running
 
     while 1 :
         ( keep_running, no_sleep ) = run_step( runner, xnodes, run_name, db )
         if not keep_running :
             break
         if not no_sleep :
+            if len(runner.all_procs) == 0 :
+                none_running += 1
+                if none_running > 5 :
+                    print "No processes running - some prereq missing"
+                    break
+            else :
+                none_running = 0
             time.sleep(1)
 
 #
@@ -443,6 +452,7 @@ def run_step( runner, xnodes, run_name, db ) :
                 else :
                     try :
                         tmp = runner.run(x, run_name, no_run=no_run, logfile_name = make_log_file_name(run_name, host, table, cmd) ) 
+                        print "STARTED",x_name
                     except run.run_exception, e :
                         now = str(datetime.datetime.now())
                         db.execute("UPDATE sm_status SET start_time=?, end_time=?, status='E', notes=? WHERE ( run=? AND host=? AND tablename=? AND cmd=? )",

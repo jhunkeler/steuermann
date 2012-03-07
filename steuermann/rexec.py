@@ -43,7 +43,11 @@ def run( host, cmd, password, directory ):
         print "HTTP ERROR",e.code
         print e.read()
         return 1
-    print f.read()
+    while 1 :
+        s = f.read(2048)
+        if s == '' :
+            break
+        sys.stdout.write(s)
     return 0
 
 def upload( host, filename, password, directory) :
