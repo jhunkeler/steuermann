@@ -20,9 +20,13 @@ TABLE x_distribute HOST herbert thor arzach
 	CMD x.motd RUN "synctool - irafx/iraf/unix/hlib/motd"
 		AFTER x_distribute/x.iraf
 
+#
+
 TABLE x_distribute HOST bond cadeau banana
-	CMD irafx.pkg RUN "cd $HOME/daily_build/mac_package; ./build x " AFTER x_distribute/gate
-	CMD irafx.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute x -" AFTER irafx.pkg
+	CMD irafx.pkg RUN "cd $HOME/daily_build/mac_package; ./build x " 
+		AFTER x_distribute/gate
+	CMD irafx.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute x -" 
+		AFTER irafx.pkg
 
 # wads of special cases
 
@@ -39,14 +43,20 @@ TABLE x_distribute HOST arzach
 	CMD x.jwcalibdev.motd RUN "synctool jwcalibdev: irafx/iraf/unix/hlib/motd"
 		AFTER x.jwcalibdev.iraf
 
+# web distribution
+
 TABLE x_distribute HOST bond
 	CMD x.web RUN "do_irafx_web"
 		AFTER x_distribute/gate
+		AFTER *:x_distribute/irafx.pkg
+		AFTER *:x_distribute/irafx.dmg
 
 TABLE x_distribute HOST herbert
 	CMD x.web RUN "do_irafx_web S"
 		AFTER x_distributb/gate
 		AFTER bond:x_distribute/x.web
+		AFTER *:x_distribute/irafx.pkg
+		AFTER *:x_distribute/irafx.dmg
 
 
 # goods - has RHE 5 only now
@@ -104,6 +114,8 @@ TABLE x_distribute_other HOST thor
 		AFTER x_distribute/gate
 	CMD udf1.motd RUN "synctool udf1:/ustsciEWS4_x64 irafx/iraf/unix/hlib/motd"
 		AFTER udf1.iraf
+
+#
 
 TABLE x_distribute_other HOST arzach
 	CMD udf1.iraf RUN "synctool udf1:/ustsciEWS5_x64 irafx"
