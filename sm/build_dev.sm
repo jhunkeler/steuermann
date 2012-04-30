@@ -17,7 +17,8 @@ TABLE build HOST herbert thor arzach bond cadeau banana
 
 TABLE build HOST vxp-dukat
 	CMD dev.py2.7 RUN "build_stsci_python"
-
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
 
 # older python environments
 #	- arzach only
