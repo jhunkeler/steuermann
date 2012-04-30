@@ -256,7 +256,10 @@ elif action == 'log' :
     start_time = sqltime(start_time)
     end_time = sqltime(end_time)
     if isinstance(end_time,datetime.datetime) and isinstance(end_time,datetime.datetime) :
-        print "dur  : %s"%(end_time-start_time)
+        try :
+            print "dur  : %s"%(end_time-start_time)
+        except Exception :
+            pass
 
     if not notes is None :
         print "notes:"
