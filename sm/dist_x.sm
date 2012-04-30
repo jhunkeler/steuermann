@@ -101,34 +101,6 @@ TABLE x_distribute_other HOST arzach
 	CMD dmsinsvm.motd RUN "synctool dmsinsvm: irafx/iraf/unix/hlib/motd"
 		AFTER dmsinsvm.iraf
 
-# UDF - another funded project with their own machines
-
-TABLE x_distribute_other HOST thor
-	CMD udf1.iraf RUN "synctool udf1:/ustsciEWS4_x64 irafx"
-		AFTER x_distribute/gate
-	CMD udf1.pyssg RUN "synctool udf1:/ustsciEWS4_x64 pyssgx"
-		AFTER x_distribute/gate
-	CMD udf1.stsci_iraf RUN "synctool udf1:/ustsciEWS4_x64 stsci_iraf_x"
-		AFTER x_distribute/gate
-	CMD udf1.hstcal RUN "synctool udf1:/ustsciEWS4_x64 hstcalx"
-		AFTER x_distribute/gate
-	CMD udf1.motd RUN "synctool udf1:/ustsciEWS4_x64 irafx/iraf/unix/hlib/motd"
-		AFTER udf1.iraf
-
-#
-
-TABLE x_distribute_other HOST arzach
-	CMD udf1.iraf RUN "synctool udf1:/ustsciEWS5_x64 irafx"
-		AFTER x_distribute/gate
-	CMD udf1.pyssg RUN "synctool udf1:/ustsciEWS5_x64 pyssgx"
-		AFTER x_distribute/gate
-	CMD udf1.stsci_iraf RUN "synctool udf1:/ustsciEWS5_x64 stsci_iraf_x"
-		AFTER x_distribute/gate
-	CMD udf1.hstcal RUN "synctool udf1:/ustsciEWS5_x64 hstcalx"
-		AFTER x_distribute/gate
-	CMD udf1.motd RUN "synctool udf1:/ustsciEWS5_x64 irafx/iraf/unix/hlib/motd"
-		AFTER udf1.iraf
-
 # royal - a beowulf cluster
 
 TABLE x_distribute_other HOST thor

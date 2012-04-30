@@ -76,32 +76,6 @@ TABLE distribute_other HOST arzach
 	CMD dmsinsvm.motd RUN "synctool dmsinsvm: irafdev/iraf/unix/hlib/motd"
 		AFTER dmsinsvm.iraf
 
-# UDF - another funded project with their own machines
-
-TABLE distribute_other HOST thor
-	CMD udf1.iraf RUN "synctool udf1:/ustsciEWS4_x64 irafdev"
-		AFTER stamp/dev
-	CMD udf1.pyssg RUN "synctool udf1:/ustsciEWS4_x64 pyssgdev"
-		AFTER stamp/dev
-	CMD udf1.stsci_iraf RUN "synctool udf1:/ustsciEWS4_x64 stsci_iraf_dev"
-		AFTER stamp/dev
-	CMD udf1.hstcal RUN "synctool udf1:/ustsciEWS4_x64 hstcaldev"
-		AFTER stamp/dev
-	CMD udf1.motd RUN "synctool udf1:/ustsciEWS4_x64 irafdev/iraf/unix/hlib/motd"
-		AFTER udf1.iraf
-
-TABLE distribute_other HOST arzach
-	CMD udf1.iraf RUN "synctool udf1:/ustsciEWS5_x64 irafdev"
-		AFTER stamp/dev
-	CMD udf1.pyssg RUN "synctool udf1:/ustsciEWS5_x64 pyssgdev"
-		AFTER stamp/dev
-	CMD udf1.stsci_iraf RUN "synctool udf1:/ustsciEWS5_x64 stsci_iraf_dev"
-		AFTER stamp/dev
-	CMD udf1.hstcal RUN "synctool udf1:/ustsciEWS5_x64 hstcaldev"
-		AFTER stamp/dev
-	CMD udf1.motd RUN "synctool udf1:/ustsciEWS5_x64 irafdev/iraf/unix/hlib/motd"
-		AFTER udf1.iraf
-
 # royal - a beowulf cluster
 
 TABLE distribute_other HOST thor
