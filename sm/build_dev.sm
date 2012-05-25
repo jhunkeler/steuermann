@@ -78,3 +78,8 @@ TABLE stamp HOST herbert thor arzach bond cadeau banana
 	CMD dev RUN "build_stamp dev"
 		AFTER build/*
 
+#
+TABLE build HOST jwcalibdev
+	CMD dev.jwst RUN "build_jwst dev"
+		AFTER *:assemble/dev.jwst
+

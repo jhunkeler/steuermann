@@ -69,6 +69,7 @@ def upload( host, filename, password, directory) :
         print e.read()
         return 1
     print f.read()
+    f.close()
     return 0
 
 if __name__ == '__main__' :
@@ -96,6 +97,7 @@ if __name__ == '__main__' :
     if opt['-u'] :
         ex = 0
         for x in args :
+            print "UPLOAD", x
             ex |= upload(host = host , filename=x, directory=directory, password=password)
         sys.exit(ex)
     else :
