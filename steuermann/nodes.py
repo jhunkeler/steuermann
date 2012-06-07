@@ -351,6 +351,50 @@ def read_file_list( file_list ) :
     di.finish()
     return di
 
+#####
+
+saved_conditions = { }
+
+def declare_conditions( text, filename ) :
+    # the parameter "text" is the token that begins "CONDITION\n"
+    # and ends "\nEND\n", with a block of python code in the middle.
+    # 
+    # the parameter "filename" is what file we were processing when
+    # we saw this set of conditions defined.
+
+    # process the junk off the ends of the text
+    text = text.split('\n',1)[1]    # tear off "CONDITION\n"
+    text = text.rsplit('\n',2)[0]   # tear off "END\n"
+
+    # if it is indented at all, compensate for the indent so the
+    # exec will work
+    if text.startswith(' ') or text.startswith('\t') :
+        text = 'if 1 :\n' + text
+    
+    # exec it into the dict
+    exec text in saved_conditions
+
+def check_condition( name, filename ) :
+    if name in saved_conditions :
+        ans = saved_conditions[name]()
+    else :
+        ans = False
+    return ans
+    
+#####
+
+hostgroups = { }
+
+def add_hostgroup( name, host ) :
+    if not name in hostgroups :
+        hostgroups[name] = [ ]
+    hostgroups[name].append(host)
+
+def get_hostgroup( name ) :
+    return hostgroups[name]
+
+#####
+
 if __name__=='__main__':
     import sys
     n = read_file_list( sys.argv[1:] )

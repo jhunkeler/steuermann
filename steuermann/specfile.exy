@@ -2,6 +2,7 @@
 # Parse a Steuermann Spec file
 #
 # This is an exyapps grammer in specfile.exy
+import nodes
 
 %%
 parser specfile:
@@ -9,37 +10,58 @@ parser specfile:
     ignore: "#.*\n"
 
     token END: "$"
+    token HOSTGROUP: "HOSTGROUP"
+    token IF: "IF"
     token TABLE: "TABLE"
     token HOST : "HOST"
     token CMD: "CMD"
     token OPT: "OPT"
     token AFTER: "AFTER"
+    token RUN: "RUN"
+    token LOCAL: "LOCAL"
+    token IMPORT: "IMPORT"
+    token DEBUG: "DEBUG"
     token name: "[a-zA-Z0-9_.-]+"
     token STAR: "\*"
     token cmdname: "[a-zA-Z0-9_.-]+"
     token tablename: "[a-zA-Z0-9_.-]+"
     token wildname: "[*?a-zA-Z0-9_.-]+"
-    token RUN: "RUN"
-    token LOCAL: "LOCAL"
     token string: '"[^"]*"'
     token SLASH: "/"
     token COLON: ":"
-    token IMPORT: "IMPORT"
+    token hostgroup: "@[a-zA-Z0-9_.-]+"
+
+    # watch carefully:  none of the keywords are "END" on a line by themselves
+    token CONDITIONS: 'CONDITIONS[^"]*\n[\s]*END[ \t]*\n'
 
     rule start: table_list END {{ return table_list }}
 
-    rule table_list:  table_section [ table_list ]
+    rule table_list:  table_section +
 
     rule table_section:
-        TABLE tablename {{ table_name = tablename }}
-		HOST {{ hostlist = [ ] }}
-		( 
-			name {{ hostlist.append(name) }} 
-		)+  
+        DEBUG string {{ print "-->debug: %s"%string }}
+        | hostgroup_def
+        | CONDITIONS {{ nodes.declare_conditions( CONDITIONS, self._scanner.filename ) }}
+        | TABLE tablename {{ table_name = tablename }} HOST {{ hostlist = [ ] }}
+		    ( 
+			    name {{ hostlist.append(name) }} 
+                | hostgroup {{ hostlist = hostlist + nodes.get_hostgroup( hostgroup ) }}
+		    )+  
 	        command_list  
-		# command_list is a list of (command, pos) where command is the text from the file and pos is the location in the file
+            # command_list is a list of (command, pos) where command is the text from the file and pos is the location in the file
                 {{ self.data.add_command_list( table_name, hostlist, command_list )  }}
-	| IMPORT string {{ self.data.import_list.append( string[1:-1] ) }}
+        | IMPORT string {{ self.data.import_list.append( string[1:-1] ) }}
+
+    ##
+    rule hostgroup_def :
+        HOSTGROUP hostgroup ( hostgroup_if<<hostgroup>> )+ 
+
+    rule hostgroup_if<<hg>> :
+        IF name 
+            {{ accept_nodes = nodes.check_condition(name, self._scanner.filename ) }}
+            COLON ( 
+                name {{ if accept_nodes : nodes.add_hostgroup( hg, name ) }}
+            )+  
 
     rule command_list:  
 	# one or more commands, appended together into a list

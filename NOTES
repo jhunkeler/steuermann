@@ -60,3 +60,42 @@ There are bunches of other details that I'll have to describe some time.
 
 Mark
 
+--------------------
+
+The new HOSTGROUP feature works like this:
+
+# defines a set of conditions - each condition is a python function in a CONDITIONS block
+CONDITIONS 
+	def foo() :
+		return True
+	def bar() :
+		return False
+END
+# the END must be on a line by itself
+
+
+HOSTGROUP @xyz 
+	IF foo : a1 a2 a3
+		# adds a1, a2, a3 to hostgroup @xyz if condition foo() returns trun
+	IF bar : b1 b2 b3
+		# adds b1, b2, b3 to hostgroup @xyz if condition bar() returns trun
+
+
+TABLE whatever HOST @xyz banana
+	# defines table whatever to be on all the hosts in xyz and the host banana
+	...
+
+hostgroup is implemented up to here.
+
+The following feature is not implemented yet:
+
+	AFTER @xyz:this/that
+
+is the same as
+	AFTER a1:this/that
+	AFTER a2:this/that
+	AFTER a3:this/that
+
+assuming that condition foo() was true and bar() was false
+
+
