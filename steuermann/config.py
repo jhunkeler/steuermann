@@ -1,4 +1,4 @@
-db_creds = '/ssbwebv1/data2/steuermann/steuermann.db'
+db_creds = 'steuermann.db'
 
 def open_db() :
     import sqlite3
