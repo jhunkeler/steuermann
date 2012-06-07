@@ -286,6 +286,7 @@ elif action == 'log' :
             x = f.read(65536)
             if x == '' :
                 break
+            x = x.replace('\0','')
             sys.stdout.write(x)
     else :
         print "No log file found.  tried "
