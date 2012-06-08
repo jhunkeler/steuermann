@@ -36,20 +36,20 @@ class command_tree(object):
         #  - we can have forward references
         #  - we can use wild cards in our AFTER clauses
 
-        # before is the predecessor, after comes AFTER the predecessor
+        # before is the predecessor, after comes "AFTER before"
         for before, after, required, pos in self.node_order :
-            if ( '*' in before ) or ( '?' in before ) or ( '[' in before ):
-                host, table, cmd = crack_name(before)
+            if ( '*' in before ) or ( '?' in before ) or ( '[' in before ) or ( '@' in before ):
+                print "CONNECTING %-50s %-50s"%(before, after)
                 for x in self.node_index :
-                    hl, tl, cl = crack_name(x)
-                    if ( fnmatch.fnmatchcase(hl,host ) and 
-                         fnmatch.fnmatchcase(tl,table) and 
-                         fnmatch.fnmatchcase(cl,cmd  ) ) :
+                    if wildcard_name( wild=before, name=x ) :
+                        print "           found",x
                         # yes, the wild card matches this one; connect them
                         # (but don't let a node come before itself because the wild card is too loose)
                         if x != after :
                             self.connect(x, after, required, pos)
             else :
+                print "CONNECTING %-50s %-50s"%(before, after)
+                print "           found",after
                 self.connect(before, after, required, pos)
 
         # Work out the depths of each node.
@@ -62,7 +62,7 @@ class command_tree(object):
 
         if not before in self.node_index :
             if required :
-                print "error: %s happens after non-existant %s - line %s"%(before,after,line)
+                print "error: %s happens after non-existant %s - line %s"%(after,before,line)
             return
 
         if not after in self.node_index :
@@ -153,24 +153,30 @@ def normalize_name( host, table, name ) :
     return name
 
 #####
-
+#
+# this checks whether a particular wildcard pattern matches a particular name
+#
 
 _wildcard_cache = ( None, None )
 
 def wildcard_name( wild, name ) :
     global _wildcard_cache
 
-    if wild != _wildcard_cache :
-        host, table, cmd = crack_name(wild)
-        _wildcard_cache = ( name, ( host, table, cmd ) )
+    w_host, w_table, w_cmd = crack_name(wild)
 
-    host, table, cmd = _wildcard_cache[1]
+    n_host, n_table, n_cmd = crack_name(name)
 
-    hl, tl, cl = crack_name(name)
-
-    return ( fnmatch.fnmatchcase(hl,host ) and
-         fnmatch.fnmatchcase(tl,table) and
-         fnmatch.fnmatchcase(cl,cmd  ) )
+    if w_host.startswith('@') :
+        # hostgroups are a special case of wild cards.  it matches if the host part of 
+        if n_host in get_hostgroup(w_host) :
+            return ( fnmatch.fnmatchcase(n_table,w_table) and
+                     fnmatch.fnmatchcase(n_cmd,  w_cmd  ) )
+        else :
+            return False
+    else :
+        return ( fnmatch.fnmatchcase(n_host, w_host ) and
+                 fnmatch.fnmatchcase(n_table,w_table) and
+                 fnmatch.fnmatchcase(n_cmd,  w_cmd  ) )
 
 
 #####
@@ -376,7 +382,11 @@ def declare_conditions( text, filename ) :
 
 def check_condition( name, filename ) :
     if name in saved_conditions :
-        ans = saved_conditions[name]()
+        c = saved_conditions[name]
+        if callable(c) :
+            ans = c()
+        else :
+            ans = c
     else :
         ans = False
     return ans
@@ -388,7 +398,12 @@ hostgroups = { }
 def add_hostgroup( name, host ) :
     if not name in hostgroups :
         hostgroups[name] = [ ]
-    hostgroups[name].append(host)
+    if host.startswith('@') :
+        new = get_hostgroup(host) 
+    else :
+        new = [ host ]
+
+    hostgroups[name] = hostgroups[name] + new
 
 def get_hostgroup( name ) :
     return hostgroups[name]

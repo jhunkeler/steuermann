@@ -25,7 +25,7 @@ parser specfile:
     token STAR: "\*"
     token cmdname: "[a-zA-Z0-9_.-]+"
     token tablename: "[a-zA-Z0-9_.-]+"
-    token wildname: "[*?a-zA-Z0-9_.-]+"
+    token wildname: "[@]{0,1}[*?a-zA-Z0-9_.-]+"
     token string: '"[^"]*"'
     token SLASH: "/"
     token COLON: ":"
