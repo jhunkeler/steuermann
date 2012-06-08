@@ -17,9 +17,11 @@ TABLE assemble HOST arzach
 		AFTER init/*
 		AFTER svnsync
 
+TABLE assemble HOST jwcalibdev
+
 	CMD dev.jwst RUN "assemble_jwst dev"
 		AFTER init/*
-		AFTER svnsync
+		AFTER *:svnsync
 
 # 	CMD dev.crds RUN "assemble_crds dev"
 # 		AFTER init/*

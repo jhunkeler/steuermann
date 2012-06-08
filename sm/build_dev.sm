@@ -7,7 +7,7 @@
 # install stsci_python into default environment
 # build hstcal
 #	- everywhere
-TABLE build HOST herbert thor arzach bond cadeau banana
+TABLE build HOST herbert thor arzach bond cadeau banana jwcalibdev
 	CMD dev.py2.7 RUN "build_stsci_python dev 2.7"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
@@ -53,7 +53,7 @@ TABLE build HOST herbert bond
 
 
 # stsdas for 64 bit machines - get it from a related 32 bit system
-TABLE build HOST thor arzach
+TABLE build HOST thor arzach jwcalibdev
 	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev herbert"
 	AFTER herbert:build/dev.stsci_iraf*
 
@@ -79,7 +79,9 @@ TABLE stamp HOST herbert thor arzach bond cadeau banana
 		AFTER build/*
 
 #
-TABLE build HOST jwcalibdev
+TABLE build HOST arzach cadeau banana jwcalibdev
 	CMD dev.jwst RUN "build_jwst dev"
+		AFTER init/*
 		AFTER *:assemble/dev.jwst
+		AFTER build/dev.py2.7
 
