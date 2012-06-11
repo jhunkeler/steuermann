@@ -66,10 +66,14 @@ The new HOSTGROUP feature works like this:
 
 # defines a set of conditions - each condition is a python function in a CONDITIONS block
 CONDITIONS 
+	# for a function, the truth value is the return value
 	def foo() :
 		return True
 	def bar() :
 		return False
+
+	# for anything else, it is just the value:
+	baz = platform.node.endswith('.stsci.edu')
 END
 # the END must be on a line by itself
 
@@ -85,7 +89,6 @@ TABLE whatever HOST @xyz banana
 	# defines table whatever to be on all the hosts in xyz and the host banana
 	...
 
-hostgroup is implemented up to here.
 
 In your AFTER clause, you can write it as
 
