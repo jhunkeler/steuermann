@@ -87,7 +87,7 @@ TABLE whatever HOST @xyz banana
 
 hostgroup is implemented up to here.
 
-The following feature is not implemented yet:
+In your AFTER clause, you can write it as
 
 	AFTER @xyz:this/that
 
