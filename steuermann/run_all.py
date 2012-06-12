@@ -452,7 +452,7 @@ def run_step( runner, xnodes, run_name, db ) :
                 else :
                     try :
                         tmp = runner.run(x, run_name, no_run=no_run, logfile_name = make_log_file_name(run_name, host, table, cmd) ) 
-                        print "STARTED",x_name
+                        # print "STARTED",x_name
                     except run.run_exception, e :
                         now = str(datetime.datetime.now())
                         db.execute("UPDATE sm_status SET start_time=?, end_time=?, status='E', notes=? WHERE ( run=? AND host=? AND tablename=? AND cmd=? )",
