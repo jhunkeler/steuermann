@@ -1,4 +1,5 @@
 import distutils.core
+import os
 
 long_desc = '''
 Steuermann is a control system for continuous integration.  You write
@@ -32,7 +33,10 @@ classifiers = [
     'Topic :: System :: Distributed Computing',
     ]
 
-# 
+
+os.system('make')
+
+
 f=open('steuermann/__init__.py','r')
 for x in f :
     if x.startswith('__version__') :
@@ -40,7 +44,7 @@ for x in f :
         break
 f.close()
 
-#
+
 command_list = [ 'smc', 'smcron', 'steuermann_report.cgi' ]
 use_usr_bin_env = [ ]
 dir_set = 'addpath = "%s"\n'
