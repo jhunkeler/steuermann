@@ -54,7 +54,8 @@ parser specfile:
 
     ##
     rule hostgroup_def :
-        HOSTGROUP hostgroup ( hostgroup_if<<hostgroup>> )+ 
+        HOSTGROUP hostgroup {{ nodes.define_hostgroup( hostgroup) }}
+            ( hostgroup_if<<hostgroup>> )+ 
 
     rule hostgroup_if<<hg>> :
         IF name 

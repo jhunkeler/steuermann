@@ -395,9 +395,11 @@ def check_condition( name, filename ) :
 
 hostgroups = { }
 
-def add_hostgroup( name, host ) :
+def define_hostgroup( name ) :
     if not name in hostgroups :
         hostgroups[name] = [ ]
+
+def add_hostgroup( name, host ) :
     if host.startswith('@') :
         new = get_hostgroup(host) 
     else :
