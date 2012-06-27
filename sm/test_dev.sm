@@ -25,9 +25,19 @@ TABLE test_run_dev HOST thor
 		AFTER stamp/dev
 		AFTER test2.7
 
+TABLE test_run_dev HOST jwcalibdev
+	CMD jwst RUN "/data1/jwst_rt/rt"
+		AFTER stamp/dev
+		AFTER test2.7
+
 TABLE test_import HOST ssb
         CMD dev.import RUN "test_import irafdev"
                 AFTER *:test_run_dev/*
 		AFTER *:pyetc/*
         CMD dev.expect RUN "test_expected irafdev"
                 AFTER test_import/dev.import
+	CMD dev.jwst.import RUN "test_import jwst"
+		AFTER jwcalibdev:test_run_dev/jwst
+	CMD dev.jwst.expect RUN "test_expected jwst jwst_"
+		AFTER dev.jwst.import
+

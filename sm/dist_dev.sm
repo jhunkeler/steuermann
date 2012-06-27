@@ -21,6 +21,19 @@ TABLE distribute HOST bond cadeau banana
 
 # wads of special cases
 
+# jwcalibdev has local disk - some day it may do its own builds
+TABLE distribute HOST arzach
+	CMD jwcalibdev.iraf RUN "synctool jwcalibdev: irafdev"
+		AFTER stamp/dev
+	CMD jwcalibdev.pyssg RUN "synctool jwcalibdev: pyssgdev"
+		AFTER stamp/dev
+	CMD jwcalibdev.stsci_iraf RUN "synctool jwcalibdev: stsci_iraf_dev"
+		AFTER stamp/dev
+	CMD jwcalibdev.hstcal RUN "synctool jwcalibdev: hstcaldev"
+		AFTER stamp/dev
+	CMD jwcalibdev.motd RUN "synctool jwcalibdev: irafdev/iraf/unix/hlib/motd"
+		AFTER jwcalibdev.iraf
+
 # goods - has RHE 5 only now
 
 TABLE distribute_other HOST arzach

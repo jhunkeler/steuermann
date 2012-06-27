@@ -74,7 +74,7 @@ TABLE build HOST thor
 	AFTER build/dev.py2.7
 
 # stamp the IRAF banner file when the builds are complete
-TABLE stamp HOST herbert thor arzach bond cadeau banana
+TABLE stamp HOST herbert thor arzach bond cadeau banana jwcalibdev
 	CMD dev RUN "build_stamp dev"
 		AFTER build/*
 

@@ -5,7 +5,7 @@ TABLE test_setup HOST herbert thor arzach bond cadeau banana
 # each of test_run_* says AFTER test_setup/*
 
 TABLE test_final HOST ssb
-        CMD notify RUN "test_notify daily"
+        CMD notify RUN "test_notify daily_latest jwst_latest"
                 AFTER *:test_import/*
 		AFTER test_final/pyetc.expect
 
