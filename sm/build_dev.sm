@@ -27,10 +27,6 @@ TABLE build HOST arzach
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 
-	CMD dev.py2.5 RUN "build_stsci_python dev 2.5"
-		AFTER init/*
-		AFTER *:assemble/dev.stsci_python
-
 # stsdas and friends
 #	- 32 bit only
 TABLE build HOST herbert bond

@@ -16,9 +16,6 @@ TABLE test_run_dev HOST arzach
 	CMD test2.6 RUN "test_rt dev 2.6"
 		AFTER stamp/dev
 		AFTER test2.7
-	CMD test2.5 RUN "test_rt dev 2.5"
-		AFTER stamp/dev
-		AFTER test2.6
 
 TABLE test_run_dev HOST thor
 	CMD contact RUN "test_contact"
