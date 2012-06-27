@@ -53,7 +53,7 @@ TABLE x_distribute HOST bond
 
 TABLE x_distribute HOST herbert
 	CMD x.web RUN "do_irafx_web S"
-		AFTER x_distributb/gate
+		AFTER x_distribute/gate
 		AFTER bond:x_distribute/x.web
 		AFTER *:x_distribute/irafx.pkg
 		AFTER *:x_distribute/irafx.dmg

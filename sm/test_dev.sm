@@ -25,7 +25,6 @@ TABLE test_run_dev HOST thor
 TABLE test_run_dev HOST jwcalibdev
 	CMD jwst RUN "/data1/jwst_rt/rt"
 		AFTER stamp/dev
-		AFTER test2.7
 
 TABLE test_import HOST ssb
         CMD dev.import RUN "test_import irafdev"
