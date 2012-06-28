@@ -16,6 +16,7 @@ import getpass
 import steuermann.config
 
 import pandokia.helpers.easyargs as easyargs
+import pandokia.text_table as text_table
 
 
 try :
@@ -158,16 +159,25 @@ def print_node(xnodes, x, print_recursive, print_all, indent=0):
 #
 
 helpstr = """
-report              show report 
-want [-r] node      declare that we want that node
+
+reset               start a new run
+start               run things and wait for them to finish
 skip [-r] node      skip this node
-list -a
-list node
-start
-wait
+want [-r] node      declare that we want this node
+
 wr                  want/skip report
 dr                  depth report
+conditions (cond)   list all conditions
+hostgroups (hg)     list all host groups
+list -a
+list node
+
+wait                like start
+
+pre [ nodenames ]   show predecessors to nodes
 pre node            show what must come before a node
+report              show report 
+
 """
 
 def run_interactive( xnodes, run_name, db) :
@@ -224,6 +234,12 @@ def run_interactive( xnodes, run_name, db) :
         elif n == 'report' :
             print report.report_text( db, run_name )
 
+        elif n == 'hostgroups' or n == 'hostgroup' or n == 'hg' :
+            print_hostgroups()
+
+        elif n == 'conditions' or n == 'condition' or n == 'cond':
+            print_conditions()
+
         elif n == 'wr' :
             print report.report_text( db, run_name, info_callback_want )
 
@@ -276,7 +292,7 @@ def run_interactive( xnodes, run_name, db) :
             for x in all :
                 print_node(xnodes, x, print_recursive, all)
 
-        elif n == 'wait' :
+        elif n == 'wait' or n == 'start' :
             c = db.cursor()
             for x in xnodes :
                 host, tablename, cmd = nodes.crack_name(x)
@@ -296,6 +312,9 @@ def run_interactive( xnodes, run_name, db) :
                 if keypress() :
                     print "wait interrupted (processes continue)"
                     break
+
+        else :
+            print "unrecognized"
 
         if keep_running :
             print "run step"
@@ -542,3 +561,35 @@ def make_log_file_name( run_name, table, host, cmd ) :
 if __name__ == '__main__' :
     main()
 
+#####
+def print_hostgroups() :
+    print ""
+    l = sorted( [ x for x in nodes.hostgroups ] )
+    for x in l :
+        print "%s:"%x
+        l1 = sorted( [ y for y in nodes.hostgroups[x] ] )
+        for y in l1 :
+            print "    %s"%y
+        print ""
+
+#####
+def print_conditions() :
+    boring = { }
+    exec 'pass' in boring
+    l = sorted( [ x for x in nodes.saved_conditions ] )
+    row = 0
+
+    tt = text_table.text_table()
+    
+    for x in l :
+        if x in boring :
+            continue
+        if callable(x) :
+            v = x()
+        else :  
+            v = nodes.saved_conditions[x]
+        tt.set_value(row,0,x)
+        tt.set_value(row,1,str(v))
+        row = row + 1
+
+    print tt.get_rst()
