@@ -39,17 +39,17 @@ class command_tree(object):
         # before is the predecessor, after comes "AFTER before"
         for before, after, required, pos in self.node_order :
             if ( '*' in before ) or ( '?' in before ) or ( '[' in before ) or ( '@' in before ):
-                print "CONNECTING %-50s %-50s"%(before, after)
+                # print "CONNECTING %-50s %-50s"%(before, after)
                 for x in self.node_index :
                     if wildcard_name( wild=before, name=x ) :
-                        print "           found",x
+                        # print "           found",x
                         # yes, the wild card matches this one; connect them
                         # (but don't let a node come before itself because the wild card is too loose)
                         if x != after :
                             self.connect(x, after, required, pos)
             else :
-                print "CONNECTING %-50s %-50s"%(before, after)
-                print "           found",after
+                # print "CONNECTING %-50s %-50s"%(before, after)
+                # print "           found",after
                 self.connect(before, after, required, pos)
 
         # Work out the depths of each node.
@@ -80,7 +80,7 @@ class command_tree(object):
 
     # create a set of nodes for a particular command - called from within the parser
     def add_command_list( self, table, hostlist, command_list ) :
-        for host in hostlist :
+        for host in set(hostlist) :
             this_table = '%s:%s' % ( host, table )
             for command, script, script_type, after_clause, pos in command_list :
                 # this happens once for each CMD clause
@@ -329,15 +329,15 @@ def read_file_list( file_list ) :
     imported = { }
     while len(file_list) > 0 : 
 
-        print "START",file_list
+        # print "START",file_list
         # first name off the list
         current_file_name = file_list[0]
         file_list = file_list[1:]
-        print "LIST",file_list
+        # print "LIST",file_list
 
         # see if it imported already
         if current_file_name in imported :
-            print "SKIP",current_file_name
+            # print "SKIP",current_file_name
             continue
         imported[current_file_name] = 1
 
@@ -352,14 +352,12 @@ def read_file_list( file_list ) :
         file_list += di.import_list
         di.import_list = [ ]
 
-        print "END",file_list
-
     di.finish()
     return di
 
 #####
 
-saved_conditions = { }
+saved_conditions = { 'True' : True, 'False' : False }
 
 def declare_conditions( text, filename ) :
     # the parameter "text" is the token that begins "CONDITION\n"
@@ -397,15 +395,15 @@ hostgroups = { }
 
 def define_hostgroup( name ) :
     if not name in hostgroups :
-        hostgroups[name] = [ ]
+        hostgroups[name] = set( )
 
 def add_hostgroup( name, host ) :
     if host.startswith('@') :
         new = get_hostgroup(host) 
     else :
-        new = [ host ]
+        new = set( [ host ] )
 
-    hostgroups[name] = hostgroups[name] + new
+    hostgroups[name] |= new
 
 def get_hostgroup( name ) :
     return hostgroups[name]
