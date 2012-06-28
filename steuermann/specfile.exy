@@ -55,14 +55,18 @@ parser specfile:
     ##
     rule hostgroup_def :
         HOSTGROUP hostgroup {{ nodes.define_hostgroup( hostgroup) }}
-            ( hostgroup_if<<hostgroup>> )+ 
+            ( hostgroup_front<<hostgroup>> hostgroup_back<<hostgroup,hostgroup_front>> )+ 
 
-    rule hostgroup_if<<hg>> :
+    rule hostgroup_front<<hg>> :
         IF name 
-            {{ accept_nodes = nodes.check_condition(name, self._scanner.filename ) }}
+            {{ return nodes.check_condition(name, self._scanner.filename ) }}
+        | {{ return True }}
+
+    rule hostgroup_back<<hg,accept_nodes>> :
             COLON ( 
                 name {{ if accept_nodes : nodes.add_hostgroup( hg, name ) }}
-            )+  
+                | hostgroup {{ if accept_nodes : nodes.add_hostgroup( hg, hostgroup ) }}
+            )*  
 
     rule command_list:  
 	# one or more commands, appended together into a list
