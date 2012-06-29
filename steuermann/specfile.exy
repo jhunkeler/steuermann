@@ -47,9 +47,7 @@ parser specfile:
 			    name {{ hostlist.append(name) }} 
                 | hostgroup {{ hostlist = hostlist + nodes.get_hostgroup( hostgroup ) }}
 		    )+  
-	        command_list  
-            # command_list is a list of (command, pos) where command is the text from the file and pos is the location in the file
-                {{ self.data.add_command_list( table_name, hostlist, command_list )  }}
+	        command_cond<<tablename,hostlist>> +
         | IMPORT string {{ self.data.import_list.append( string[1:-1] ) }}
 
     ##
@@ -68,15 +66,9 @@ parser specfile:
                 | hostgroup {{ if accept_nodes : nodes.add_hostgroup( hg, hostgroup ) }}
             )*  
 
-    rule command_list:  
-	# one or more commands, appended together into a list
-        {{ cmlist = [ ] }} 
-        command {{ cmlist.append( command ) }} 
-        [ 
-		command_list {{ cmlist += command_list }} 
-	] 
-        {{ return cmlist }} 
-   	| {{ return [ ] }}
+    rule command_cond<<table_name,hostlist>> :
+        IF name COLON command {{ if nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
+        | command {{ self.data.add_command_list( table_name, hostlist, [ command ] ) }}
 
     rule command: 
 	# a single command, including any number of AFTER clauses
