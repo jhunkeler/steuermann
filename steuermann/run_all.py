@@ -147,8 +147,10 @@ def cmd_flagging( l, xnodes, func ) :
 
 
 #
-def print_node(xnodes, x, print_recursive, print_all, indent=0):
+def print_node(xnodes, x, print_recursive, print_all, indent=0, print_cmd=1):
     print ' '*indent, xnodes[x].wanted, xnodes[x].finished, xnodes[x].skip,  x
+    if print_cmd :
+        print ' '*indent, "       CMD", xnodes[x].script_type, xnodes[x].script
     if print_all :
         l = [ a.name for a in xnodes[x].predecessors ]
         print ' '*indent, "       AFTER", '  '.join(l)
@@ -266,31 +268,7 @@ def run_interactive( xnodes, run_name, db) :
             register_database(db, run_name, xnodes)
 
         elif n == 'list' :
-            l = l[1:]
-            if len(l) > 0 and l[0] == '-a' :
-                l = l[1:]
-                print_all = 1
-            else :
-                print_all = 0
-
-            if len(l) > 0 and l[0] == '-r' :
-                l = l[1:]
-                print_recursive=1
-            else :
-                print_recursive=0
-
-            if len(l) == 0 :
-                all = [ x for x in xnodes ]
-            else :
-                all = [ ]
-                for x in l :
-                    all = all + find_wild_names( xnodes, x )
-
-            all = sorted(all)
-            print "recursive",print_recursive
-            print "w f s name"
-            for x in all :
-                print_node(xnodes, x, print_recursive, all)
+            list_cmd(l[1:])
 
         elif n == 'wait' or n == 'start' :
             c = db.cursor()
@@ -593,3 +571,38 @@ def print_conditions() :
         row = row + 1
 
     print tt.get_rst()
+
+#####
+def list_cmd(l) :
+    if len(l) > 0 and l[0] == '-a' :
+        l = l[1:]
+        print_all = 1
+    else :
+        print_all = 0
+
+    if len(l) > 0 and l[0] == '-c' :
+        l = l[1:]
+        print_cmd = 1
+        print "YOW"
+    else :
+        print_cmd = 0
+
+    if len(l) > 0 and l[0] == '-r' : 
+        l = l[1:]
+        print_recursive=1
+    else :
+        print_recursive=0
+
+    if len(l) == 0 :
+        all = [ x for x in xnodes ]
+    else :
+        all = [ ]
+        for x in l :
+            all = all + find_wild_names( xnodes, x )
+
+    all = sorted(all)
+    print "recursive",print_recursive
+    print "w f s name"
+    for x in all :
+        print_node(xnodes, x, print_recursive, all, print_cmd=print_cmd)
+
