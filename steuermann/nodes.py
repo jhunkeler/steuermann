@@ -401,12 +401,12 @@ def add_hostgroup( name, host ) :
     if host.startswith('@') :
         new = get_hostgroup(host) 
     else :
-        new = set( [ host ] )
+        new = [ host ]
 
-    hostgroups[name] |= new
+    hostgroups[name] |= set( new )
 
 def get_hostgroup( name ) :
-    return hostgroups[name]
+    return list( hostgroups[name] )
 
 #####
 
