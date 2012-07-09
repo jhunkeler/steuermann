@@ -11,15 +11,18 @@ TABLE build HOST herbert thor arzach bond cadeau banana jwcalibdev
 	CMD dev.py2.7.1 RUN "build_stsci_python dev 2.7.1"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
-	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
-		AFTER init/*
-		AFTER *:assemble/dev.stsci_python
 	CMD dev.hstcal RUN "build_hstcal dev"
 		AFTER init/*
 		AFTER *:assemble/dev.hstcal
 
 TABLE build HOST vxp-dukat
 	CMD dev.py2.7.1 RUN "build_stsci_python"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
+
+# newer python environments
+TABLE build HOST jwcalibdev cadeau
+	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 
