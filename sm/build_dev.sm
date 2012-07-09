@@ -8,7 +8,10 @@
 # build hstcal
 #	- everywhere
 TABLE build HOST herbert thor arzach bond cadeau banana jwcalibdev
-	CMD dev.py2.7 RUN "build_stsci_python dev 2.7"
+	CMD dev.py2.7.1 RUN "build_stsci_python dev 2.7.1"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
+	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 	CMD dev.hstcal RUN "build_hstcal dev"
@@ -16,7 +19,7 @@ TABLE build HOST herbert thor arzach bond cadeau banana jwcalibdev
 		AFTER *:assemble/dev.hstcal
 
 TABLE build HOST vxp-dukat
-	CMD dev.py2.7 RUN "build_stsci_python"
+	CMD dev.py2.7.1 RUN "build_stsci_python"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 
@@ -60,14 +63,14 @@ TABLE build HOST cadeau banana
 # stsci_python documentation
 #	- one machine only
 TABLE build HOST arzach
-	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7"
-	AFTER build/dev.py2.7
+	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7.1"
+	AFTER build/dev.py2.7.1
 
 # old epydoc documentation - only works on thor; hope we can get rid of
 # epydoc sooner than we have to do anything about this.
 TABLE build HOST thor
 	CMD dev.stsci_python_epydoc RUN "/thor/data2/iraf/epydoc_test/nightly"
-	AFTER build/dev.py2.7
+	AFTER build/dev.py2.7.1
 
 # stamp the IRAF banner file when the builds are complete
 TABLE stamp HOST herbert thor arzach bond cadeau banana jwcalibdev
@@ -79,7 +82,7 @@ TABLE build HOST arzach cadeau banana jwcalibdev
 	CMD dev.jwst RUN "build_jwst dev"
 		AFTER init/*
 		AFTER *:assemble/dev.jwst
-		AFTER build/dev.py2.7
+		AFTER build/dev.py2.7.1
 	CMD dev.jwst_docs RUN "build_jwst_docs"
 		AFTER dev.jwst
 

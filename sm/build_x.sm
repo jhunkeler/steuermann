@@ -8,7 +8,7 @@
 # build hstcal
 #	- everywhere
 TABLE build HOST herbert thor arzach bond cadeau banana
-	CMD x.py2.7 RUN "build_stsci_python x 2.7"
+	CMD x.py2.7.1 RUN "build_stsci_python x 2.7.1"
 		AFTER init/*
 		AFTER *:assemble/x.stsci_python
 	CMD x.hstcal RUN "build_hstcal x"

@@ -5,7 +5,7 @@ IMPORT "test_common.sm"
 # This structure is meant to serialize the regtests so that nothing else
 # is going on at the same time.  The regtests can consume all the CPUs.
 TABLE test_run_x HOST arzach cadeau banana
-	CMD test2.7 RUN "test_rt x 2.7"
+	CMD test2.7.1 RUN "test_rt x 2.7.1"
 		AFTER stamp/x
 		AFTER test_setup/okify
 		AFTER test_setup/*
@@ -14,7 +14,7 @@ TABLE test_run_x HOST arzach cadeau banana
 TABLE test_run_x HOST arzach
 	CMD contact RUN "test_contact"
 		AFTER stamp/x
-		AFTER test2.7
+		AFTER test2.7.1
 
 TABLE test_import HOST ssb
         CMD x.import RUN "test_import irafx"
