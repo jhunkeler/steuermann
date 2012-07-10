@@ -13,9 +13,15 @@ TABLE test_run_dev HOST herbert thor arzach bond cadeau banana
 		AFTER test_setup/*
 
 TABLE test_run_dev HOST arzach 
-	CMD test2.6 RUN "test_rt dev 2.6"
+	CMD test2.6.5 RUN "test_rt dev 2.6.5"
 		AFTER stamp/dev
 		AFTER test2.7.1
+
+TABLE test_run_dev HOST cadeau 
+	CMD test2.7.3 RUN "test_rt dev 2.7.3"
+		AFTER stamp/dev
+		AFTER test_setup/okify
+		AFTER test_setup/*
 
 TABLE test_run_dev HOST thor
 	CMD contact RUN "test_contact"

@@ -26,10 +26,15 @@ TABLE build HOST jwcalibdev cadeau
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 
+TABLE build HOST arzach
+	CMD ur_docs RUN "/arzach/data1/iraf/work/ur_doc_build/docs/overnight_build"
+		AFTER init/*
+
+
 # older python environments
 #	- arzach only
 TABLE build HOST arzach 
-	CMD dev.py2.6 RUN "build_stsci_python dev 2.6"
+	CMD dev.py2.6.5 RUN "build_stsci_python dev 2.6.5"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 
