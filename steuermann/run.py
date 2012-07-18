@@ -30,6 +30,7 @@ import traceback
 import sys
 import errno
 import ConfigParser
+import re
 
 def config_yes_no(d,which) :
     if not which in d :
@@ -279,6 +280,11 @@ class runner(object):
                 if value.startswith('[') :
                     # it is a list
                     d[name] = eval(value)
+                elif name.endswith('$') :
+                    # this is ugly, but we'll do it for now
+                    x = value.split('$')
+                    x = x[0] + os.environ[x[1]]
+                    d[name[:-1]] = x
                 else :
                     # everything else is plain text
                     d[name] = value
