@@ -17,13 +17,15 @@ TABLE test_run_dev HOST arzach
 		AFTER stamp/dev
 		AFTER test2.7.1
 
-TABLE test_run_dev HOST cadeau 
+TABLE test_run_dev HOST cadeau arzach
 	CMD test2.7.3 RUN "test_rt dev 2.7.3"
 		AFTER stamp/dev
 		AFTER test_setup/okify
 		AFTER test_setup/*
+		AFTER OPT test2.6.5
+		AFTER test2.7.1
 
-TABLE test_run_dev HOST thor
+TABLE test_run_dev HOST arazach
 	CMD contact RUN "test_contact"
 		AFTER stamp/dev
 		AFTER test2.7.1
