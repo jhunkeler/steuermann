@@ -21,7 +21,7 @@ TABLE build HOST vxp-dukat
 		AFTER *:assemble/dev.stsci_python
 
 # newer python environments
-TABLE build HOST jwcalibdev cadeau
+TABLE build HOST jwcalibdev cadeau arzach
 	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
