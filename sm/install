@@ -1,0 +1,13 @@
+#!/bin/sh -x
+#
+#	su iraf -c sh install
+#
+
+N=4
+
+here=`pwd`
+
+cd /ssbwebv1/data2/steuermann/run_$N
+
+cp $here/* .
+
