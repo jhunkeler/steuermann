@@ -1,6 +1,6 @@
 #!/bin/sh -x
 #
-#	su iraf -c sh install
+#	su iraf -c ./install
 #
 
 N=4

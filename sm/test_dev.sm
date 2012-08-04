@@ -25,10 +25,14 @@ TABLE test_run_dev HOST cadeau arzach
 		AFTER OPT test2.6.5
 		AFTER test2.7.1
 
-TABLE test_run_dev HOST arazach
+TABLE test_run_dev HOST arzach
 	CMD contact RUN "test_contact"
 		AFTER stamp/dev
 		AFTER test2.7.1
+
+TABLE test_run_dev HOST jwcalibdev
+	CMD contact_jwst RUN "test_contact_jwst"
+		AFTER init/*
 
 TABLE test_run_dev HOST jwcalibdev
 	CMD jwst RUN "/data1/jwst_rt/rt"

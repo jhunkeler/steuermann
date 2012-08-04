@@ -71,7 +71,7 @@ TABLE build HOST cadeau banana
 # stsci_python documentation
 #	- one machine only
 TABLE build HOST arzach
-	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7.1"
+	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7.3"
 	AFTER build/dev.py2.7.1
 
 # old epydoc documentation - only works on thor; hope we can get rid of
@@ -91,6 +91,8 @@ TABLE build HOST arzach cadeau banana jwcalibdev
 		AFTER init/*
 		AFTER *:assemble/dev.jwst
 		AFTER build/dev.py2.7.1
+
+TABLE build HOST jwcalibdev
 	CMD dev.jwst_docs RUN "build_jwst_docs"
 		AFTER dev.jwst
 
