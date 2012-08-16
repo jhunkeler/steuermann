@@ -90,9 +90,9 @@ TABLE build HOST arzach cadeau banana jwcalibdev
 	CMD dev.jwst RUN "build_jwst dev"
 		AFTER init/*
 		AFTER *:assemble/dev.jwst
-		AFTER build/dev.py2.7.1
+		AFTER build/dev.py2.7.*
 
 TABLE build HOST jwcalibdev
-	CMD dev.jwst_docs RUN "build_jwst_docs"
+	CMD dev.jwst_docs RUN "build_jwst_docs dev"
 		AFTER dev.jwst
 

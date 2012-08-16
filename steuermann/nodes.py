@@ -268,6 +268,8 @@ def c_d_fn(x,depth) :
         print "error: loop detected at",x.name
         return
 
+    print '>',"  "*depth, depth, x.name
+
     # if it is already deeper than where we are now, we can (must)
     # prune the tree walk here.
     if x.depth  >= depth :
@@ -288,6 +290,7 @@ def c_d_fn(x,depth) :
     for y in x.successors :
         c_d_fn(y,depth)
 
+    print '<',"  "*depth, depth, x.name
     x.in_recursion = 0
 
 def compute_depths(nodes) :

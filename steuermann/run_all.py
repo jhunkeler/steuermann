@@ -148,7 +148,7 @@ def cmd_flagging( l, xnodes, func ) :
 
 #
 def print_node(xnodes, x, print_recursive, print_all, indent=0, print_cmd=1):
-    print ' '*indent, xnodes[x].wanted, xnodes[x].finished, xnodes[x].skip,  x
+    print ' '*indent, xnodes[x].wanted, xnodes[x].finished, xnodes[x].skip, xnodes[x].depth,  x
     if print_cmd :
         print ' '*indent, "       CMD", xnodes[x].script_type, xnodes[x].script
     if print_all :

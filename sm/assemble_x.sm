@@ -20,3 +20,9 @@ TABLE assemble HOST arzach
 	CMD x.irafx_age RUN "irafx_age.py"
 		AFTER init/*
 
+TABLE assemble HOST jwcalibdev
+
+        CMD x.jwst RUN "assemble_jwst x"
+                AFTER init/*
+                AFTER *:svnsync
+
