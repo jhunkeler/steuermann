@@ -7,8 +7,8 @@
 # install stsci_python into default environment
 # build hstcal
 #	- everywhere
-TABLE build HOST herbert thor arzach bond cadeau banana
-	CMD x.py2.7.1 RUN "build_stsci_python x 2.7.1"
+TABLE build HOST arzach bond cadeau banana
+	CMD x.py2.7.3 RUN "build_stsci_python x 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/x.stsci_python
 	CMD x.hstcal RUN "build_hstcal x"
@@ -37,7 +37,7 @@ TABLE build HOST herbert bond
 
 
 # stsdas for 64 bit machines - get it from a related 32 bit system
-TABLE build HOST thor arzach
+TABLE build HOST arzach
 	CMD x.stsci_iraf_64hack RUN "build_stsci_iraf_64hack x herbert"
 	AFTER herbert:build/x.stsci_iraf*
 

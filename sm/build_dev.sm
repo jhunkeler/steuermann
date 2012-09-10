@@ -7,8 +7,8 @@
 # install stsci_python into default environment
 # build hstcal
 #	- everywhere
-TABLE build HOST herbert thor arzach bond cadeau banana jwcalibdev
-	CMD dev.py2.7.1 RUN "build_stsci_python dev 2.7.1"
+TABLE build HOST arzach bond cadeau banana jwcalibdev
+	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 	CMD dev.hstcal RUN "build_hstcal dev"
@@ -20,11 +20,7 @@ TABLE build HOST vxp-dukat
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
 
-# newer python environments
-TABLE build HOST jwcalibdev cadeau arzach
-	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
-		AFTER init/*
-		AFTER *:assemble/dev.stsci_python
+#
 
 TABLE build HOST arzach
 	CMD ur_docs RUN "/arzach/data1/iraf/work/ur_doc_build/docs/overnight_build"
@@ -72,13 +68,13 @@ TABLE build HOST cadeau banana
 #	- one machine only
 TABLE build HOST arzach
 	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7.3"
-	AFTER build/dev.py2.7.1
+	AFTER build/dev.py2.7.3
 
 # old epydoc documentation - only works on thor; hope we can get rid of
 # epydoc sooner than we have to do anything about this.
 TABLE build HOST thor
-	CMD dev.stsci_python_epydoc RUN "/thor/data2/iraf/epydoc_test/nightly"
-	AFTER build/dev.py2.7.1
+	CMD dev.stsci_python_epydoc RUN "exit 1 ; /thor/data2/iraf/epydoc_test/nightly"
+	AFTER build/dev.py2.7.*
 
 # stamp the IRAF banner file when the builds are complete
 TABLE stamp HOST herbert thor arzach bond cadeau banana jwcalibdev

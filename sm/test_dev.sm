@@ -6,8 +6,8 @@ IMPORT "test_common.sm"
 
 # This structure is meant to serialize the regtests so that nothing else
 # is going on at the same time.  The regtests can consume all the CPUs.
-TABLE test_run_dev HOST herbert thor arzach bond cadeau banana
-	CMD test2.7.1 RUN "test_rt dev 2.7.1"
+TABLE test_run_dev HOST arzach bond cadeau banana
+	CMD test2.7.3 RUN "test_rt dev 2.7.3"
 		AFTER stamp/dev
 		AFTER test_setup/okify
 		AFTER test_setup/*
@@ -15,24 +15,17 @@ TABLE test_run_dev HOST herbert thor arzach bond cadeau banana
 TABLE test_run_dev HOST arzach 
 	CMD test2.6.5 RUN "test_rt dev 2.6.5"
 		AFTER stamp/dev
-		AFTER test2.7.1
-
-TABLE test_run_dev HOST cadeau arzach
-	CMD test2.7.3 RUN "test_rt dev 2.7.3"
-		AFTER stamp/dev
-		AFTER test_setup/okify
-		AFTER test_setup/*
-		AFTER OPT test2.6.5
-		AFTER test2.7.1
+		AFTER test2.7.*
 
 TABLE test_run_dev HOST arzach
 	CMD contact RUN "test_contact"
 		AFTER stamp/dev
-		AFTER test2.7.1
+		AFTER test2.7.*
 
 TABLE test_run_dev HOST jwcalibdev
 	CMD contact_jwst RUN "test_contact_jwst"
 		AFTER init/*
+		AFTER test2.7.*
 
 TABLE test_run_dev HOST jwcalibdev
 	CMD jwst RUN "/data1/jwst_rt/rt"
