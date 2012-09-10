@@ -7,7 +7,7 @@
 # install stsci_python into default environment
 # build hstcal
 #	- everywhere
-TABLE build HOST arzach bond cadeau banana
+TABLE build HOST arzach cadeau banana
 	CMD x.py2.7.3 RUN "build_stsci_python x 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/x.stsci_python
@@ -47,7 +47,7 @@ TABLE build HOST cadeau banana
 
 
 # stamp the IRAF banner file when the builds are complete
-TABLE stamp HOST herbert thor arzach bond cadeau banana
+TABLE stamp HOST herbert arzach bond cadeau banana
 	CMD x RUN "build_stamp x"
 		AFTER build/*
 

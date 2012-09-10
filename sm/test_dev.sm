@@ -6,7 +6,7 @@ IMPORT "test_common.sm"
 
 # This structure is meant to serialize the regtests so that nothing else
 # is going on at the same time.  The regtests can consume all the CPUs.
-TABLE test_run_dev HOST arzach bond cadeau banana
+TABLE test_run_dev HOST arzach cadeau banana
 	CMD test2.7.3 RUN "test_rt dev 2.7.3"
 		AFTER stamp/dev
 		AFTER test_setup/okify

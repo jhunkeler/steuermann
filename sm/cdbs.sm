@@ -1,8 +1,8 @@
-TABLE cdbs HOST bond cadeau banana
+TABLE cdbs HOST cadeau banana
 	CMD local_copy RUN "cdbs_copy"
 		AFTER init/*
 	
-TABLE cdbs HOST bond
+TABLE cdbs HOST cadeau
 	CMD mac_package RUN "/Users/iraf/daily_build/mac_package/make_packages cdbs"
 		AFTER cdbs/local_copy
 

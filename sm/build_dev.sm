@@ -7,7 +7,7 @@
 # install stsci_python into default environment
 # build hstcal
 #	- everywhere
-TABLE build HOST arzach bond cadeau banana jwcalibdev
+TABLE build HOST arzach cadeau banana jwcalibdev
 	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/dev.stsci_python
@@ -56,7 +56,7 @@ TABLE build HOST herbert bond
 
 
 # stsdas for 64 bit machines - get it from a related 32 bit system
-TABLE build HOST thor arzach jwcalibdev
+TABLE build HOST arzach jwcalibdev
 	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev herbert"
 	AFTER herbert:build/dev.stsci_iraf*
 
@@ -77,7 +77,7 @@ TABLE build HOST thor
 	AFTER build/dev.py2.7.*
 
 # stamp the IRAF banner file when the builds are complete
-TABLE stamp HOST herbert thor arzach bond cadeau banana jwcalibdev
+TABLE stamp HOST herbert arzach bond cadeau banana jwcalibdev
 	CMD dev RUN "build_stamp dev"
 		AFTER build/*
 

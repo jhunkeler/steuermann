@@ -8,7 +8,7 @@ TABLE x_distribute HOST herbert thor arzach bond cadeau banana
 
 # regular distributions
 
-TABLE x_distribute HOST herbert thor arzach
+TABLE x_distribute HOST thor arzach
 	CMD x.iraf RUN "synctool - irafx"
 		AFTER x_distribute/gate
 	CMD x.pyssg RUN "synctool - pyssgx"
@@ -22,7 +22,7 @@ TABLE x_distribute HOST herbert thor arzach
 
 #
 
-TABLE x_distribute HOST bond cadeau banana
+TABLE x_distribute HOST cadeau banana
 	CMD irafx.pkg RUN "cd $HOME/daily_build/mac_package; ./build x " 
 		AFTER x_distribute/gate
 	CMD irafx.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute x -" 
@@ -45,7 +45,7 @@ TABLE x_distribute HOST arzach
 
 # web distribution
 
-TABLE x_distribute HOST bond
+TABLE x_distribute HOST cadeau
 	CMD x.web RUN "do_irafx_web"
 		AFTER x_distribute/gate
 		AFTER *:x_distribute/irafx.pkg
@@ -54,7 +54,7 @@ TABLE x_distribute HOST bond
 TABLE x_distribute HOST herbert
 	CMD x.web RUN "do_irafx_web S"
 		AFTER x_distribute/gate
-		AFTER bond:x_distribute/x.web
+		AFTER cadeau:x_distribute/x.web
 		AFTER *:x_distribute/irafx.pkg
 		AFTER *:x_distribute/irafx.dmg
 
@@ -103,7 +103,7 @@ TABLE x_distribute_other HOST arzach
 
 # royal - a beowulf cluster
 
-TABLE x_distribute_other HOST thor
+TABLE x_distribute_other HOST arzach
 	CMD royal.iraf RUN "synctool royal: irafx"
 		AFTER x_distribute/gate
 	CMD royal.pyssg RUN "synctool royal: pyssgx"

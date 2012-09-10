@@ -3,7 +3,7 @@
 
 # regular distributions
 
-TABLE distribute HOST herbert thor arzach
+TABLE distribute HOST arzach
 	CMD dev.iraf RUN "synctool - irafdev"
 		AFTER stamp/dev
 	CMD dev.pyssg RUN "synctool - pyssgdev"
@@ -15,7 +15,7 @@ TABLE distribute HOST herbert thor arzach
 	CMD dev.motd RUN "synctool - irafdev/iraf/unix/hlib/motd"
 		AFTER distribute/dev.iraf
 
-TABLE distribute HOST bond cadeau banana
+TABLE distribute HOST cadeau banana
 	CMD irafdev.pkg RUN "cd $HOME/daily_build/mac_package; ./build dev " AFTER stamp/dev
 	CMD irafdev.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute dev -" AFTER irafdev.pkg
 
@@ -65,7 +65,7 @@ TABLE distribute_other HOST arzach
 
 # royal - a beowulf cluster
 
-TABLE distribute_other HOST thor
+TABLE distribute_other HOST arzach
 	CMD royal.iraf RUN "synctool royal: irafdev"
 		AFTER stamp/dev
 	CMD royal.pyssg RUN "synctool royal: pyssgdev"
