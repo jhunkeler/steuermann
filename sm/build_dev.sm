@@ -83,12 +83,12 @@ TABLE stamp HOST herbert arzach bond cadeau banana jwcalibdev
 
 #
 TABLE build HOST arzach cadeau banana jwcalibdev
-	CMD dev.jwst RUN "build_jwst dev"
+	CMD dev.jwst2.7.3 RUN "build_jwst dev 2.7.3"
 		AFTER init/*
 		AFTER *:assemble/dev.jwst
 		AFTER build/dev.py2.7.*
 
 TABLE build HOST jwcalibdev
-	CMD dev.jwst_docs RUN "build_jwst_docs dev"
-		AFTER dev.jwst
+	CMD dev.jwst_docs RUN "build_jwst_docs dev 2.7.3"
+		AFTER dev.jwst*
 
