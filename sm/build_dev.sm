@@ -21,10 +21,8 @@ TABLE build HOST vxp-dukat
 		AFTER *:assemble/dev.stsci_python
 
 #
-
-TABLE build HOST arzach
-	CMD ur_docs RUN "/arzach/data1/iraf/work/ur_doc_build/docs/overnight_build"
-		AFTER init/*
+# not useful yet
+# TABLE build HOST arzach CMD ur_docs RUN "/arzach/data1/iraf/work/ur_doc_build/docs/overnight_build" AFTER init/*
 
 
 # older python environments
@@ -72,9 +70,7 @@ TABLE build HOST arzach
 
 # old epydoc documentation - only works on thor; hope we can get rid of
 # epydoc sooner than we have to do anything about this.
-TABLE build HOST thor
-	CMD dev.stsci_python_epydoc RUN "exit 1 ; /thor/data2/iraf/epydoc_test/nightly"
-	AFTER build/dev.py2.7.*
+# TABLE build HOST thor CMD dev.stsci_python_epydoc RUN "exit 1 ; /thor/data2/iraf/epydoc_test/nightly" AFTER build/dev.py2.7.*
 
 # stamp the IRAF banner file when the builds are complete
 TABLE stamp HOST herbert arzach bond cadeau banana jwcalibdev

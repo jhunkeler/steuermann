@@ -1,12 +1,12 @@
 ####################
 ####################
 
-TABLE pyetc HOST etcbrady 
+TABLE pyetc HOST etcbrady etccartier
 
 	CMD trunk RUN "/data1/nightly/trunk/test-ppsetc -d trunk "
 		AFTER init/*
 
-	CMD refactored RUN  "/data1/nightly/refactored/test-ppsetc -d refactored "
+	CMD refactored RUN "/data1/nightly/refactored/test-ppsetc -d refactored "
 		AFTER trunk
 		AFTER init/*
 
@@ -18,9 +18,9 @@ TABLE pyetc HOST etcbrady
 		AFTER jwst
 		AFTER init/*
 
-TABLE pyetc HOST arzach
-	CMD doc_build RUN "/arzach/data1/iraf/pyetc_doc_build/doc/auto_doc_build"
-		AFTER etcbrady:pyetc/trunk
+TABLE pyetc HOST etccartier
+	CMD doc_build RUN "/data1/nightly/trunk/pyetc/doc/auto_doc_build"
+		AFTER etccartier:pyetc/trunk
 
 TABLE test_final HOST ssb
 	CMD pyetc.expect RUN "test_import pyetc ; test_expected pyetc "
