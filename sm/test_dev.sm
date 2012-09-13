@@ -28,7 +28,7 @@ TABLE test_run_dev HOST jwcalibdev
 		AFTER test2.7.*
 
 TABLE test_run_dev HOST jwcalibdev
-	CMD jwst RUN "/data1/jwst_rt/rt"
+	CMD jwst RUN "/data1/jwst_rt/rt dev 2.7.3"
 		AFTER stamp/dev
 
 TABLE test_import HOST ssb
