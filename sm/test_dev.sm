@@ -35,10 +35,10 @@ TABLE test_import HOST ssb
         CMD dev.import RUN "test_import irafdev"
                 AFTER *:test_run_dev/*
 		AFTER *:pyetc/*
-        CMD dev.expect RUN "test_expected irafdev"
+        CMD dev.expect RUN "test_expected irafdev daily_latest daily"
                 AFTER test_import/dev.import
 	CMD dev.jwst.import RUN "test_import jwst"
 		AFTER jwcalibdev:test_run_dev/jwst
-	CMD dev.jwst.expect RUN "test_expected jwst jwst_"
+	CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
 		AFTER dev.jwst.import
 
