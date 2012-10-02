@@ -32,12 +32,12 @@ simple_status = ( 'N', 'P', 'S', 'W' )
 
 def info_callback_gui( db, run, tablename, host, cmd ) :
     c = db.cursor()
-    c.execute("SELECT status, start_time, end_time FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
+    c.execute("SELECT status, start_time, end_time, logs FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
             run, host, tablename, cmd ) )
     x = c.fetchone()
     if x is None :
         return ''
-    status, start_time, end_time = x
+    status, start_time, end_time, logs_exist = x
     if start_time is None :
         start_time = ''
     if end_time is None :
@@ -71,6 +71,10 @@ def info_callback_gui( db, run, tablename, host, cmd ) :
         link = link + " : " + st + " - " + et
 
     # h_result = '%s %s %s %s'%(link, d_status, start_time, end_time)
+
+    if logs_exist:
+        link += '<BR/>LINK'
+
     h_result = link
 
     return ( t_result, h_result )

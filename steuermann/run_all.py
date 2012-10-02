@@ -32,8 +32,8 @@ username=getpass.getuser()
 def main() :
     global xnodes
     global no_run
+
     # read all the input files
-    
     if readline :
         history = os.path.join(os.path.expanduser("~"), ".steuermann_history")
         try :
@@ -491,8 +491,44 @@ def run_step( runner, xnodes, run_name, db ) :
             # note who and log it
             x_host, x_table, x_cmd = nodes.crack_name(who_exited[0])
 
-            db.execute("UPDATE sm_status SET end_time = ?, status = ?  WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
-                    ( str(datetime.datetime.now()), who_exited[1], run_name, x_host, x_table, x_cmd ) )
+            logs_exist = 0
+            
+            args = runner.get_host_info(x_host)
+            workdir = args['workdir']
+            hostname = args['hostname']
+
+            src = os.path.join(workdir, run_name, who_exited[0])
+            dst = os.path.join(steuermann.config.host_logs, run_name, who_exited[0])
+
+            '''
+            print
+            print "host " + hostname
+            print "workdir " + workdir
+            print src
+            print dst
+            print
+            '''
+
+            try:
+                os.system('mkdir -p %s' %os.path.dirname(dst))
+            except:
+                print 'mkdir -p %s failed' %os.path.dirname(dst)
+            try:
+                os.system('scp -r %s:%s %s' %(hostname, src, dst))
+            except:
+                print 'scp failed'
+
+            
+            if not os.path.exists(dst):
+                print 'WARNING - %s does not exist' %dst
+            else:
+                print os.listdir(dst)
+                if len(os.listdir(dst)) > 0:
+                    logs_exist = 1
+                    print 'FOUND SOME LOGS'
+
+            db.execute("UPDATE sm_status SET end_time = ?, status = ?, logs = ?  WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
+                    ( str(datetime.datetime.now()), who_exited[1], logs_exist, run_name, x_host, x_table, x_cmd ) )
             db.commit()
 
         # runner.display_procs()

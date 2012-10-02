@@ -2,7 +2,7 @@
 -- Before we start running anything, we insert a record for every
 -- command in the test run.  The initial status is 'S'.
 
-CREATE TABLE sm_status ( 
+CREATE TABLE sm_status (
 	run	VARCHAR(100),
 		-- name of this run
 
@@ -32,6 +32,8 @@ CREATE TABLE sm_status (
 
 	notes	VARCHAR(1000),
 		-- notes reported by the script
+
+    logs    INTEGER,
 
 	FOREIGN KEY(run) REFERENCES runs(run)
 		-- run name has to be in the run table
