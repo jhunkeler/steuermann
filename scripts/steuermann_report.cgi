@@ -332,7 +332,9 @@ elif action == 'show_run_log':
         print 'ERROR - %s does not exist' %log
     else:
         file = open(log)
-        print file.read()
+        lines = file.readlines()
+        for ln in lines:
+            print '%s<br/>' %ln
         file.close()
 
     print html_trailer
