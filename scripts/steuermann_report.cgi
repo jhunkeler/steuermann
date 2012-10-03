@@ -66,6 +66,27 @@ def normalize_run_name(db, name) :
 
     return name
 
+
+# make sure the name provided is valid
+def validate_name(form):
+    name = re.match('(.*)/(.*):(.*)/(.*)', form['name'].value)
+    run = name.group(1)
+    host = name.group(2)
+    table = name.group(3)
+    cmd = name.group(4)
+
+    db = steuermann.config.open_db()
+    c = db.cursor()
+    c.execute("SELECT status, start_time, end_time, notes FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
+            run, host, table, cmd ) )
+    x = c.fetchone()
+    if x is None :
+        print "No such record in database",run,host,table,cmd
+        sys.exit(0)
+
+    return run, host, table, cmd, x
+
+
 ##########
 # if no action specified, show the list of runs
 #
@@ -229,23 +250,8 @@ elif action == 'log' :
     print 'content-type: text/plain'
     print ''
 
-    # crack apart the parameter run/host:table/cmd
-    name = re.match('(.*)/(.*):(.*)/(.*)', form['name'].value)
-    run = name.group(1)
-    host = name.group(2)
-    table = name.group(3)
-    cmd = name.group(4)
-
-
-    db = steuermann.config.open_db()
-    c = db.cursor()
-    c.execute("SELECT status, start_time, end_time, notes FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
-            run, host, table, cmd ) )
-    x = c.fetchone()
-    if x is None :
-        print "No such record in database",run,host,table,cmd
-        sys.exit(0)
-
+    run, host, table, cmd, x = validate_name(form)
+    
     status, start_time, end_time, notes = x
 
     print "%s %s:%s/%s"%(run, host, table, cmd)
@@ -293,6 +299,46 @@ elif action == 'log' :
         print loglist
 
     sys.exit(0)
+
+
+elif action == 'run_log':
+    run, host, table, cmd, x = validate_name(form)
+
+    print html_header %{'title': form['name'].value}
+
+    host_logs = steuermann.config.host_logs
+    run_logs = os.path.join(host_logs, form['name'].value)
+    print run_logs
+    print '<br/><br/>'
+
+    for log in os.listdir(run_logs):
+        print "<a href='%s?action=show_run_log&name=%s&log_name=%s'>%s</a><br/>" %(cginame, form['name'].value, log, log)
+
+    print html_trailer
+
+    sys.exit(0)
+
+
+elif action == 'show_run_log':
+    run, host, table, cmd, x = validate_name(form)
+
+    log_name = form['log_name'].value
+    host_logs = steuermann.config.host_logs
+    log = os.path.join(host_logs, form['name'].value, log_name)
+
+    print html_header %{'title': '%s' %log}
+
+    if not os.path.exists(log):
+        print 'ERROR - %s does not exist' %log
+    else:
+        file = open(log)
+        print file.read()
+        file.close()
+
+    print html_trailer
+
+    sys.exit(0)
+
 
 ##########
 # info means show information about the system

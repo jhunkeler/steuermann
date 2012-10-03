@@ -54,7 +54,7 @@ def info_callback_gui( db, run, tablename, host, cmd ) :
     if status in simple_status :
         link = '%s'%d_status
     else :
-        link = " <a href='%s?action=log&name=%s/%s:%s/%s'>%s</a>"%(cginame, run, host, tablename, cmd, d_status )
+        link = "<a href='%s?action=log&name=%s/%s:%s/%s'>%s</a>" %(cginame, run, host, tablename, cmd, d_status )
 
     if not status in simple_status :
         try :
@@ -73,7 +73,7 @@ def info_callback_gui( db, run, tablename, host, cmd ) :
     # h_result = '%s %s %s %s'%(link, d_status, start_time, end_time)
 
     if logs_exist:
-        link += '<BR/>LINK'
+        link += "<br/><a href='%s?action=run_log&name=%s/%s:%s/%s'>%s</a>" %(cginame, run, host, tablename, cmd, 'logs' )
 
     h_result = link
 
