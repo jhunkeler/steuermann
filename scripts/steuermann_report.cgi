@@ -326,18 +326,19 @@ elif action == 'show_run_log':
     host_logs = steuermann.config.host_logs
     log = os.path.join(host_logs, form['name'].value, log_name)
 
-    print html_header %{'title': '%s' %log}
+    print 'content-type: text/plain'
+    print
+    print log
+    print '#'*len(log)
+    print
+    print
 
     if not os.path.exists(log):
         print 'ERROR - %s does not exist' %log
     else:
         file = open(log)
-        lines = file.readlines()
-        for ln in lines:
-            print '%s<br/>' %ln
+        print file.read()
         file.close()
-
-    print html_trailer
 
     sys.exit(0)
 
