@@ -71,7 +71,7 @@ parser specfile:
 
     rule command_cond<<table_name,hostlist>> :
         IF    name COLON command {{ if     nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
-        IFNOT name COLON command {{ if not nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
+        | IFNOT name COLON command {{ if not nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
         | command {{ self.data.add_command_list( table_name, hostlist, [ command ] ) }}
 
     rule command: 
