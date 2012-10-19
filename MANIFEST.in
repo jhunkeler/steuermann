@@ -1,6 +1,2 @@
-recursive-include docs
-recursive-include scripts
-recursive-include steuermann
-recursive-include tests
-include go LICENSE Makefile README
-
+include *
+recursive-include * *
