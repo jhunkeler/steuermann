@@ -68,10 +68,10 @@ class runner(object):
     #####
     #
 
-    def __init__( self, nodes ) :
+    def __init__( self, nodes, hosts_ini ) :
         self.all_procs = { }
         self.node_index = nodes
-        self.load_host_info()
+        self.load_host_info(filename = hosts_ini)
         self.host_info_cache = { }
         self.howmany = { }
 
@@ -293,13 +293,19 @@ class runner(object):
             print "No config section in hosts.ini: %s"%section
             return { }
 
-    def load_host_info( self, filename=None ) : 
+
+    def load_host_info( self, filename ) : 
+
+        if os.path.exists(filename):
+            print 'READING HOST INFO FROM %s' %filename
+        else:
+            print 'ERROR - %s does not exist' %filename
+            sys.exit(1)
 
         # read the config file
-        if filename is None :
-            filename = os.path.dirname(__file__) + '/hosts.ini'
         self.cfg = ConfigParser.RawConfigParser()
         self.cfg.read(filename)
+
 
     def get_host_info(self, host) :
         if not host in self.host_info_cache :

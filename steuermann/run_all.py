@@ -58,6 +58,7 @@ def main() :
         '-a'    : ''        ,   # run all nodes non-interactively
         '-r'    : '='       ,   # give run name
         '-n'    : ''        ,   # do not actually execute any processes
+        '-h'    : '='       ,   # give hosts (*.ini) file
         } )
 
     #
@@ -70,17 +71,24 @@ def main() :
 
     xnodes = di_nodes.node_index
 
+    # get run name
     if '-r' in opt :
         run_name = opt['-r']
     else :
         run_name = "user_%s_%s"%(username,str(datetime.datetime.now()).replace(' ','_'))
 
+    # get hosts (*.ini) file name
+    if '-h' in opt :
+        hosts_ini = opt['-h']
+    else :
+        hosts_ini = os.path.join(os.path.dirname(__file__), 'hosts.ini')
+
     db = steuermann.config.open_db()
 
     if all :
-        run_all(xnodes, run_name, db)
+        run_all(xnodes, run_name, hosts_ini, db)
     else :
-        run_interactive( xnodes, run_name, db )
+        run_interactive( xnodes, run_name, hosts_ini, db )
 
 #
 
@@ -182,14 +190,14 @@ report              show report
 
 """
 
-def run_interactive( xnodes, run_name, db) :
+def run_interactive( xnodes, run_name, hosts_ini, db) :
 
     org_run_name = run_name
     run_count = 0
 
     register_database(db, run_name, xnodes)
 
-    runner = run.runner( xnodes )
+    runner = run.runner( xnodes, hosts_ini )
 
     for x in xnodes :
         xnodes[x].finished = 0
@@ -364,7 +372,7 @@ def register_database(db, run, xnodes ) :
 
 #
 
-def run_all(xnodes, run_name, db) :
+def run_all(xnodes, run_name, hosts_ini, db) :
 
     for x in xnodes :
         x = xnodes[x]
@@ -375,7 +383,7 @@ def run_all(xnodes, run_name, db) :
 
     register_database(db, run_name, xnodes)
 
-    runner = run.runner( xnodes )
+    runner = run.runner( xnodes, hosts_ini )
 
     none_running = 0    
         # will count how many times through there was nothing running
