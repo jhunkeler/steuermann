@@ -5,3 +5,4 @@ def open_db() :
     return sqlite3.connect(db_creds)
 
 logdir = '/ssbwebv1/data2/steuermann/logs'
+host_logs = '/ssbwebv1/data2/steuermann/host_logs'
