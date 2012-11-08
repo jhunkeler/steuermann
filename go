@@ -1,6 +1,6 @@
 #!/bin/sh
 
-n=7
+n=9
 
 rm -rf build
 

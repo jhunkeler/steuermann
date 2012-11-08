@@ -19,7 +19,16 @@ cgitb.enable()
 form = cgi.FieldStorage(keep_blank_values=1)
 cginame = os.getenv("SCRIPT_NAME")
 
+auth_users = ( 'sienkiew', 'cslocum' )
+
 permission_modify=0
+if 'REMOTE_USER' in os.environ :
+    if os.environ["REMOTE_USER"] in auth_users :
+        permission_modify = 1
+    elif 'USER' in os.environ :
+        if os.environ["REMOTE_USER"] == os.environ['USER'] :
+            permission_modify = 1
+
 
 html_header='''Content-type: text/html
 
@@ -122,7 +131,8 @@ elif action == 'crons' :
     tt.define_column('duration')
     tt.define_column('status')
     if permission_modify :
-        tt.define_column('delete')
+        # tt.define_column('delete')
+        pass
 
     link="%s?action=%s&host=%s&name=%s&decol=%s"
     for host, name, decollision, start_time, end_time, duration, status in c :
@@ -140,7 +150,8 @@ elif action == 'crons' :
         tt.set_value(row, 'duration',   duration)
         tt.set_value(row, 'status',     status)
         if permission_modify :
-            tt.set_value(row, 'delete', 'arf')
+            # tt.set_value(row, 'delete', 'arf')
+            pass 
 
     print tt.get_html()
     print html_trailer
@@ -202,6 +213,9 @@ elif action == 'delete' :
         c.execute("DELETE FROM sm_runs WHERE run LIKE ?",(in_run,))
         c.execute("DELETE FROM sm_status WHERE run LIKE ?",(in_run,))
         db.commit()
+
+        print ""
+        print "Database record deleted, but not log files"
         sys.exit(0)
 
 ##########
