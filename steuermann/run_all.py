@@ -569,11 +569,11 @@ def info_callback_want( db, run, tablename, host, cmd ) :
         s = s + 'W'
     if s == '' :
         s = '-'
-    return s
+    return { 'text' : s }
 
 def info_callback_depth( db, run, tablename, host, cmd ) :
     n = xnodes['%s:%s/%s'%(host,tablename,cmd)]
-    return n.depth
+    return { 'text' : n.depth }
 
 #####
 def make_log_file_name( run_name, table, host, cmd ) :

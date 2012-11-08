@@ -22,7 +22,7 @@ def info_callback_status( db, run, tablename, host, cmd ) :
     c.execute("SELECT status FROM sm_status WHERE run = ? AND host = ? AND tablename = ? AND cmd = ?",(
             run, host, tablename, cmd ) )
     status, = c.fetchone()
-    return status
+    return { 'text' : status }
 
 #
 
@@ -77,12 +77,12 @@ def info_callback_gui( db, run, tablename, host, cmd ) :
 
     h_result = link
 
-    return ( t_result, h_result )
+    return { 'text' : t_result, 'html' : h_result }
 
 # 
 
 def info_callback_debug_table_cell( db, run, tablename, cmd, host ) :
-    return '%s %s %s %s' % ( run, host, tablename, cmd )
+    return { 'text' : '%s %s %s %s' % ( run, host, tablename, cmd ) }
 
 #
 
@@ -91,7 +91,7 @@ def get_table_list( db, run_name ) :
     c.execute("select max(depth) as d, tablename from sm_status where run = ? group by tablename order by d asc",(run_name,))
     table_list = [ x for x in c ]
         # table_list contains ( depth, tablename )
-    return table_list
+    return  table_list
 
 def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
 
@@ -122,15 +122,21 @@ def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
         where tablename = ? and run = ?  order by cmd asc
         """, ( tablename, run_name ) )
 
+    t.sm_host_failures = { }   # count of failures on this host
     row = 0
     for x in c :
         cmd, host, status, start_time, end_time, notes = x
+        try :
+            if ( status in ( 'E', 'P' ) ) or ( int(status) != 0 ) :
+                t.sm_host_failures[host] = t.sm_host_failures.get(host,0) + 1
+        except ValueError :
+            pass
         row = cmd_to_row[cmd]
         info = info_callback( db, run_name, tablename, host, cmd )
-        if isinstance(info, tuple) :
-            t.set_value( row, host, text=info[0], html=info[1] )
+        if 'html' in info :
+            t.set_value( row, host, text=info['text'], html=info['html'] )
         else :
-            t.set_value( row, host, info) 
+            t.set_value( row, host, text=info['text']) 
 
     t.pad()
 
@@ -138,37 +144,68 @@ def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
 
 #
 
+class raw_report(object):
+
+    def __init__( self, db, run_name, info_callback ) :
+    
+        table_list = get_table_list(db, run_name)
+        self.table_header = [ ]
+        self.table_body = [ ]
+
+        self.host_failures = { }
+        for depth, tablename in table_list :
+            self.table_header.append( tablename )
+            t = get_table( db, run_name, tablename, info_callback, showdepth=1 )
+            self.table_body.append( t )
+            for x in t.sm_host_failures :
+                self.host_failures[x] = self.host_failures.get(x,0) + t.sm_host_failures[x]
+
 def report_text( db, run_name, info_callback = info_callback_status ) :
+
+    raw = raw_report( db, run_name, info_callback )
 
     s = StringIO.StringIO()
 
     table_list = get_table_list(db, run_name)
 
-    for depth, tablename in table_list :
+    if len(raw.host_failures) > 0 :
+        s.write('hosts with failures:\n')
+        t = text_table.text_table()
+        for x in sorted(raw.host_failures) :
+            t.set_value(0,x,raw.host_failures[x])
+        s.write(t.get_track_wiki(headings=True))
+    
+
+    for header, body in zip( raw.table_header, raw.table_body ) :
         s.write("------\n")
-        s.write(tablename)
+        s.write(header)
         s.write('\n')
 
-        t = get_table( db, run_name, tablename, info_callback )
-
-        s.write( t.get_trac_wiki(headings=True) )
+        s.write( body.get_trac_wiki(headings=True) )
 
     return s.getvalue()
 
 #
 
 def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) :
+    raw = raw_report( db, run_name, info_callback )
+
     s = StringIO.StringIO()
     s.write('<h%d>%s</h%d>\n'%(hlevel,run_name,hlevel))
 
     hlevel = hlevel + 1
-    
-    table_list = get_table_list(db, run_name)
 
-    for depth, tablename in table_list :
-        s.write('<h%d>%s</h%d>\n'%(hlevel,tablename,hlevel))
-        t = get_table( db, run_name, tablename, info_callback, showdepth=1 )
+    if len(raw.host_failures) > 0 :
+        s.write('<h%d>hosts with failures</h%d>\n'%(hlevel,hlevel))
+        t = text_table.text_table()
+        t.set_html_table_attributes('border=1')
+        for x in sorted(raw.host_failures) :
+            t.set_value(0,x,raw.host_failures[x])
         s.write(t.get_html())
+    
+    for header, body in zip( raw.table_header, raw.table_body ) :
+        s.write('<h%d>%s</h%d>\n'%(hlevel,header,hlevel))
+        s.write(body.get_html())
 
     return s.getvalue()
 
