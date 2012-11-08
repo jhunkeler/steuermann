@@ -146,12 +146,14 @@ def cmd_flagging( l, xnodes, func ) :
     if l[1] == '-r' :
         recursive = 1
         l = l[2:]
+        verbose = 0
     else :
         recursive = 0
         l = l[1:]
+        verbose = 1
     
     for x in l :
-        do_flag( xnodes, x, recursive, func, 1 )
+        do_flag( xnodes, x, recursive, func, verbose )
 
 
 #
