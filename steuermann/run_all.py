@@ -524,7 +524,7 @@ def run_step( runner, xnodes, run_name, db ) :
             except:
                 print 'mkdir -p %s failed' %os.path.dirname(dst)
             try:
-                os.system('scp -r %s:%s %s' %(hostname, src, dst))
+                os.system('scp -r %s:%s %s 2> /dev/null' %(hostname, src, dst))
             except:
                 print 'scp failed'
 
