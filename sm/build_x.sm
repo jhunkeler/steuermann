@@ -51,6 +51,12 @@ TABLE stamp HOST herbert arzach bond cadeau banana
 	CMD x RUN "build_stamp x"
 		AFTER build/*
 
+# stsci_python documentation
+#       - one machine only
+TABLE build HOST arzach
+        CMD x.stsci_python_sphinxdocs RUN "build_sphinxdocs x 2.7.3"
+        AFTER build/x.py2.7.3
+
 # jwst irafx
 
 TABLE build HOST arzach cadeau banana jwcalibdev
