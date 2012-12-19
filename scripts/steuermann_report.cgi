@@ -325,7 +325,7 @@ elif action == 'run_log':
     print run_logs
     print '<br/><br/>'
 
-    for log in os.listdir(run_logs):
+    for log in sorted(os.listdir(run_logs)):
         print "<a href='%s?action=show_run_log&name=%s&log_name=%s'>%s</a><br/>" %(cginame, form['name'].value, log, log)
 
     print html_trailer
