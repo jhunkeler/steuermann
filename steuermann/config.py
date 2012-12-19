@@ -1,8 +1,8 @@
-db_creds = 'steuermann.db'
+db_creds = '/ssbwebv1/data2/steuermann/steuermann.db'
 
 def open_db() :
     import sqlite3
     return sqlite3.connect(db_creds)
 
-logdir = 'logs'
-host_logs = 'host_logs'
+logdir = '/ssbwebv1/data2/steuermann/logs'
+host_logs = '/ssbwebv1/data2/steuermann/host_logs'
