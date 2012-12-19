@@ -21,6 +21,7 @@ parser specfile:
     token RUN: "RUN"
     token LOCAL: "LOCAL"
     token IMPORT: "IMPORT"
+    token RESOURCE: "RESOURCE"
     token DEBUG: "DEBUG"
     token name: "[a-zA-Z0-9_.-]+"
     token STAR: "\*"
@@ -31,14 +32,24 @@ parser specfile:
     token SLASH: "/"
     token COLON: ":"
     token hostgroup: "@[a-zA-Z0-9_.-]+"
+    token number: "[0-9]+"
+    token RES_ALL: "all"
+    token RES_AVAILABLE: "available"
 
     # watch carefully:  none of the keywords are "END" on a line by themselves
     token CONDITIONS: 'CONDITIONS[^"]*\n[\s]*END[ \t]*\n'
 
-    rule start: table_list END {{ return table_list }}
 
+    ##
+    # This is the whole file
+    rule start: table_list "$" {{ return table_list }}
+
+    ##
+    #
     rule table_list:  table_section +
 
+    ##
+    #
     rule table_section:
         DEBUG string {{ print "-->debug: %s"%string }}
         | hostgroup_def
@@ -48,14 +59,17 @@ parser specfile:
 			    name {{ hostlist.append(name) }} 
                 | hostgroup {{ hostlist = hostlist + nodes.get_hostgroup( hostgroup ) }}
 		    )+  
-	        command_cond<<tablename,hostlist>> +
+	        cond_command<<tablename,hostlist>> +
         | IMPORT string {{ self.data.import_list.append( string[1:-1] ) }}
 
     ##
+    #
     rule hostgroup_def :
         HOSTGROUP hostgroup {{ nodes.define_hostgroup( hostgroup) }}
             ( hostgroup_front<<hostgroup>> hostgroup_back<<hostgroup,hostgroup_front>> )+ 
 
+    ##
+    #
     rule hostgroup_front<<hg>> :
         IF name 
             {{ return     nodes.check_condition(name, self._scanner.filename ) }}
@@ -63,34 +77,79 @@ parser specfile:
             {{ return not nodes.check_condition(name, self._scanner.filename ) }}
         | {{ return True }}
 
+    ##
+    #
     rule hostgroup_back<<hg,accept_nodes>> :
             COLON ( 
                 name {{ if accept_nodes : nodes.add_hostgroup( hg, name ) }}
                 | hostgroup {{ if accept_nodes : nodes.add_hostgroup( hg, hostgroup ) }}
             )*  
 
-    rule command_cond<<table_name,hostlist>> :
-        IF    name COLON command {{ if     nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
-        | IFNOT name COLON command {{ if not nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
-        | command {{ self.data.add_command_list( table_name, hostlist, [ command ] ) }}
+    ##
+    #
+    rule cond_command<<table_name,hostlist>> :
+        IF    name COLON command 
+            {{ if nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
+        | IFNOT name COLON command 
+            {{ if not nodes.check_condition(name, self._scanner.filename ) : self.data.add_command_list( table_name, hostlist, [ command ] ) }}
+        | command 
+            {{ self.data.add_command_list( table_name, hostlist, [ command ] ) }}
 
-    rule command: 
+    ##
 	# a single command, including any number of AFTER clauses
-        CMD  {{ cmd_pos = self._scanner.get_pos() }} 
-    	    cmdname  {{ cmd_name=cmdname; script=cmdname; x_after_clause = [ ] }} 
-            [ RUN string {{ script = string[1:-1]; script_type='r' }} 
-		| LOCAL string {{ script = string[1:-1]; script_type='l' }} 
+    rule command: 
+        CMD  
+            {{ cmd_pos = self._scanner.get_pos() }}  
+            {{ script_type = 'l' }}
+            {{ resources = { 'cpu' : 1 } }}
+        cmdname  
+            {{ cmd_name=cmdname; script=cmdname; x_after_clause = [ ] }} 
+        [
+            RUN string 
+                {{ script = string[1:-1]; script_type='r' }} 
+		|   
+            LOCAL string 
+                {{ script = string[1:-1]; script_type='l' }} 
 	    ]
-            ( {{ after_pos = self._scanner.get_pos() }} 
-		AFTER optword after_spec {{ x_after_clause.append( (after_spec, optword, after_pos) ) }}
-	    )*
-            {{ return ( cmd_name, script, script_type, x_after_clause, cmd_pos ) }}  
+        ( 
+                {{ after_pos = self._scanner.get_pos() }} 
 
+            [ 
+                RESOURCE resource_defs 
+                {{ resources.update(resource_defs) }}
+            ]
+
+            AFTER optword after_spec 
+                {{ x_after_clause.append( (after_spec, optword, after_pos) ) }}
+	    )*
+            {{ return ( cmd_name, script, script_type, x_after_clause, cmd_pos, resources ) }}  
+
+    ##
+    #
+    rule resource_defs:
+        {{ rl = { } }} 
+        ( 
+            name 
+            "=" 
+            (
+            number 
+                    {{ ans = int(number) }} 
+            | RES_ALL
+                    {{ ans = 'all' }}
+            | RES_AVAILABLE
+                    {{ ans = 'available' }}
+            )
+                {{ rl[name] = ans }} 
+        ) *
+            {{ print rl ; return rl }}
+
+    ##
     # in the AFTER clause, you can say OPT to mean the node is optional (not an error if it does not exist)
     rule optword:
         OPT {{ return 0 }}
         | {{ return 1 }}
 
+    ##
     rule after_spec: 
         wildname {{ rval = wildname }} 
         [ COLON  wildname {{ rval = rval + ':' + wildname }} ]

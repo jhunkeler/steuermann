@@ -1,9 +1,10 @@
 TABLE a HOST host_a
-	CMD A RUN "a" AFTER Z
-	CMD B RUN "b" AFTER A
-	CMD C RUN "c" AFTER X
-	CMD D AFTER B 
-	CMD F AFTER *
+        CMD A RUN "a" AFTER Z
+        CMD B RUN "b" RESOURCE arf=1 chocolate=2 banana=5 AFTER A
+#         CMD C RUN "c" AFTER X
+        CMD D AFTER B 
+        CMD F RESOURCE stuff = all AFTER *
+        CMD G RESOURCE stuff = available AFTER D
+	CMD E RESOURCE AFTER  D
 
-	CMD E AFTER Z
-	CMD Z
+        CMD Z

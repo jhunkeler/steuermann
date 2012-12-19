@@ -164,6 +164,7 @@ def print_node(xnodes, x, print_recursive, print_all, indent=0, print_cmd=1):
     if print_all :
         l = [ a.name for a in xnodes[x].predecessors ]
         print ' '*indent, "       AFTER", '  '.join(l)
+        print ' '*indent, "       RESOURCES", ' '.join([ "%s=%s"%(aa, xnodes[x].resources[aa]) for aa in sorted(xnodes[x].resources) ])
         if print_recursive :
             for x in l :
                 print_node( xnodes, x, print_recursive, print_all, indent=indent+8)

@@ -82,7 +82,7 @@ class command_tree(object):
     def add_command_list( self, table, hostlist, command_list ) :
         for host in set(hostlist) :
             this_table = '%s:%s' % ( host, table )
-            for command, script, script_type, after_clause, pos in command_list :
+            for command, script, script_type, after_clause, pos, resources in command_list :
                 # this happens once for each CMD clause
                 # command is the name of this command
                 # script is the script to run
@@ -96,7 +96,7 @@ class command_tree(object):
                     print "# warning: %s already used on line %s"%(command,self.node_index[command].input_line)
 
                 # create the node
-                self.node_index[command]=node(command, script, script_type, nice_pos( current_file_name, pos)  )
+                self.node_index[command]=node(command, script, script_type, nice_pos( current_file_name, pos), resources )
 
                 for before_name, required, pos in after_clause :
                     # this happens once for each AFTER clause
@@ -195,13 +195,16 @@ def wildcard_name( wild, name ) :
 # true if the before node is finished running.
 #
 class node(object) :
-    def __init__(self, name, script, script_type, input_line) :
+    def __init__(self, name, script, script_type, input_line, resources) :
         # the fully qualified name of the node
         self.name = name
 
         # the command script that this node runs
         self.script = script
         self.script_type = script_type
+
+        # what "resources" it requires
+        self.resources = resources
 
         # what line of the input file specified this node; this is
         # a string of the form "foo.bar 123"
