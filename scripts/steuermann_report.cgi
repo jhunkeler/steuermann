@@ -325,9 +325,16 @@ elif action == 'run_log':
     print run_logs
     print '<br/><br/>'
 
-    for log in sorted(os.listdir(run_logs)):
+    tb = pandokia.text_table.text_table()
+
+    for row, log in enumerate(sorted(os.listdir(run_logs))):
         size= os.stat(run_logs + '/' + log).st_size
-        print "<a href='%s?action=show_run_log&name=%s&log_name=%s'>%s</a> %d<br/>" %(cginame, form['name'].value, log, log, size)
+        tb.set_value(row, 0, html=
+            "<a href='%s?action=show_run_log&name=%s&log_name=%s'>%s</a>" %(cginame, form['name'].value, log, log)
+            )
+        tb.set_value(row,1, size)
+
+    print tb.get_html()
 
     print html_trailer
 
