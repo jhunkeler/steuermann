@@ -483,12 +483,26 @@ def run_step( runner, xnodes, run_name, db ) :
 
             # - not enough resources available
             enough = True
+            x.used_resources = {}
             for res, amount in x.resources.items():
                 if res in common_resources.keys():
                     avail = common_resources_avail[res]
-                    if amount > avail:
+
+                    if amount == 'all':
+                        amount = common_resources[res]
+                    elif amount == 'available':
+                        if avail > 0:
+                            amount = avail
+
+                    if type(amount) == '<type \'str\'>':
+                        enough = False
+                    elif amount > avail:
                         enough = False
                         break
+
+                    if enough:
+                        x.used_resources[res] = amount
+
             if not enough:
                 continue
 
@@ -533,6 +547,7 @@ def run_step( runner, xnodes, run_name, db ) :
                         # allocate common resources
                         for res, amount in x.resources.items():
                             if res in common_resources_avail.keys():
+                                amount = x.used_resources[res]
                                 common_resources_avail[res] -= amount
 
                         tmp = runner.run(x, run_name, no_run=no_run, logfile_name = make_log_file_name(run_name, host, table, cmd) ) 
@@ -584,6 +599,7 @@ def run_step( runner, xnodes, run_name, db ) :
             # de-allocate common resources
             for res, amount in x.resources.items():
                 if res in common_resources_avail.keys():
+                    amount = x.used_resources[res]
                     common_resources_avail[res] += amount
 
 
