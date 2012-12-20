@@ -500,9 +500,6 @@ def run_step( runner, xnodes, run_name, db ) :
                         enough = False
                         break
 
-                    if enough:
-                        x.used_resources[res] = amount
-
             if not enough:
                 continue
 
@@ -547,7 +544,11 @@ def run_step( runner, xnodes, run_name, db ) :
                         # allocate common resources
                         for res, amount in x.resources.items():
                             if res in common_resources_avail.keys():
-                                amount = x.used_resources[res]
+                                if amount == 'all':
+                                    amount = common_resources[res]
+                                elif amount == 'available':
+                                    if avail > 0:
+                                        amount = avail
                                 common_resources_avail[res] -= amount
 
                         tmp = runner.run(x, run_name, no_run=no_run, logfile_name = make_log_file_name(run_name, host, table, cmd) ) 
@@ -577,7 +578,8 @@ def run_step( runner, xnodes, run_name, db ) :
                             print "WARNING: runner.run() returned unknown code %s"%str(tmp)
 
                     db.commit()
-                        
+
+
 
         # if anything has exited, we process it and update the status in the database
         while 1 :
@@ -599,7 +601,11 @@ def run_step( runner, xnodes, run_name, db ) :
             # de-allocate common resources
             for res, amount in x.resources.items():
                 if res in common_resources_avail.keys():
-                    amount = x.used_resources[res]
+                    if amount == 'all':
+                        amount = common_resources[res]
+                    elif amount == 'available':
+                        if avail > 0:
+                            amount = avail
                     common_resources_avail[res] += amount
 
 
