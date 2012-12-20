@@ -73,18 +73,22 @@ class runner(object):
         self.node_index = nodes
         self.load_host_info(filename = hosts_ini)
         self.host_info_cache = { }
-        self.howmany = { }
+        self.resources = {}
+        self.resources_avail = {}
+
 
     #####
     # start a process
 
     def run( self, node, run_name, logfile_name, no_run = False ):
-        '''run a process
-    return is:
-        D - host disabled
-        M - not run max proc limit
-        R - running
-'''
+        '''
+            run a process
+        
+            return is:
+                D - host disabled
+                M - not run; resource limit
+                R - running
+        '''
 
         try :
 
@@ -99,20 +103,34 @@ class runner(object):
             if ( config_yes_no(args,'disable') ) :
                 return 'D'
 
-            hostname = args['hostname']
-            if 'maxproc' in args :
+            # track resources
+            if node.host not in self.resources.keys():
+                self.resources[node.host] = {}
+                self.resources_avail[node.host] = {}
 
-                n = int(self.howmany.get(hostname,0))
-                if n >= int(args['maxproc']) :
-                    # print "decline to run %s - %d other already running"%(node.name,n)
-                    return 'M'
+            for key, val in args.items():
+                if key.startswith('res_'):
+                    key = key.lstrip('res_')
+                    self.resources[node.host][key] = int(val)
+                    if key not in self.resources_avail[node.host].keys():
+                        self.resources_avail[node.host][key] = int(val)
 
-                n = n + 1
-                self.howmany[hostname] = n
-                # print "running %s %s %d"%(hostname,node.name, n)
-            else :
-                # print "running %s %s no maxproc"%(hostname, node.name)
-                pass
+            # check if enough resources on host and return if not
+            enough = True
+            for res, amount in node.resources.items():
+                if res in self.resources[node.host].keys():
+                    avail = self.resources_avail[node.host][res]
+                    if amount > avail:
+                        enough = False
+                        break
+            if not enough:
+                return 'M'
+
+            # allocate host resources
+            for res, amount in node.resources.items():
+                if res in self.resources[node.host].keys():
+                    self.resources_avail[node.host][res] -= amount
+
 
             if debug :
                 print "run",node.name
@@ -178,10 +196,12 @@ class runner(object):
             # start running the process
             if debug :
                 print "RUN",run
-            p = subprocess.Popen(args=run,
+            p = subprocess.Popen(
+                args=run,
                 stdout=logfile,
                 stderr=subprocess.STDOUT,
-                shell=False, close_fds=True)
+                shell=False, close_fds=True
+            )
 
             # remember the popen object for the process; remember the open log file
             n = struct()
@@ -208,12 +228,14 @@ class runner(object):
 
         args = self.get_host_info(node.host)
 
-        hostname = args['hostname']
 
-        n = self.howmany[hostname] - 1
-        self.howmany[hostname] = n
+        # de-allocate host resources
+        for res, amount in node.resources.items():
+            if res in self.resources[node.host].keys():
+                self.resources_avail[node.host][res] += amount
 
         if debug :
+            hostname = args['hostname']
             print "finish %s %s %d"%(hostname,node_name,n)
 
         # note the termination of the process at the end of the log file
@@ -323,10 +345,6 @@ class runner(object):
             # default hostname is the name from the section header
             if not 'hostname' in d :
                 d['hostname'] = host
-
-            # default maximum processes is 1
-            if not 'maxproc' in d :
-                d['maxproc'] = 1
 
             self.host_info_cache[host] = d
 
