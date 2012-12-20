@@ -59,13 +59,15 @@ def main() :
 #                                # several times to get a list
 #        '--verbose' : '-v',     # arg is an alias for some other arg
 
-    opt, args = easyargs.get( { 
+    allowed_flags = { 
         '--all' : '-a'      ,
         '-a'    : ''        ,   # run all nodes non-interactively
         '-r'    : '='       ,   # give run name
         '-n'    : ''        ,   # do not actually execute any processes
         '-h'    : '='       ,   # give hosts (*.ini) file
-        } )
+    }
+
+    opt, args = easyargs.get(allowed_flags)
 
     #
     #
@@ -73,7 +75,8 @@ def main() :
     all = opt['-a']
     no_run = opt['-n']
 
-    di_nodes = nodes.read_file_list( args )
+    sm_files = [a for a in args if ('--' not in a and '=' not in a)]
+    di_nodes = nodes.read_file_list( sm_files )
 
     xnodes = di_nodes.node_index
 
@@ -93,6 +96,22 @@ def main() :
     get_common_resources(hosts_ini)
 
     db = steuermann.config.open_db()
+
+
+    # find any unknown arguments like --something=whatever, set as conditions
+    arguments = sys.argv[1:]
+    for a in args:
+        if '--' in a and '=' in a:
+            not_allowed_flag = True
+            for f in allowed_flags.keys():
+                if a.startswith(f):
+                    not_allowed_flag = False
+                    break
+            if not_allowed_flag:
+                a = a.lstrip('--')
+                k, v = a.split('=')
+                nodes.saved_conditions[k] = v
+
 
     if all :
         run_all(xnodes, run_name, hosts_ini, db)
@@ -659,13 +678,13 @@ def print_conditions() :
     row = 0
 
     tt = text_table.text_table()
-    
+
     for x in l :
         if x in boring :
             continue
         if callable(x) :
             v = x()
-        else :  
+        else :
             v = nodes.saved_conditions[x]
         tt.set_value(row,0,x)
         tt.set_value(row,1,str(v))
