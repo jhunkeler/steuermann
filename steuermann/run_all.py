@@ -67,7 +67,7 @@ def main() :
         '-h'    : '='       ,   # give hosts (*.ini) file
     }
 
-    opt, args = easyargs.get(allowed_flags)
+    opt, args = easyargs.get(allowed_flags, allow_unexpected = True)
 
     #
     #
@@ -97,10 +97,10 @@ def main() :
 
     db = steuermann.config.open_db()
 
-
     # find any unknown arguments like --something=whatever, set as conditions
     arguments = sys.argv[1:]
-    for a in args:
+    for a in arguments:
+        print a
         if '--' in a and '=' in a:
             not_allowed_flag = True
             for f in allowed_flags.keys():
@@ -111,7 +111,6 @@ def main() :
                 a = a.lstrip('--')
                 k, v = a.split('=')
                 nodes.saved_conditions[k] = v
-
 
     if all :
         run_all(xnodes, run_name, hosts_ini, db)
