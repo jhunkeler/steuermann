@@ -36,6 +36,7 @@ username=getpass.getuser()
 #####
 
 def main() :
+
     global xnodes
     global no_run
 
@@ -50,14 +51,14 @@ def main() :
         atexit.register(readline.write_history_file, history)
 
 
-# easyargs spec definition:
-#
-#        '-v' : '',              # arg takes no parameter, opt['-v'] is
-#                                # how many times it occurred
-#        '-f' : '=',             # arg takes a parameter
-#        '-mf' : '=+',           # arg takes a parameter, may be specified 
-#                                # several times to get a list
-#        '--verbose' : '-v',     # arg is an alias for some other arg
+    # easyargs spec definition:
+    #
+    #        '-v' : '',              # arg takes no parameter, opt['-v'] is
+    #                                # how many times it occurred
+    #        '-f' : '=',             # arg takes a parameter
+    #        '-mf' : '=+',           # arg takes a parameter, may be specified 
+    #                                # several times to get a list
+    #        '--verbose' : '-v',     # arg is an alias for some other arg
 
     allowed_flags = { 
         '--all' : '-a'      ,
@@ -69,15 +70,28 @@ def main() :
 
     opt, args = easyargs.get(allowed_flags, allow_unexpected = True)
 
-    #
-    #
-
     all = opt['-a']
     no_run = opt['-n']
 
+
+    # find any unknown arguments like --something=whatever, set as conditions
+    arguments = sys.argv[1:]
+    for a in arguments:
+        if '--' in a and '=' in a:
+            
+            not_allowed_flag = True
+            for f in allowed_flags.keys():
+                if a.startswith(f):
+                    not_allowed_flag = False
+                    break
+            if not_allowed_flag:
+                a = a.lstrip('--')
+                k, v = a.split('=')
+                nodes.saved_conditions[k] = eval(v)
+
+
     sm_files = [a for a in args if ('--' not in a and '=' not in a)]
     di_nodes = nodes.read_file_list( sm_files )
-
     xnodes = di_nodes.node_index
 
     # get run name
@@ -96,21 +110,6 @@ def main() :
     get_common_resources(hosts_ini)
 
     db = steuermann.config.open_db()
-
-    # find any unknown arguments like --something=whatever, set as conditions
-    arguments = sys.argv[1:]
-    for a in arguments:
-        print a
-        if '--' in a and '=' in a:
-            not_allowed_flag = True
-            for f in allowed_flags.keys():
-                if a.startswith(f):
-                    not_allowed_flag = False
-                    break
-            if not_allowed_flag:
-                a = a.lstrip('--')
-                k, v = a.split('=')
-                nodes.saved_conditions[k] = v
 
     if all :
         run_all(xnodes, run_name, hosts_ini, db)

@@ -330,6 +330,7 @@ import specfile
 current_file_name = None
 
 def read_file_list( file_list ) :
+
     global current_file_name
     di = command_tree( ) 
     imported = { }
@@ -380,11 +381,22 @@ def declare_conditions( text, filename ) :
     # exec will work
     if text.startswith(' ') or text.startswith('\t') :
         text = 'if 1 :\n' + text
+
+    # exec it into cond first, and then move any entries that are unique
+    #   into saved_conditions; this allows us to specify conditions on the
+    #   command line and not have them overwritten by the same variable in
+    #   a CONDITIONS block
+    cond = {}
+    exec text in cond
+    for k, v in cond.items():
+        if k not in saved_conditions:
+            saved_conditions[k] = v
+
     
-    # exec it into the dict
-    exec text in saved_conditions
+
 
 def check_condition( name, filename ) :
+
     if name in saved_conditions :
         c = saved_conditions[name]
         if callable(c) :
@@ -393,6 +405,7 @@ def check_condition( name, filename ) :
             ans = c
     else :
         ans = False
+
     return ans
     
 #####
