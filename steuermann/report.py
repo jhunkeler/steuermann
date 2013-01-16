@@ -93,6 +93,7 @@ def get_table_list( db, run_name ) :
         # table_list contains ( depth, tablename )
     return  table_list
 
+# a single table in the report - covers commands tablename/*
 def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
 
     t = text_table.text_table()
@@ -114,7 +115,8 @@ def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
     for cmd, depth in c :
         row = row + 1
         cmd_to_row[cmd] = row
-        t.set_value(row, 0, cmd)
+        cmd_html = '<a name="row_%s/%s"></a> %s'%(tablename, cmd, cmd)
+        t.set_value(row, 0, cmd, html=cmd_html)
         if showdepth :
             t.set_value(row, 'depth', depth)
 
@@ -122,13 +124,13 @@ def get_table( db, run_name, tablename, info_callback, showdepth=0 ) :
         where tablename = ? and run = ?  order by cmd asc
         """, ( tablename, run_name ) )
 
-    t.sm_host_failures = { }   # count of failures on this host
+    t.sm_host_failures = { }   # list of failures on this host
     row = 0
     for x in c :
         cmd, host, status, start_time, end_time, notes = x
         try :
             if ( status in ( 'E', 'P' ) ) or ( int(status) != 0 ) :
-                t.sm_host_failures[host] = t.sm_host_failures.get(host,0) + 1
+                t.sm_host_failures[host] = t.sm_host_failures.get(host,[]) + [ ( tablename, cmd ) ]
         except ValueError :
             pass
         row = cmd_to_row[cmd]
@@ -158,7 +160,7 @@ class raw_report(object):
             t = get_table( db, run_name, tablename, info_callback, showdepth=1 )
             self.table_body.append( t )
             for x in t.sm_host_failures :
-                self.host_failures[x] = self.host_failures.get(x,0) + t.sm_host_failures[x]
+                self.host_failures[x] = self.host_failures.get(x,[]) + t.sm_host_failures[x]
 
 def report_text( db, run_name, info_callback = info_callback_status ) :
 
@@ -200,7 +202,11 @@ def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) 
         t = text_table.text_table()
         t.set_html_table_attributes('border=1')
         for x in sorted(raw.host_failures) :
-            t.set_value(0,x,raw.host_failures[x])
+            h = '%d<br>\n'%len(raw.host_failures[x])
+            for table, cmd in raw.host_failures[x] :
+                name = '%s/%s'%(table,cmd)
+                h = h + '<a href="#row_%s">%s</a><br>\n'%(name,name)
+            t.set_value(0,x,h, html=h)
         s.write(t.get_html())
     
     for header, body in zip( raw.table_header, raw.table_body ) :
