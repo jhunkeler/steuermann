@@ -1,7 +1,7 @@
 ####################
 ####################
 
-TABLE pyetc HOST etcbrady etccartier
+TABLE pyetc HOST etccartier
 
 	CMD trunk RUN "/data1/nightly/trunk/test-ppsetc -d trunk "
 		AFTER init/*
@@ -26,6 +26,6 @@ TABLE test_final HOST ssb
 	CMD pyetc.expect RUN "test_import pyetc ; test_expected pyetc"
 		AFTER *:pyetc/*
 
-TABLE test_final HOST etcbrady
+TABLE test_final HOST etccartier
 	CMD pyetc.report RUN "pyetc_report"
 		AFTER ssb:test_final/pyetc.expect
