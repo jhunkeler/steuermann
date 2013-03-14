@@ -151,6 +151,11 @@ class runner(object):
                 runname=run_name,
                 )
 
+            # also stick everything from env into args (if not already defined)
+            for k, v in os.environ.items():
+                if k not in args.keys():
+                    args[k] = v
+
             if debug :
                 print "ARGS"
                 for x in sorted([x for x in args]) :
