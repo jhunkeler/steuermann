@@ -18,14 +18,18 @@ TABLE pyetc HOST etccartier
 		AFTER jwst
 		AFTER init/*
 
+	CMD rfim RUN "/data1/nightly/rfim/test-ppsetc -d rfim "
+		AFTER rt
+		AFTER init/*
+
 TABLE pyetc HOST etccartier
 	CMD doc_build RUN "/data1/nightly/trunk/pyetc/doc/auto_doc_build"
-		AFTER etccartier:pyetc/trunk
+			AFTER etccartier:pyetc/trunk
 
-TABLE test_final HOST ssb
-	CMD pyetc.expect RUN "test_import pyetc ; test_expected pyetc"
-		AFTER *:pyetc/*
+	TABLE test_final HOST ssb
+		CMD pyetc.expect RUN "test_import pyetc ; test_expected pyetc"
+			AFTER *:pyetc/*
 
-TABLE test_final HOST etccartier
-	CMD pyetc.report RUN "pyetc_report"
-		AFTER ssb:test_final/pyetc.expect
+	TABLE test_final HOST etccartier
+		CMD pyetc.report RUN "pyetc_report"
+			AFTER ssb:test_final/pyetc.expect
