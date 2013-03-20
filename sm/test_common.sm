@@ -1,4 +1,4 @@
-TABLE test_setup HOST arzach cadeau banana
+TABLE test_setup HOST arzach cadeau banana herbert
         CMD okify RUN "test_okify"
 		AFTER init/*
 
