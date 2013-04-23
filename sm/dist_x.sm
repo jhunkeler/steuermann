@@ -1,14 +1,14 @@
 
 # we can make everything after this
 
-TABLE x_distribute HOST herbert thor arzach bond cadeau banana
+TABLE x_distribute HOST herbert arzach bond cadeau banana
 	CMD gate RUN "exit 0"
 		AFTER init/*
 		AFTER stamp/*
 
 # regular distributions
 
-TABLE x_distribute HOST thor arzach
+TABLE x_distribute HOST arzach
 	CMD x.iraf RUN "synctool - irafx"
 		AFTER x_distribute/gate
 	CMD x.pyssg RUN "synctool - pyssgx"

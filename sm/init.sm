@@ -1,4 +1,4 @@
-TABLE init HOST banana bond cadeau arzach thor herbert ssb aten jwcalibdev etcbrady etccartier
+TABLE init HOST banana bond cadeau arzach herbert ssb aten jwcalibdev etcbrady etccartier
 	CMD sendscripts LOCAL "/eng/ssb/auto/steuermann_scripts/init_sendscripts %(hostname)s %(workdir)s"
 	CMD sysstat RUN "sysstat"
 		AFTER sendscripts

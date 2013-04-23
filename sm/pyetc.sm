@@ -14,7 +14,7 @@ TABLE pyetc HOST etccartier
 		AFTER refactored
 		AFTER init/*
 
-	CMD rt RUN "/data1/nightly/rt/rt.csh pyetc"
+	CMD rt RUN "/eng/ssb/auto/steuermann_scripts/test_rt dev pyetc"
 		AFTER jwst
 		AFTER init/*
 
