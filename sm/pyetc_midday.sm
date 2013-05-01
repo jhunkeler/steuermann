@@ -1,13 +1,9 @@
-####################
-####################
+TABLE init HOST etccartier
+	CMD env RUN "env | sort"
 
 TABLE pyetc HOST etccartier
 
-	CMD delay_four_hours RUN "/bin/sleep 4h"
-        	AFTER init/*
-
 	CMD trunk RUN "/data1/nightly/trunk/test-ppsetc -d trunk "
-	    AFTER delay_four_hours
 		AFTER init/*
 
 	CMD refactored RUN "/data1/nightly/refactored/test-ppsetc -d refactored "
@@ -18,7 +14,7 @@ TABLE pyetc HOST etccartier
 		AFTER refactored
 		AFTER init/*
 
-	CMD rt RUN "/eng/ssb/auto/steuermann_scripts/test_rt dev pyetc"
+	CMD rt RUN "/data1/nightly/rt/rt.csh pyetc"
 		AFTER jwst
 		AFTER init/*
 
@@ -30,10 +26,10 @@ TABLE pyetc HOST etccartier
 	CMD doc_build RUN "/data1/nightly/trunk/pyetc/doc/auto_doc_build"
 			AFTER etccartier:pyetc/trunk
 
-	TABLE test_final HOST ssb
-		CMD pyetc.expect RUN "test_import pyetc ; test_expected pyetc"
-			AFTER *:pyetc/*
+TABLE test_final HOST ssb
+	CMD pyetc.expect RUN "test_import pyetc ; test_expected pyetc"
+		AFTER *:pyetc/*
 
-	TABLE test_final HOST etccartier
-		CMD pyetc.report RUN "pyetc_report"
-			AFTER ssb:test_final/pyetc.expect
+TABLE save_reference_files HOST etccartier
+    CMD save_refs RUN "python /data1/nightly/save_refs.py"
+        AFTER *:test_final/*
