@@ -52,12 +52,16 @@ def main() :
     node.table = None
     node.cmd = None
     node.script = script
+    node.resources = { }
     if host == 'localhost' :
         node.script_type = 'l'  # local
     else :
         node.script_type = 'r'  # remote
     
-    runner = steuermann.run.runner( nodes = { node.name : node } )
+    hosts_ini = os.path.join(os.path.dirname(__file__), 'hosts.ini')
+
+    runner = steuermann.run.runner( nodes = { node.name : node }, hosts_ini = hosts_ini )
+
     logname = logfile_name = steuermann.config.logdir + '/cron/' + logfile
     st = runner.run( node=node, run_name='', logfile_name = logname )
 
