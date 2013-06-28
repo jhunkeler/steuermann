@@ -6,23 +6,28 @@ TABLE pyetc HOST etccartier
 	CMD delay_four_hours RUN "/bin/sleep 4h"
         	AFTER init/*
 
-	CMD trunk RUN "/data1/nightly/trunk/test-ppsetc -d trunk "
+
+	CMD jwst_dev RUN "/data1/nightly/trunk/test-ppsetc -d trunk pyetc"
 	    AFTER delay_four_hours
 		AFTER init/*
 
-	CMD refactored RUN "/data1/nightly/refactored/test-ppsetc -d refactored "
+	CMD trunk RUN "/data1/nightly/jwst_dev/test-ppsetc -d dev etc_jwst_dev"
+	    AFTER jwst_dev
+		AFTER init/*
+
+	CMD refactored RUN "/data1/nightly/refactored/test-ppsetc -d refactored pyetc"
 		AFTER trunk
 		AFTER init/*
 
-	CMD jwst RUN "/data1/nightly/jwpetc_dev/test-ppsetc -d"
+	CMD jwst_prototype RUN "/data1/nightly/jwpetc_dev/test-ppsetc -d"
 		AFTER refactored
 		AFTER init/*
 
 	CMD rt RUN "/eng/ssb/auto/steuermann_scripts/test_rt dev pyetc"
-		AFTER jwst
+		AFTER jwst_prototype
 		AFTER init/*
 
-	CMD rfim RUN "/data1/nightly/rfim/test-ppsetc -d rfim "
+	CMD rfim RUN "/data1/nightly/rfim/test-ppsetc -d rfim pyetc"
 		AFTER rt
 		AFTER init/*
 
@@ -37,3 +42,6 @@ TABLE pyetc HOST etccartier
 	TABLE test_final HOST etccartier
 		CMD pyetc.report RUN "pyetc_report"
 			AFTER ssb:test_final/pyetc.expect
+
+
+/data1/nightly/jwst_dev
