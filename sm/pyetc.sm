@@ -42,6 +42,3 @@ TABLE pyetc HOST etccartier
 	TABLE test_final HOST etccartier
 		CMD pyetc.report RUN "pyetc_report"
 			AFTER ssb:test_final/pyetc.expect
-
-
-/data1/nightly/jwst_dev
