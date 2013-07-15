@@ -324,7 +324,8 @@ class runner(object):
     def load_host_info( self, filename ) : 
 
         if os.path.exists(filename):
-            print 'READING HOST INFO FROM %s' %filename
+            pass
+            # print 'READING HOST INFO FROM %s' %filename
         else:
             print 'ERROR - %s does not exist' %filename
             sys.exit(1)
