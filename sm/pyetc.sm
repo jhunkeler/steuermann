@@ -3,12 +3,7 @@
 
 TABLE pyetc HOST etccartier
 
-    # delay for 4 hours so that tests start after midnight
-	CMD delay_four_hours RUN "/bin/sleep 4h"
-        	AFTER init/*
-
 	CMD jwst_dev RUN "/data1/nightly/jwst_dev/test-ppsetc -d dev etc_jwst_dev"
-	    AFTER delay_four_hours
 
 	CMD trunk RUN "/data1/nightly/trunk/test-ppsetc -d trunk pyetc"
 	    AFTER jwst_dev

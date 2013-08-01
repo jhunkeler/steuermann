@@ -1,0 +1,7 @@
+
+TABLE test_final HOST ssb
+
+    CMD notify RUN "test_notify daily_latest jwst_latest"
+
+	CMD mysql_watch RUN "test_mysql_watch"
+

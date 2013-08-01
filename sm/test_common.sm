@@ -4,14 +4,3 @@ TABLE test_setup HOST arzach cadeau banana herbert
 
 # each of test_run_* says AFTER test_setup/*
 
-TABLE test_final HOST ssb
-        CMD notify RUN "test_notify daily_latest jwst_latest"
-                AFTER *:test_import/*
-		AFTER test_final/pyetc.expect
-
-	CMD mysql_watch RUN "test_mysql_watch"
-		AFTER OPT dev.import
-		AFTER OPT x.import
-		AFTER init/*
-
-
