@@ -46,7 +46,8 @@ create unique index sm_status_idx1 on sm_status ( run, host, tablename, cmd );
 -- table lists all run names in the system
 CREATE TABLE sm_runs (
 	run		VARCHAR(100),
-	create_time	VARCHAR(26)
+	create_time	VARCHAR(26),
+	errors		int
 	);
 
 CREATE UNIQUE INDEX sm_runs_idx1 ON sm_runs(run);

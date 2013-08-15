@@ -178,13 +178,24 @@ elif action == 'runs' :
         elif x == 'time_desc' :
             order ='create_time DESC'
 
-    c.execute('SELECT DISTINCT run, create_time FROM sm_runs ORDER BY %s'%order)
+    c.execute('SELECT run, create_time, errors FROM sm_runs ORDER BY %s'%order)
     print "<table>"
-    for run, create_time in c :
+    for run, create_time, errors in c :
+        if errors is None :
+            c2 = db.cursor()
+            c2.execute("select count(*) from sm_status where run = ? and status > '0' and status < 'A'", (run,))
+            errors = c2.fetchone()
+            errors = errors[0]
+            # I was thinking of caching the computed value back into
+            # the sm_runs table and then invalidating it any time we add
+            # to the sm_status, but it is so fast that I don't need that
+            # optimization right now.
         print "<tr>"
         print "<td>"
         print "<a href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
-        print "</td><td>"
+        print "</td>"
+        print "<td>%s</td>"%errors
+        print "<td>"
         if permission_modify :
             print "<a href=%s?action=delete&run=%s>delete</a>"%(cginame, run)
         print "</td>"
