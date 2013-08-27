@@ -29,10 +29,14 @@ TABLE pyetc HOST etccartier
     	CMD spectro_medium RUN "/data1/nightly/spectro_medium/test-ppsetc -d medium etc_spectro"
 	    AFTER imagers_loose
 
-    CMD spectro_loose RUN "/data1/nightly/spectro_loose/test-ppsetc -d loose etc_spectro"
+	CMD spectro_loose RUN "/data1/nightly/spectro_loose/test-ppsetc -d loose etc_spectro"
 	    AFTER spectro_medium
 
 	CMD doc_build RUN "/data1/nightly/trunk/pyetc/doc/auto_doc_build"
+		AFTER etccartier:pyetc/trunk
+
+	# a special build for INS to edit the docs and us to build them in place
+	CMD ins_doc_build RUN "/data1/nightly/trunk/pyetc/doc/auto_doc_build_ins"
 		AFTER etccartier:pyetc/trunk
 
 
