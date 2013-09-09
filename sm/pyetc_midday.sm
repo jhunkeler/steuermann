@@ -18,11 +18,8 @@ TABLE pyetc HOST etccartier
 	CMD rt RUN "/eng/ssb/auto/steuermann_scripts/test_rt dev pyetc"
 		AFTER jwst_prototype
 
-	CMD rfim RUN "/data1/nightly/rfim/test-ppsetc -d rfim pyetc"
-		AFTER rt
-
     	CMD imagers_medium RUN "/data1/nightly/imagers_medium/test-ppsetc -d medium etc_imagers"
-	    AFTER rfim
+	    AFTER rt
 
     	CMD imagers_loose RUN "/data1/nightly/imagers_loose/test-ppsetc -d loose etc_imagers"
 	    AFTER imagers_medium
