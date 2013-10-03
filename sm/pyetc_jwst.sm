@@ -1,0 +1,19 @@
+####################
+####################
+
+TABLE run_tests HOST etcbrady
+
+    CMD prototype_prod RUN "/data1/nightly/jwst_prototype_prod/test-ppsetc -d"
+
+    CMD bnc_dev RUN "/data1/nightly/jwst_bnc_dev/test-ppsetc -d dev bnc"
+        AFTER prototype_prod
+
+
+TABLE import_tests HOST ssb
+	CMD import RUN "test_import pyetc; test_expected pyetc"
+		AFTER *:run_tests/*
+
+
+#TABLE pyetc_report HOST etcbrady
+#	CMD report RUN "pyetc_report"
+#		AFTER ssb:import_tests/*
