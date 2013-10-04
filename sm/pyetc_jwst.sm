@@ -10,7 +10,7 @@ TABLE run_tests HOST etcbrady
 
 
 TABLE import_tests HOST ssb
-	CMD import RUN "test_import pyetc; test_expected pyetc"
+	CMD import RUN "test_import jwst_etc_daily; test_expected pyetc"
 		AFTER *:run_tests/*
 
 
