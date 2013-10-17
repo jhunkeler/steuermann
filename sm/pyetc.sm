@@ -38,7 +38,7 @@ TABLE pyetc HOST etccartier
 
 
 TABLE test_final HOST ssb
-	CMD pyetc.expect RUN "test_import pyetc ; test_expected pyetc"
+	CMD pyetc.expect RUN "test_import pyetc-etccartier ; test_expected pyetc"
 		AFTER *:pyetc/*
 
 
