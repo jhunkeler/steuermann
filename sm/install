@@ -3,7 +3,7 @@
 #	su iraf -c ./install
 #
 
-N=10
+N=11
 
 here=`pwd`
 
