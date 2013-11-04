@@ -5,3 +5,5 @@ TABLE test_final HOST ssb
 
 	CMD mysql_watch RUN "test_mysql_watch"
 
+	CMD recount RUN "test_recount"
+
