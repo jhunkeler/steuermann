@@ -17,7 +17,7 @@ TABLE run_tests HOST etcbrady
 #    CMD core_prod RUN "/data1/nightly/hst_core_prod/test-ppsetc -d production etc_hst_core"
 #        AFTER core_medium
 
-#    CMD release_prod RUN "/data1/nightly/hst_release_prod/test-ppsetc -d production etc_hst_release"
+    CMD release_prod RUN "/data1/nightly/hst_release_prod/test-ppsetc -d production etc_hst_release"
 #        AFTER core_prod
 
 #    CMD spectro_loose RUN "/data1/nightly/hst_spectro_loose/test-ppsetc -d loose etc_hst_spectro"
@@ -29,8 +29,11 @@ TABLE run_tests HOST etcbrady
 #    CMD spectro_prod RUN "/data1/nightly/hst_spectro_prod/test-ppsetc -d production etc_hst_spectro"
 #        AFTER spectro_medium
 
-    CMD release_numpy_1.7.1 RUN "/data1/nightly/hst_release_numpy_1.7.1/test-ppsetc -d numpy_1.7.1 etc_hst_release"
+#    CMD spectro_refactored RUN "/data1/nightly/hst_spectro_refactored/test-ppsetc -d refactored etc_hst_spectro"
 #        AFTER spectro_prod
+
+#    CMD release_numpy_1.7.1 RUN "/data1/nightly/hst_release_numpy_1.7.1/test-ppsetc -d numpy_1.7.1 etc_hst_release"
+#        AFTER spectro_refactored
 
 
 TABLE import_tests HOST ssb
