@@ -1,0 +1,90 @@
+## TODO:
+##  add builds on ssbwebv1 for those things that we actually care about
+
+####################
+####################
+
+# install stsci_python into default environment
+# build hstcal
+#	- everywhere
+TABLE build HOST arzach cadeau banana jwcalibdev
+	CMD dev.py2.7.3 RUN "build_stsci_python dev 2.7.3"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
+	CMD dev.hstcal RUN "build_hstcal dev"
+		AFTER init/*
+		AFTER *:assemble/dev.hstcal
+
+#TABLE build HOST vxp-dukat
+#	CMD dev.py2.7.1 RUN "build_stsci_python"
+#		AFTER init/*
+#		AFTER *:assemble/dev.stsci_python
+
+#
+# not useful yet
+# TABLE build HOST arzach CMD ur_docs RUN "/arzach/data1/iraf/work/ur_doc_build/docs/overnight_build" AFTER init/*
+
+
+# older python environments
+#	- arzach only
+TABLE build HOST arzach 
+	CMD dev.py2.6.5 RUN "build_stsci_python dev 2.6.5"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_python
+
+# stsdas and friends
+#	- 32 bit only
+TABLE build HOST herbert bond
+	CMD dev.axe RUN "build_axe dev"
+		AFTER init/*
+		AFTER *:assemble/dev.axe
+
+	CMD dev.stsci_iraf RUN "build_stsci_iraf dev"
+		AFTER init/*
+		AFTER *:assemble/dev.stsci_iraf
+		AFTER build/dev.axe
+
+	CMD dev.stsci_iraf_log RUN "build_stsci_iraf_log dev"
+		AFTER init/*
+		AFTER build/dev.stsci_iraf
+
+	CMD dev.stsci_iraf_help RUN "build_stsci_iraf_help dev"
+		AFTER init/*
+		AFTER build/dev.stsci_iraf
+
+
+# stsdas for 64 bit machines - get it from a related 32 bit system
+TABLE build HOST arzach jwcalibdev
+	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev herbert"
+	AFTER herbert:build/dev.stsci_iraf*
+
+TABLE build HOST cadeau banana
+	CMD dev.stsci_iraf_64hack RUN "build_stsci_iraf_64hack dev bond"
+	AFTER bond:build/dev.stsci_iraf*
+
+# stsci_python documentation
+#	- one machine only
+TABLE build HOST arzach
+	CMD dev.stsci_python_sphinxdocs RUN "build_sphinxdocs dev 2.7.3"
+	AFTER build/dev.py2.7.3
+
+# old epydoc documentation - only works on thor; hope we can get rid of
+# epydoc sooner than we have to do anything about this.
+# TABLE build HOST thor CMD dev.stsci_python_epydoc RUN "exit 1 ; /thor/data2/iraf/epydoc_test/nightly" AFTER build/dev.py2.7.*
+
+# stamp the IRAF banner file when the builds are complete
+TABLE stamp HOST herbert arzach bond cadeau banana jwcalibdev
+	CMD dev RUN "build_stamp dev"
+		AFTER build/*
+
+#
+TABLE build HOST arzach cadeau banana jwcalibdev
+	CMD dev.jwst2.7.3 RUN "build_jwst dev 2.7.3"
+		AFTER init/*
+		AFTER *:assemble/dev.jwst
+		AFTER build/dev.py2.7.*
+
+TABLE build HOST jwcalibdev
+	CMD dev.jwst_docs RUN "build_jwst_docs dev 2.7.3"
+		AFTER dev.jwst*
+

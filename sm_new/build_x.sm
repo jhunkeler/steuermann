@@ -1,0 +1,71 @@
+## TODO:
+##  add builds on ssbwebv1 for those things that we actually care about
+
+####################
+####################
+
+# install stsci_python into default environment
+# build hstcal
+#	- everywhere
+TABLE build HOST arzach cadeau banana jwcalibdev
+	CMD x.py2.7.3 RUN "build_stsci_python x 2.7.3"
+		AFTER init/*
+		AFTER *:assemble/x.stsci_python
+	CMD x.hstcal RUN "build_hstcal x"
+		AFTER init/*
+		AFTER *:assemble/x.hstcal
+
+# stsdas and friends
+#	- 32 bit only
+TABLE build HOST herbert bond
+	CMD x.axe RUN "build_axe x"
+		AFTER init/*
+		AFTER *:assemble/x.axe
+
+	CMD x.stsci_iraf RUN "build_stsci_iraf x"
+		AFTER init/*
+		AFTER *:assemble/x.stsci_iraf
+		AFTER build/x.axe
+
+	CMD x.stsci_iraf_log RUN "build_stsci_iraf_log x"
+		AFTER init/*
+		AFTER build/x.stsci_iraf
+
+	CMD x.stsci_iraf_help RUN "build_stsci_iraf_help x"
+		AFTER init/*
+		AFTER build/x.stsci_iraf
+
+
+# stsdas for 64 bit machines - get it from a related 32 bit system
+TABLE build HOST arzach
+	CMD x.stsci_iraf_64hack RUN "build_stsci_iraf_64hack x herbert"
+	AFTER herbert:build/x.stsci_iraf*
+
+TABLE build HOST cadeau banana
+	CMD x.stsci_iraf_64hack RUN "build_stsci_iraf_64hack x bond"
+	AFTER bond:build/x.stsci_iraf*
+
+
+# stamp the IRAF banner file when the builds are complete
+TABLE stamp HOST herbert arzach bond cadeau banana
+	CMD x RUN "build_stamp x"
+		AFTER build/*
+
+# stsci_python documentation
+#       - one machine only
+TABLE build HOST arzach
+        CMD x.stsci_python_sphinxdocs RUN "build_sphinxdocs x 2.7.3"
+        AFTER build/x.py2.7.3
+
+# jwst irafx
+
+TABLE build HOST arzach cadeau banana jwcalibdev
+        CMD x.jwst RUN "build_jwst x 2.7.3"
+                AFTER init/*
+                AFTER *:assemble/x.jwst
+                AFTER build/x.py2.7.*
+
+TABLE build HOST jwcalibdev
+        CMD x.jwst_docs2.7.3 RUN "build_jwst_docs x 2.7.3"
+                AFTER x.jwst*
+

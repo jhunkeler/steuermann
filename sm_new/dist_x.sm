@@ -1,0 +1,117 @@
+
+# we can make everything after this
+
+TABLE x_distribute HOST herbert arzach bond cadeau banana
+	CMD gate RUN "exit 0"
+		AFTER init/*
+		AFTER stamp/*
+
+# regular distributions
+
+TABLE x_distribute HOST arzach
+	CMD x.iraf RUN "synctool - irafx"
+		AFTER x_distribute/gate
+	CMD x.pyssg RUN "synctool - pyssgx"
+		AFTER x_distribute/gate
+	CMD x.stsci_iraf RUN "synctool - stsci_iraf_x"
+		AFTER x_distribute/gate
+	CMD x.hstcal RUN "synctool - hstcalx"
+		AFTER x_distribute/gate
+	CMD x.motd RUN "synctool - irafx/iraf/unix/hlib/motd"
+		AFTER x_distribute/x.iraf
+
+#
+
+TABLE x_distribute HOST cadeau banana
+	CMD irafx.pkg RUN "cd $HOME/daily_build/mac_package; ./build x " 
+		AFTER x_distribute/gate
+	CMD irafx.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute x -" 
+		AFTER irafx.pkg
+
+# wads of special cases
+
+# jwcalibdev has local disk - some day it may do its own builds
+TABLE x_distribute HOST arzach
+	CMD x.jwcalibdev.iraf RUN "synctool jwcalibdev: irafx"
+		AFTER x_distribute/gate
+	CMD x.jwcalibdev.pyssg RUN "synctool jwcalibdev: pyssgx"
+		AFTER x_distribute/gate
+	CMD x.jwcalibdev.stsci_iraf RUN "synctool jwcalibdev: stsci_iraf_x"
+		AFTER x_distribute/gate
+	CMD x.jwcalibdev.hstcal RUN "synctool jwcalibdev: hstcalx"
+		AFTER x_distribute/gate
+	CMD x.jwcalibdev.motd RUN "synctool jwcalibdev: irafx/iraf/unix/hlib/motd"
+		AFTER x.jwcalibdev.iraf
+
+# web distribution
+
+TABLE x_distribute HOST cadeau
+	CMD x.web RUN "do_irafx_web"
+		AFTER x_distribute/gate
+		AFTER *:x_distribute/irafx.pkg
+		AFTER *:x_distribute/irafx.dmg
+
+TABLE x_distribute HOST herbert
+	CMD x.web RUN "do_irafx_web S"
+		AFTER x_distribute/gate
+		AFTER cadeau:x_distribute/x.web
+		AFTER *:x_distribute/irafx.pkg
+		AFTER *:x_distribute/irafx.dmg
+
+
+# goods - has RHE 5 only now
+
+TABLE x_distribute_other HOST arzach
+	CMD goods.iraf RUN "synctool goods12: irafx"
+		AFTER x_distribute/gate
+	CMD goods.pyssg RUN "synctool goods12: pyssgx"
+		AFTER x_distribute/gate
+	CMD goods.stsci_iraf RUN "synctool goods12: stsci_iraf_x"
+		AFTER x_distribute/gate
+	CMD goods.hstcal RUN "synctool goods12: hstcalx"
+		AFTER x_distribute/gate
+	CMD goods.motd RUN "synctool goods12: irafx/iraf/unix/hlib/motd"
+		AFTER goods.iraf
+
+# witserv1 - who are these guys?
+
+TABLE x_distribute_other HOST arzach
+	CMD witserv1.iraf RUN "synctool witserv1: irafx"
+		AFTER x_distribute/gate
+	CMD witserv1.pyssg RUN "synctool witserv1: pyssgx"
+		AFTER x_distribute/gate
+	CMD witserv1.stsci_iraf RUN "synctool witserv1: stsci_iraf_x"
+		AFTER x_distribute/gate
+	CMD witserv1.hstcal RUN "synctool witserv1: hstcalx"
+		AFTER x_distribute/gate
+	CMD witserv1.motd RUN "synctool witserv1: irafx/iraf/unix/hlib/motd"
+		AFTER witserv1.iraf
+
+# dmsinsvm - have a pipeline and irafx/irafdev on the same machine for INS
+
+TABLE x_distribute_other HOST arzach
+	CMD dmsinsvm.iraf RUN "synctool dmsinsvm: irafx"
+		AFTER x_distribute/gate
+	CMD dmsinsvm.pyssg RUN "synctool dmsinsvm: pyssgx"
+		AFTER x_distribute/gate
+	CMD dmsinsvm.stsci_iraf RUN "synctool dmsinsvm: stsci_iraf_x"
+		AFTER x_distribute/gate
+	CMD dmsinsvm.hstcal RUN "synctool dmsinsvm: hstcalx"
+		AFTER x_distribute/gate
+	CMD dmsinsvm.motd RUN "synctool dmsinsvm: irafx/iraf/unix/hlib/motd"
+		AFTER dmsinsvm.iraf
+
+# royal - a beowulf cluster
+
+TABLE x_distribute_other HOST arzach
+	CMD royal.iraf RUN "synctool royal: irafx"
+		AFTER x_distribute/gate
+	CMD royal.pyssg RUN "synctool royal: pyssgx"
+		AFTER x_distribute/gate
+	CMD royal.stsci_iraf RUN "synctool royal: stsci_iraf_x"
+		AFTER x_distribute/gate
+	CMD royal.hstcal RUN "synctool royal: hstcalx"
+		AFTER x_distribute/gate
+	CMD royal.motd RUN "synctool royal: irafx/iraf/unix/hlib/motd"
+		AFTER royal.iraf
+

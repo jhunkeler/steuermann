@@ -1,0 +1,43 @@
+TABLE init HOST etccartier
+	CMD env RUN "env | sort"
+
+TABLE pyetc HOST etccartier
+
+	CMD jwst_dev RUN "/data1/nightly/jwst_dev/test-ppsetc -d dev etc_jwst_dev"
+		AFTER init/*
+
+	CMD trunk RUN "/data1/nightly/trunk/test-ppsetc -d trunk pyetc"
+	    AFTER jwst_dev
+
+	CMD refactored RUN "/data1/nightly/refactored/test-ppsetc -d refactored pyetc"
+		AFTER trunk
+
+	CMD jwst_prototype RUN "/data1/nightly/jwpetc_dev/test-ppsetc -d"
+		AFTER refactored
+
+	CMD rt RUN "/eng/ssb/auto/steuermann_scripts/test_rt dev pyetc"
+		AFTER jwst_prototype
+
+    	CMD imagers_medium RUN "/data1/nightly/imagers_medium/test-ppsetc -d medium etc_imagers"
+	    AFTER rt
+
+    	CMD imagers_loose RUN "/data1/nightly/imagers_loose/test-ppsetc -d loose etc_imagers"
+	    AFTER imagers_medium
+
+    	CMD spectro_medium RUN "/data1/nightly/spectro_medium/test-ppsetc -d medium etc_spectro"
+	    AFTER imagers_loose
+
+    CMD spectro_loose RUN "/data1/nightly/spectro_loose/test-ppsetc -d loose etc_spectro"
+	    AFTER spectro_medium
+
+	CMD doc_build RUN "/data1/nightly/trunk/pyetc/doc/auto_doc_build"
+		AFTER etccartier:pyetc/trunk
+
+
+TABLE test_final HOST ssb
+	CMD pyetc.expect RUN "test_import pyetc ; test_expected etc_midday"
+		AFTER *:pyetc/*
+
+#TABLE save_reference_files HOST etccartier
+#    CMD save_refs RUN "python /data1/nightly/save_refs.py"
+#        AFTER *:test_final/*
