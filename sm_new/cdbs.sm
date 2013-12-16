@@ -1,3 +1,7 @@
+TABLE cdbs HOST arzach
+	CMD ftp RUN "cdbs_arc"
+		AFTER init/*
+
 TABLE cdbs HOST cadeau banana
 	CMD local_copy RUN "cdbs_copy"
 		AFTER init/*
@@ -5,9 +9,5 @@ TABLE cdbs HOST cadeau banana
 TABLE cdbs HOST cadeau
 	CMD mac_package RUN "/Users/iraf/daily_build/mac_package/make_packages cdbs"
 		AFTER cdbs/local_copy
-
-TABLE cdbs HOST arzach
-	CMD ftp RUN "cdbs_arc"
-		AFTER init/*
 
 

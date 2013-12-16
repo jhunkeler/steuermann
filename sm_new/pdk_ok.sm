@@ -1,0 +1,10 @@
+
+TABLE pdk_ok HOST ssb
+
+    CMD process_okify_tables RUN "/eng/ssb/auto/steuermann_scripts/process_okify_tables"
+		AFTER *:init/*
+
+TABLE pdk_ok HOST arzach cadeau banana herbert
+
+    CMD okify RUN "test_okify"
+        AFTER ssb:pdk_ok/process_okify_tables

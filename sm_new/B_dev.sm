@@ -1,5 +1,0 @@
-IMPORT "init.sm"
-IMPORT "assemble_common.sm"
-IMPORT "assemble_dev.sm"
-IMPORT "build_dev.sm"
-IMPORT "dist_dev.sm"

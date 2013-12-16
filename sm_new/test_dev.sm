@@ -1,44 +1,51 @@
-####################
-####################
-
-IMPORT "test_common.sm"
-
-
 # This structure is meant to serialize the regtests so that nothing else
 # is going on at the same time.  The regtests can consume all the CPUs.
 TABLE test_run_dev HOST arzach cadeau banana # herbert
-	CMD test2.7.3 RUN "test_rt dev 2.7.3"
-		AFTER stamp/dev
-		AFTER test_setup/okify
-		AFTER test_setup/*
+
+    CMD test2.7.3 RUN "test_rt dev 2.7.3"
+        AFTER stamp/dev
+        AFTER pdk_ok/*
+
 
 TABLE test_run_dev HOST arzach
-	CMD test2.6.5 RUN "test_rt dev 2.6.5"
-		AFTER stamp/dev
-		AFTER test2.7.*
+
+    CMD test2.6.5 RUN "test_rt dev 2.6.5"
+        AFTER stamp/dev
+        AFTER test2.7.*
+
 
 TABLE test_run_dev HOST arzach
-	CMD contact RUN "test_contact"
-		AFTER stamp/dev
-		AFTER test2.7.*
+
+    CMD contact RUN "test_contact"
+        AFTER stamp/dev
+        AFTER test2.7.*
+
 
 TABLE test_run_dev HOST jwcalibdev
-	CMD contact_jwst RUN "test_contact_jwst"
-		AFTER init/*
-		AFTER test2.7.*
+
+    CMD contact_jwst RUN "test_contact_jwst"
+        AFTER init/*
+        AFTER test2.7.*
+
 
 TABLE test_run_dev HOST jwcalibdev
-	CMD jwst RUN "/data1/jwst_rt/rt dev 2.7.3"
-		AFTER stamp/dev
+
+    CMD jwst RUN "/data1/jwst_rt/rt dev 2.7.3"
+        AFTER stamp/dev
+
 
 TABLE test_import HOST ssb
-        CMD dev.import RUN "test_import irafdev"
-                AFTER *:test_run_dev/*
-		AFTER *:pyetc/*
-        CMD dev.expect RUN "test_expected irafdev daily_latest daily"
-                AFTER test_import/dev.import
-	CMD dev.jwst.import RUN "test_import jwst"
-		AFTER jwcalibdev:test_run_dev/jwst
-	CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
-		AFTER dev.jwst.import
+
+    CMD dev.import RUN "test_import irafdev"
+        AFTER *:test_run_dev/*
+        AFTER *:pyetc/*
+
+    CMD dev.expect RUN "test_expected irafdev daily_latest daily"
+        AFTER test_import/dev.import
+
+    CMD dev.jwst.import RUN "test_import jwst"
+        AFTER jwcalibdev:test_run_dev/jwst
+
+    CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
+        AFTER dev.jwst.import
 

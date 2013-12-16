@@ -1,0 +1,15 @@
+IMPORT "init.sm"
+IMPORT "cdbs.sm"
+IMPORT "pdk_ok.sm"
+IMPORT "assemble_common.sm"
+IMPORT "assemble_dev.sm"
+
+
+TABLE setup_done HOST banana bond cadeau arzach herbert ssb jwcalibdev etcbrady etccartier
+
+	CMD done LOCAL "echo all done with setup"
+		AFTER init/*
+		AFTER OPT cdbs/*
+		AFTER OPT pdk_ok/*
+		AFTER OPT assemble/*
+

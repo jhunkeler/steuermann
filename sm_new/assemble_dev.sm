@@ -2,28 +2,23 @@
 TABLE assemble HOST arzach
 
 	CMD dev.stsci_python RUN "assemble_stsci_python dev"
-		AFTER init/*
 		AFTER svnsync
 
 	CMD dev.stsci_iraf RUN "assemble_stsci_iraf dev"
-		AFTER init/*
 		AFTER svnsync
 
 	CMD dev.axe RUN "assemble_axe dev"
-		AFTER init/*
 		AFTER svnsync
 
 	CMD dev.hstcal RUN "assemble_hstcal dev"
-		AFTER init/*
 		AFTER svnsync
+
 
 TABLE assemble HOST jwcalibdev
 
 	CMD dev.jwst RUN "assemble_jwst dev"
-		AFTER init/*
-		AFTER *:svnsync
+		AFTER *:assemble/svnsync
 
 # 	CMD dev.crds RUN "assemble_crds dev"
-# 		AFTER init/*
-# 		AFTER svnsync
+# 		AFTER *:assemble/svnsync
 
