@@ -1,3 +1,7 @@
+# TODO
+# - install Ureka x on test machines
+
+
 # This structure is meant to serialize the regtests so that nothing else
 # is going on at the same time.  The regtests can consume all the CPUs.
 TABLE test_run_x HOST arzach cadeau banana herbert

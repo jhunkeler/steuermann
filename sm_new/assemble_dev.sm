@@ -1,24 +1,30 @@
 # arzach assembles all the source code
 TABLE assemble HOST arzach
 
+    IF ssbdev_build:
 	CMD dev.stsci_python RUN "assemble_stsci_python dev"
 		AFTER svnsync
 
+    IF ssbdev_build:
 	CMD dev.stsci_iraf RUN "assemble_stsci_iraf dev"
 		AFTER svnsync
 
+    IF ssbdev_build:
 	CMD dev.axe RUN "assemble_axe dev"
 		AFTER svnsync
 
+    IF ssbdev_build:
 	CMD dev.hstcal RUN "assemble_hstcal dev"
 		AFTER svnsync
 
 
 TABLE assemble HOST jwcalibdev
 
+    IF ssbdev_build:
 	CMD dev.jwst RUN "assemble_jwst dev"
 		AFTER *:assemble/svnsync
 
+#   IF ssbdev_build:
 # 	CMD dev.crds RUN "assemble_crds dev"
 # 		AFTER *:assemble/svnsync
 

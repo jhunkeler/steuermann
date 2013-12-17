@@ -1,0 +1,7 @@
+CONDITIONS
+	ssbdev_build = False
+	ssbdev_dist = False
+
+	ssbx_build = False
+	ssbx_dist = False
+END
