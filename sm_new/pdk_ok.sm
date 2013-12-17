@@ -1,4 +1,3 @@
-
 TABLE pdk_ok HOST ssb
 
     CMD process_okify_tables RUN "/eng/ssb/auto/steuermann_scripts/process_okify_tables"
