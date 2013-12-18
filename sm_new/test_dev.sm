@@ -1,57 +1,46 @@
 # TODO
-# - install Ureka dev on test machines
+#   install Ureka into /usr/stsci on nott
+#       call "install_ssb_ureka dev"
+#   run tests
 
 
+TABLE test_dev HOST nott
 
+    IF ssbdev_build:
+    CMD install_dev RUN "install_ssb_ureka dev"
+        AFTER AFTER init/*
 
-# This structure is meant to serialize the regtests so that nothing else
-# is going on at the same time.  The regtests can consume all the CPUs.
-TABLE test_run_dev HOST arzach cadeau banana # herbert
+    IF ssbdev_build:
+    CMD jwst_contact RUN "test_contact_jwst"
+        AFTER install_dev
 
-    CMD test2.7.3 RUN "test_rt dev 2.7.3"
-        AFTER stamp/dev
-        AFTER pdk_ok/*
+    IF ssbdev_build:
+    CMD jwst_test RUN "/srv/jwst_rt/rt dev"
+        AFTER jwst_contact
 
-
-TABLE test_run_dev HOST arzach
-
-    CMD test2.6.5 RUN "test_rt dev 2.6.5"
-        AFTER stamp/dev
-        AFTER test2.7.*
-
-
-TABLE test_run_dev HOST arzach
+    IF ssbdev_build:
+    CMD test2.7.5 RUN "test_rt dev 2.7.5"
+        AFTER jwst_test
 
     CMD contact RUN "test_contact"
-        AFTER stamp/dev
-        AFTER test2.7.*
+        AFTER test2.7.5
 
 
-TABLE test_run_dev HOST jwcalibdev
+TABLE import_test_results HOST ssb
 
-    CMD contact_jwst RUN "test_contact_jwst"
-        AFTER init/*
-        AFTER test2.7.*
-
-
-TABLE test_run_dev HOST jwcalibdev
-
-    CMD jwst RUN "/data1/jwst_rt/rt dev 2.7.3"
-        AFTER stamp/dev
-
-
-TABLE test_import HOST ssb
-
+    IF ssbdev_build:
     CMD dev.import RUN "test_import irafdev"
-        AFTER *:test_run_dev/*
-        AFTER *:pyetc/*
+        AFTER nott:test_dev/*
 
+    IF ssbdev_build:
     CMD dev.expect RUN "test_expected irafdev daily_latest daily"
-        AFTER test_import/dev.import
+        AFTER dev.import
 
+    IF ssbdev_build:
     CMD dev.jwst.import RUN "test_import jwst"
-        AFTER jwcalibdev:test_run_dev/jwst
+        AFTER nott:test_dev/jwst_test
 
+    IF ssbdev_build:
     CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
         AFTER dev.jwst.import
 

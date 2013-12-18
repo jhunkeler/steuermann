@@ -1,7 +1,7 @@
 IMPORT "init.sm"
 
 IMPORT "test_dev.sm"
-IMPORT "test_x.sm"
+#IMPORT "test_x.sm"
 
-IMPORT "dist_dev.sm"
-IMPORT "dist_x.sm"
+#IMPORT "dist_dev.sm"
+#IMPORT "dist_x.sm"
