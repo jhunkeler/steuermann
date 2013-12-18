@@ -8,7 +8,7 @@ TABLE test_dev HOST nott
 
     IF ssbdev_build:
     CMD install_dev RUN "install_ssb_ureka dev"
-        AFTER AFTER init/*
+        AFTER init/*
 
     IF ssbdev_build:
     CMD jwst_contact RUN "test_contact_jwst"
