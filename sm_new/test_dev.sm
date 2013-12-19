@@ -15,7 +15,8 @@ TABLE test_dev HOST nott
 
     IF ssbdev_test:
     CMD test2.7.5 RUN "test_rt dev 2.7.5"
-        AFTER jwst_test
+        AFTER OPT jwst_test
+        AFTER install_dev
 
     IF ssbdev_test:
     CMD contact RUN "test_contact"
