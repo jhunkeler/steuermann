@@ -1,24 +1,43 @@
-# TODO
-# - install Ureka x on test machines
+
+TABLE test_x HOST nott
+
+    IF ssbx_test:
+    CMD install_x RUN "install_ssb_ureka x"
+        AFTER init/*
+
+#    IF ssbx_test:
+#    CMD jwst_contact RUN "test_contact_jwst"
+#        AFTER install_x
+
+#    IF ssbx_test:
+#    CMD jwst_test RUN "/srv/jwst_rt/rt x"
+#        AFTER jwst_contact
+
+    IF ssbx_test:
+    CMD test2.7.5 RUN "test_rt x 2.7.5"
+        AFTER OPT jwst_test
+        AFTER install_x
+
+    IF ssbx_test:
+    CMD contact RUN "test_contact"
+        AFTER test2.7.5
 
 
-# This structure is meant to serialize the regtests so that nothing else
-# is going on at the same time.  The regtests can consume all the CPUs.
-TABLE test_run_x HOST arzach cadeau banana herbert
-	CMD test2.7.3 RUN "test_rt x 2.7.3"
-		AFTER stamp/x
-		AFTER test_setup/okify
-		AFTER test_setup/*
-		AFTER OPT test_run_dev/*
+TABLE import_test_results HOST ssb
 
-TABLE test_run_x HOST arzach
-	CMD contact RUN "test_contact"
-		AFTER stamp/x
-		AFTER test2.7.*
+#    IF ssbx_test:
+#    CMD x.jwst.import RUN "test_import jwst"
+#        AFTER nott:test_x/jwst_test
 
-TABLE test_import HOST ssb
-        CMD x.import RUN "test_import irafx"
-                AFTER *:test_run_x/*
-        CMD x.expect RUN "test_expected irafx daily_latest daily"
-                AFTER test_import/x.import
+#    IF ssbx_test:
+#    CMD x.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
+#        AFTER x.jwst.import
+
+    IF ssbx_test:
+    CMD x.import RUN "test_import irafx"
+        AFTER nott:test_x/*
+
+    IF ssbx_test:
+    CMD x.expect RUN "test_expected irafx daily_latest daily"
+        AFTER x.import
 
