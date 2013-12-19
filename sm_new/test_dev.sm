@@ -1,46 +1,42 @@
-# TODO
-#   install Ureka into /usr/stsci on nott
-#       call "install_ssb_ureka dev"
-#   run tests
-
 
 TABLE test_dev HOST nott
 
-    IF ssbdev_build:
+    IF ssbdev_test:
     CMD install_dev RUN "install_ssb_ureka dev"
         AFTER init/*
 
-    IF ssbdev_build:
-    CMD jwst_contact RUN "test_contact_jwst"
-        AFTER install_dev
+#    IF ssbdev_test:
+#    CMD jwst_contact RUN "test_contact_jwst"
+#        AFTER install_dev
 
-    IF ssbdev_build:
-    CMD jwst_test RUN "/srv/jwst_rt/rt dev"
-        AFTER jwst_contact
+#    IF ssbdev_test:
+#    CMD jwst_test RUN "/srv/jwst_rt/rt dev"
+#        AFTER jwst_contact
 
-    IF ssbdev_build:
+    IF ssbdev_test:
     CMD test2.7.5 RUN "test_rt dev 2.7.5"
         AFTER jwst_test
 
+    IF ssbdev_test:
     CMD contact RUN "test_contact"
         AFTER test2.7.5
 
 
 TABLE import_test_results HOST ssb
 
-    IF ssbdev_build:
+#    IF ssbdev_test:
+#    CMD dev.jwst.import RUN "test_import jwst"
+#        AFTER nott:test_dev/jwst_test
+
+#    IF ssbdev_test:
+#    CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
+#        AFTER dev.jwst.import
+
+    IF ssbdev_test:
     CMD dev.import RUN "test_import irafdev"
         AFTER nott:test_dev/*
 
-    IF ssbdev_build:
+    IF ssbdev_test:
     CMD dev.expect RUN "test_expected irafdev daily_latest daily"
         AFTER dev.import
-
-    IF ssbdev_build:
-    CMD dev.jwst.import RUN "test_import jwst"
-        AFTER nott:test_dev/jwst_test
-
-    IF ssbdev_build:
-    CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
-        AFTER dev.jwst.import
 

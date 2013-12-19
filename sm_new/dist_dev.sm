@@ -1,84 +1,11 @@
-# TODO
-#   rsync Ureka from /usr/stsci on nott to /ustsciEWS6_x64 on redhat-srvr4
 
+TABLE distribute HOST nott
 
+    IF ssbdev_dist:
+    CMD sync_ssbdev RUN "synctool - ssbdev"
+        AFTER nott:test_dev/install_dev
 
-# regular distributions
-
-TABLE distribute HOST arzach
-	CMD dev.iraf RUN "synctool - irafdev"
-		AFTER stamp/dev
-	CMD dev.pyssg RUN "synctool - pyssgdev"
-		AFTER stamp/dev
-	CMD dev.stsci_iraf RUN "synctool - stsci_iraf_dev"
-		AFTER stamp/dev
-	CMD dev.hstcal RUN "synctool - hstcaldev"
-		AFTER stamp/dev
-	CMD dev.motd RUN "synctool - irafdev/iraf/unix/hlib/motd"
-		AFTER distribute/dev.iraf
-
-TABLE distribute HOST cadeau banana
-	CMD irafdev.pkg RUN "cd $HOME/daily_build/mac_package; ./build dev " AFTER stamp/dev
-	CMD irafdev.dmg RUN "cd $HOME/daily_build/mac_package; ./distribute dev -" AFTER irafdev.pkg
-
-# wads of special cases
-
-# goods - has RHE 5 only now
-
-TABLE distribute_other HOST arzach
-	CMD goods.iraf RUN "synctool goods12: irafdev"
-		AFTER stamp/dev
-	CMD goods.pyssg RUN "synctool goods12: pyssgdev"
-		AFTER stamp/dev
-	CMD goods.stsci_iraf RUN "synctool goods12: stsci_iraf_dev"
-		AFTER stamp/dev
-	CMD goods.hstcal RUN "synctool goods12: hstcaldev"
-		AFTER stamp/dev
-	CMD goods.motd RUN "synctool goods12: irafdev/iraf/unix/hlib/motd"
-		AFTER goods.iraf
-
-# witserv1 - who are these guys?
-
-TABLE distribute_other HOST arzach
-	CMD witserv1.iraf RUN "synctool witserv1: irafdev"
-		AFTER stamp/dev
-	CMD witserv1.pyssg RUN "synctool witserv1: pyssgdev"
-		AFTER stamp/dev
-	CMD witserv1.stsci_iraf RUN "synctool witserv1: stsci_iraf_dev"
-		AFTER stamp/dev
-	CMD witserv1.hstcal RUN "synctool witserv1: hstcaldev"
-		AFTER stamp/dev
-	CMD witserv1.motd RUN "synctool witserv1: irafdev/iraf/unix/hlib/motd"
-		AFTER witserv1.iraf
-
-# dmsinsvm - have a pipeline and irafx/irafdev on the same machine for INS
-#
-# dmsinsvm shares a disk with the real DMS systems.  There is not
-# currently space for irafdev.
-
-# TABLE distribute_other HOST arzach
-# 	CMD dmsinsvm.iraf RUN "synctool dmsinsvm: irafdev"
-# 		AFTER stamp/dev
-# 	CMD dmsinsvm.pyssg RUN "synctool dmsinsvm: pyssgdev"
-# 		AFTER stamp/dev
-# 	CMD dmsinsvm.stsci_iraf RUN "synctool dmsinsvm: stsci_iraf_dev"
-# 		AFTER stamp/dev
-# 	CMD dmsinsvm.hstcal RUN "synctool dmsinsvm: hstcaldev"
-# 		AFTER stamp/dev
-# 	CMD dmsinsvm.motd RUN "synctool dmsinsvm: irafdev/iraf/unix/hlib/motd"
-# 		AFTER dmsinsvm.iraf
-
-# royal - a beowulf cluster
-
-TABLE distribute_other HOST arzach
-	CMD royal.iraf RUN "synctool royal: irafdev"
-		AFTER stamp/dev
-	CMD royal.pyssg RUN "synctool royal: pyssgdev"
-		AFTER stamp/dev
-	CMD royal.stsci_iraf RUN "synctool royal: stsci_iraf_dev"
-		AFTER stamp/dev
-	CMD royal.hstcal RUN "synctool royal: hstcaldev"
-		AFTER stamp/dev
-	CMD royal.motd RUN "synctool royal: irafdev/iraf/unix/hlib/motd"
-		AFTER royal.iraf
+    IF ssbdev_dist:
+    CMD sync_envconfig RUN "synctool - envconfig.mac"
+        AFTER sync_ssbdev
 
