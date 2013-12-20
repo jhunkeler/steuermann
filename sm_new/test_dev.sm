@@ -1,41 +1,45 @@
 
-TABLE test_dev HOST nott
+TABLE test_dev HOST banana cadeau nott
 
     IF ssbdev_test:
     CMD install_dev RUN "install_ssb_ureka dev"
         AFTER init/*
 
-#    IF ssbdev_test:
-#    CMD jwst_contact RUN "test_contact_jwst"
-#        AFTER install_dev
-
-#    IF ssbdev_test:
-#    CMD jwst_test RUN "/srv/jwst_rt/rt dev"
-#        AFTER jwst_contact
-
-    IF ssbdev_test:
-    CMD test2.7.5 RUN "test_rt dev 2.7.5"
-        AFTER OPT jwst_test
-        AFTER install_dev
+TABLE test_dev HOST cadeau
 
     IF ssbdev_test:
     CMD contact RUN "test_contact"
-        AFTER test2.7.5
+        AFTER install_dev
 
+TABLE test_dev HOST banana cadeau
+
+    IF ssbdev_test:
+    CMD test2.7.5 RUN "test_rt dev 2.7.5"
+        AFTER cadeau:test_dev/contact
+
+TABLE test_dev HOST jwcalibdev
+
+    IF ssbdev_test:
+    CMD jwst_contact RUN "test_contact_jwst"
+        AFTER install_dev
+
+    IF ssbdev_test:
+    CMD jwst_test RUN "/data1/jwst_rt/rt dev"
+        AFTER jwst_contact
 
 TABLE import_test_results HOST ssb
 
-#    IF ssbdev_test:
-#    CMD dev.jwst.import RUN "test_import jwst"
-#        AFTER nott:test_dev/jwst_test
+    IF ssbdev_test:
+    CMD dev.jwst.import RUN "test_import jwst"
+        AFTER jwcalibdev:test_dev/jwst_test
 
-#    IF ssbdev_test:
-#    CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
-#        AFTER dev.jwst.import
+    IF ssbdev_test:
+    CMD dev.jwst.expect RUN "test_expected jwst jwst_latest dailyjwst"
+        AFTER dev.jwst.import
 
     IF ssbdev_test:
     CMD dev.import RUN "test_import irafdev"
-        AFTER nott:test_dev/*
+        AFTER *:test_dev/*
 
     IF ssbdev_test:
     CMD dev.expect RUN "test_expected irafdev daily_latest daily"
