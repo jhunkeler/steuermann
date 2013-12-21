@@ -4,6 +4,7 @@ TABLE test_x HOST banana cadeau nott jwcalibdev
     IF ssbx_test:
     CMD install_x RUN "install_ssb_ureka x"
         AFTER init/*
+        AFTER OPT test_dev/*
 
 TABLE test_x HOST cadeau
 
