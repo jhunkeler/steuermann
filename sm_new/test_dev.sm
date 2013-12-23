@@ -1,5 +1,5 @@
 
-TABLE test_dev HOST banana cadeau nott jwcalibdev
+TABLE test_dev HOST arzach banana cadeau nott jwcalibdev
 
     IF ssbdev_test:
     CMD install_dev RUN "install_ssb_ureka dev"
@@ -11,7 +11,7 @@ TABLE test_dev HOST cadeau
     CMD contact RUN "test_contact"
         AFTER install_dev
 
-TABLE test_dev HOST banana cadeau
+TABLE test_dev HOST arzach banana cadeau
 
     IF ssbdev_test:
     CMD test2.7.5 RUN "test_rt dev 2.7.5"

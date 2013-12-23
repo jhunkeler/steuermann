@@ -1,5 +1,5 @@
 
-TABLE test_x HOST banana cadeau nott jwcalibdev
+TABLE test_x HOST arzach banana cadeau nott jwcalibdev
 
     IF ssbx_test:
     CMD install_x RUN "install_ssb_ureka x"
@@ -12,7 +12,7 @@ TABLE test_x HOST cadeau
     CMD contact RUN "test_contact"
         AFTER install_x
 
-TABLE test_x HOST banana cadeau
+TABLE test_x HOST arzach banana cadeau
 
     IF ssbx_test:
     CMD test2.7.5 RUN "test_rt x 2.7.5"
