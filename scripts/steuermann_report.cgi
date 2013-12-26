@@ -192,7 +192,12 @@ elif action == 'runs' :
             # optimization right now.
         print "<tr>"
         print "<td>"
-        print "<a href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
+        if run.startswith('daily_20'):
+            print "<a style="color:#B40404;" href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
+        elif run.startswith('etc_hst_daily') or run.startswith('etc_jwst_daily'):
+            print "<a style="color:#B40404;" href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
+        else:
+            print "<a href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
         print "</td>"
         print "<td>%s</td>"%errors
         print "<td>"
