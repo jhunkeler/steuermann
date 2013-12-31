@@ -6,7 +6,7 @@ TABLE assemble HOST arzach
 		AFTER init/*
 
     IF ssbx_build:
-    CMD irafx_update RUN "/eng/ssb/auto/prog/irafx_update "
+    CMD irafx_update RUN "/eng/ssb/auto/steuermann_scripts/irafx_update "
         AFTER init/*
 
     IF ssbx_build:
