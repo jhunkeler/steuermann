@@ -4,6 +4,7 @@ TABLE test_dev HOST arzach banana cadeau nott jwcalibdev
     IF ssbdev_test:
     CMD install_dev RUN "install_ssb_ureka dev"
         AFTER init/*
+        AFTER OPT build_docs/*
 
 TABLE test_dev HOST cadeau
 

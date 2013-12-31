@@ -1,4 +1,17 @@
 
+TABLE build_docs HOST arzach
+
+    IF ssbx_dist:
+    CMD stsci_python_dev_docs RUN "build_sphinxdocs dev"
+        AFTER init/*
+
+TABLE build_docs HOST jwcalibdev
+
+    IF ssbx_dist:
+    CMD jwst_dev_docs RUN "build_jwst_docs dev"
+        AFTER init/*
+
+
 TABLE distribute HOST nott
 
     IF ssbx_dist:
