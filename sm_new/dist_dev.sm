@@ -2,13 +2,13 @@
 TABLE build_docs HOST arzach
 
     IF ssbdev_dist:
-    CMD stsci_python_x_docs RUN "build_sphinxdocs x"
+    CMD stsci_python_dev_docs RUN "build_sphinxdocs dev"
         AFTER init/*
 
 TABLE build_docs HOST jwcalibdev
 
     IF ssbdev_dist:
-    CMD jwst_x_docs RUN "build_jwst_docs x"
+    CMD jwst_dev_docs RUN "build_jwst_docs dev"
         AFTER init/*
 
 
