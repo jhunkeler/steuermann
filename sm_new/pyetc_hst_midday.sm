@@ -29,11 +29,8 @@ TABLE run_tests HOST etcbrady
 #    CMD spectro_prod RUN "/data1/nightly/hst_spectro_prod/test-ppsetc -d production etc_hst_spectro"
 #        AFTER spectro_medium
 
-#    CMD spectro_refactored RUN "/data1/nightly/hst_spectro_refactored/test-ppsetc -d refactored etc_hst_spectro"
-#        AFTER spectro_prod
-
 #    CMD release_numpy_1.7.1 RUN "/data1/nightly/hst_release_numpy_1.7.1/test-ppsetc -d numpy_1.7.1 etc_hst_release"
-#        AFTER spectro_refactored
+#        AFTER spectro_prod
 
 
 TABLE import_tests HOST ssb
