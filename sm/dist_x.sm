@@ -2,13 +2,13 @@
 TABLE build_docs HOST cadeau
 
     IF ssbx_dist:
-    CMD stsci_python_dev_docs RUN "build_sphinxdocs dev"
+    CMD stsci_python_x_docs RUN "build_sphinxdocs x"
         AFTER init/*
 
 TABLE build_docs HOST jwcalibdev
 
     IF ssbx_dist:
-    CMD jwst_dev_docs RUN "build_jwst_docs dev"
+    CMD jwst_x_docs RUN "build_jwst_docs x"
         AFTER init/*
 
 
@@ -17,11 +17,6 @@ TABLE distribute HOST nott
     IF ssbx_dist:
     CMD sync_ssbx RUN "synctool - ssbx"
         AFTER init/*
-
-    IF ssbx_dist:
-    CMD sync_envconfig RUN "synctool - envconfig.mac"
-        AFTER sync_ssbx
-
 
 TABLE distribute HOST ssb
 
