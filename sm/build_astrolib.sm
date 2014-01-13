@@ -1,5 +1,0 @@
-
-TABLE build HOST arzach
-	CMD dev.astrolib RUN "build_astrolib"
-		AFTER arzach:assemble/dev.astrolib
-
