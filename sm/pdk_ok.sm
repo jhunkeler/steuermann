@@ -1,4 +1,4 @@
-TABLE pdk_ok HOST ssb
+TABLE pdk_ok HOST arzach
 
     CMD process_okify_tables RUN "/eng/ssb/auto/steuermann_scripts/process_okify_tables"
 		AFTER *:init/*
