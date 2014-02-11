@@ -36,6 +36,11 @@ TABLE run_tests HOST etcbrady
     CMD release_numpy_1.7.1 RUN "/data1/nightly/hst_release_numpy_1.7.1/test-ppsetc -d numpy_1.7.1 etc_hst_release"
         AFTER spectro_prod
 
+    CMD dynamic RUN "/data1/nightly/dynamic/test-ppsetc -d stuff dynamic"
+        AFTER release_numpy_1.7.1
+
+
+
 
 TABLE import_tests HOST ssb
 	CMD import RUN "test_import pyetc-etcbrady; test_expected etc_hst_daily"
