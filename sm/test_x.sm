@@ -12,7 +12,7 @@ TABLE test_x HOST cadeau
     CMD contact RUN "test_contact"
         AFTER install_x
 
-TABLE test_x HOST arzach banana cadeau
+TABLE test_x HOST nott arzach banana cadeau
 
     IF ssbx_test:
     CMD test2.7.5 RUN "test_rt x 2.7.5"
