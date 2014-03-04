@@ -39,12 +39,14 @@ TABLE run_tests HOST etcbrady
     CMD dynamic RUN "/data1/nightly/dynamic/test-ppsetc -d stuff dynamic"
         AFTER release_numpy_1.7.1
 
-
+    CMD release_django_1.5.5 RUN "/data1/nightly/hst_release_django_1.5.5/test-ppsetc -d django_1.5.5 etc_hst_release"
+        AFTER dynamic
 
 
 TABLE import_tests HOST ssb
 	CMD import RUN "test_import pyetc-etcbrady; test_expected etc_hst_daily"
 		AFTER *:run_tests/*
+
 
 TABLE refactored_stats HOST etcbrady
 	CMD pyetc_report RUN "/eng/ssb/auto/steuermann_scripts/pyetc_report"
