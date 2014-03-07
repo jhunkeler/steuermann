@@ -2,7 +2,7 @@
 TABLE assemble HOST arzach
 
     IF ssbx_build:
-	CMD x.irafx_age RUN "irafdev; irafx_age.py"
+	CMD x.irafx_age RUN "irafdev; /eng/ssb/auto/steuermann_scripts/irafx_age.py"
 		AFTER init/*
 
     IF ssbx_build:
