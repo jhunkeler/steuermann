@@ -29,6 +29,13 @@ TABLE test_dev HOST jwcalibdev
     CMD jwst_test RUN "/data1/jwst_rt/rt dev"
         AFTER jwst_contact
 
+TABLE test_dev HOST jwcalibdev
+
+    IF ssbdev_test:
+    CMD drizzlepac_dev RUN "source ~/.cshrc; ssbdev_driz; setenv PDK_TESTRUN $sm_run; setenv PDK_PROJECT drizzlepac; setenv PDK_CONTEXT y14dev; setenv PDK_LOG /srv/rt/logs/driz_dev_${sm_run}; cd /srv/rt; mkdir logs; pdkrun -r --parallel=4 betadrizzle; cat logs/* | ssh ssb 'irafdev; pdk import - '; rm -rf logs"
+        AFTER test2.7.5
+
+
 TABLE import_test_results HOST ssb
 
     IF ssbdev_test:
