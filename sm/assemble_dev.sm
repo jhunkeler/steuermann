@@ -21,7 +21,7 @@ TABLE assemble HOST arzach
 TABLE assemble HOST jwcalibdev
 
     IF ssbdev_build:
-	CMD dev.jwst RUN "assemble_jwst dev"
+	CMD dev.jwst RUN "/eng/ssb/auto/steuermann_scripts/assemble_jwst dev"
 		AFTER *:assemble/svnsync
 
 #   IF ssbdev_build:
