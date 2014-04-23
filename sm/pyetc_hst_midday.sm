@@ -3,7 +3,10 @@
 
 TABLE run_tests HOST etcbrady
 
+#    CMD dynamic RUN "/data1/nightly/dynamic/test-ppsetc -d stuff dynamic"
+
 #    CMD bit_prod RUN "/data1/nightly/hst_bit_prod/test-ppsetc -d production bit"
+#    		AFTER dynamic
 
 #    CMD imagers_prod RUN "/data1/nightly/hst_imagers_prod/test-ppsetc -d production etc_hst_imagers"
 #        AFTER bit_prod
