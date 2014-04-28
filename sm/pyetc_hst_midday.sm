@@ -32,9 +32,6 @@ TABLE run_tests HOST etcbrady
 #    CMD spectro_prod RUN "/data1/nightly/hst_spectro_prod/test-ppsetc -d production etc_hst_spectro"
 #        AFTER spectro_medium
 
-#    CMD release_django_1.5.5 RUN "/data1/nightly/hst_release_django_1.5.5/test-ppsetc -d django_1.5.5 etc_hst_release"
-#        AFTER spectro_prod
-
 
 TABLE import_tests HOST ssb
 	CMD import RUN "test_import pyetc-etcbrady; test_expected etc_hst_daily"
