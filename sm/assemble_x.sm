@@ -11,24 +11,24 @@ TABLE assemble HOST arzach
 
     IF ssbx_build:
 	CMD x.stsci_python RUN "assemble_stsci_python x"
-		AFTER svnsync
+		AFTER init/*
 
     IF ssbx_build:
 	CMD x.stsci_iraf RUN "assemble_stsci_iraf x"
-		AFTER svnsync
+		AFTER init/*
 
     IF ssbx_build:
 	CMD x.axe RUN "assemble_axe x"
-		AFTER svnsync
+		AFTER init/*
 
     IF ssbx_build:
 	CMD x.hstcal RUN "assemble_hstcal x"
-		AFTER svnsync
+		AFTER init/*
 
 
 TABLE assemble HOST jwcalibdev
 
     IF ssbx_build:
     CMD x.jwst RUN "assemble_jwst x"
-        AFTER *:assemble/svnsync
+    		AFTER init/*
 

@@ -1,7 +1,0 @@
-# arzach assembles all the source code
-TABLE assemble HOST arzach
-
-    CMD svnsync RUN "assemble_svnsync"
-        AFTER init/*
-        AFTER OPT irafx_update
-
