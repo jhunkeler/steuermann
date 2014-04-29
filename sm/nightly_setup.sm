@@ -1,6 +1,5 @@
 IMPORT "init.sm"
 IMPORT "cdbs.sm"
 IMPORT "pdk_ok.sm"
-IMPORT "assemble_common.sm"
 IMPORT "assemble_dev.sm"
 IMPORT "assemble_x.sm"
