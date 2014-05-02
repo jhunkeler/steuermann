@@ -23,8 +23,8 @@ TABLE run_tests HOST etcbrady
     CMD release_prod RUN "/data1/nightly/hst_release_prod/test-ppsetc -d production etc_hst_release"
         AFTER core_prod
 
-#    CMD release_new_cdbs RUN "/data1/nightly/hst_release_new_cdbs/test-ppsetc -d new_cdbs etc_hst_release"
-#        AFTER release_prod
+    CMD release_new_cdbs RUN "/data1/nightly/hst_release_new_cdbs/test-ppsetc -d new_cdbs etc_hst_release"
+        AFTER release_prod
 
     CMD spectro_loose RUN "/data1/nightly/hst_spectro_loose/test-ppsetc -d loose etc_hst_spectro"
         AFTER release_prod
