@@ -1,7 +1,7 @@
 ####################
 ####################
 
-TABLE run_tests HOST etcbrady
+#TABLE run_tests HOST etcbrady
 
 #    CMD prototype_prod RUN "/data1/nightly/jwst_prototype_prod/test-ppsetc -d"
 
