@@ -12,18 +12,22 @@ TABLE assemble HOST arzach
     IF ssbx_build:
 	CMD x.stsci_python RUN "assemble_stsci_python x"
 		AFTER init/*
+		AFTER irafx_update
 
     IF ssbx_build:
 	CMD x.stsci_iraf RUN "assemble_stsci_iraf x"
 		AFTER init/*
+		AFTER irafx_update
 
     IF ssbx_build:
 	CMD x.axe RUN "assemble_axe x"
 		AFTER init/*
+		AFTER irafx_update
 
     IF ssbx_build:
 	CMD x.hstcal RUN "assemble_hstcal x"
 		AFTER init/*
+		AFTER irafx_update
 
 
 TABLE assemble HOST jwcalibdev
