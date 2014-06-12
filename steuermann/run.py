@@ -39,7 +39,7 @@ def config_yes_no(d,which) :
     s = d[which]
     return s.strip()[0].lower() in ( 'y', 't', '1' )
 
-debug=1
+debug=0
 
 ##### 
 
@@ -142,7 +142,7 @@ class runner(object):
 
             args = args.copy()
             args.update( 
-                script=node.script,
+                script=node.script % nodes.saved_conditions,
                 script_type=node.script_type,
                 host=node.host,
                 table=node.table,
@@ -151,13 +151,6 @@ class runner(object):
                 w_node=node.name.replace("/","_").replace(":","_"),
                 runname=run_name,
                 )
-
-            print
-            print 'script = %s' %args['script']
-            print
-            print 'script = %s' %(args['script'] % nodes.saved_conditions)
-            print
-
 
             # also stick everything from env into args (if not already defined)
             for k, v in os.environ.items():
