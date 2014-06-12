@@ -162,7 +162,9 @@ class runner(object):
                 for x in sorted([x for x in args]) :
                     print '%s=%s'%(x,args[x])
 
-            args['script'] = args['script'] % args
+                        
+
+            #args['script'] = args['script'] % args
 
             if args['script_type'] == 'r' :
                 run = args['run']
