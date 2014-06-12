@@ -157,14 +157,20 @@ class runner(object):
                 if k not in args.keys():
                     args[k] = v
 
+            # we want things defined in the CONDITIONS block to be part of args
+            for k, v in nodes.saved_conditions.items():
+                if v == True:
+                    v = 'True'
+                if v == False:
+                    v = 'False'
+                args[k] = v
+
             if debug :
                 print "ARGS"
                 for x in sorted([x for x in args]) :
                     print '%s=%s'%(x,args[x])
 
-                        
-
-            #args['script'] = args['script'] % args
+            args['script'] = args['script'] % args
 
             if args['script_type'] == 'r' :
                 run = args['run']
@@ -175,9 +181,8 @@ class runner(object):
 
             t = [ ]
             for x in run :
-                # bug: what to do in case of keyerror
-                thing = x % args              
-                t.append(thing % nodes.saved_conditions)
+                # bug: what to do in case of keyerror     
+                t.append(x % args)
 
             run = t
 
