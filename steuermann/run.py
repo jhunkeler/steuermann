@@ -152,7 +152,7 @@ class runner(object):
                 )
 
             print
-            print 'script = %s' %(args['script'] % nodes.saved_conditions)
+            print 'script = %s' %args['script'] 
             print
 
 

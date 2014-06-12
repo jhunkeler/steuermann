@@ -200,7 +200,7 @@ class node(object) :
         self.name = name
 
         # the command script that this node runs
-        self.script = script
+        self.script = script % nodes.saved_conditions
         self.script_type = script_type
 
         # what "resources" it requires
