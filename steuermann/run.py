@@ -152,7 +152,7 @@ class runner(object):
                 )
 
             print
-            print 'script = %s' %script
+            print 'script = %s' %args['script']
             print
 
 
