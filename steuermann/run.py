@@ -142,7 +142,7 @@ class runner(object):
 
             args = args.copy()
             args.update( 
-                script=node.script % nodes.saved_conditions,
+                script=node.script,
                 script_type=node.script_type,
                 host=node.host,
                 table=node.table,
@@ -174,7 +174,8 @@ class runner(object):
             t = [ ]
             for x in run :
                 # bug: what to do in case of keyerror
-                t.append( x % args )
+                thing = x % args              
+                t.append(thing % nodes.saved_conditions)
 
             run = t
 
