@@ -31,6 +31,7 @@ import sys
 import errno
 import ConfigParser
 import re
+import nodes
 
 def config_yes_no(d,which) :
     if not which in d :
@@ -38,7 +39,7 @@ def config_yes_no(d,which) :
     s = d[which]
     return s.strip()[0].lower() in ( 'y', 't', '1' )
 
-debug=0
+debug=1
 
 ##### 
 
@@ -152,7 +153,9 @@ class runner(object):
                 )
 
             print
-            print 'script = %s' %args['script'] 
+            print 'script = %s' %args['script']
+            print
+            print 'script = %s' %(args['script'] % nodes.saved_conditions)
             print
 
 
