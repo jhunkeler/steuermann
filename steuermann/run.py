@@ -38,7 +38,7 @@ def config_yes_no(d,which) :
     s = d[which]
     return s.strip()[0].lower() in ( 'y', 't', '1' )
 
-debug=1
+debug=0
 
 ##### 
 
