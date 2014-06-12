@@ -435,6 +435,8 @@ def register_database(db, run, xnodes ) :
 
 def run_all(xnodes, run_name, hosts_ini, db) :
 
+    print_conditions()
+
     for x in xnodes :
         x = xnodes[x]
         x.finished = 0
