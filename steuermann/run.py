@@ -170,6 +170,11 @@ class runner(object):
             else :
                 raise Exception()
 
+            print
+            print 'run = %s' %run
+            print
+
+
             t = [ ]
             for x in run :
                 # bug: what to do in case of keyerror

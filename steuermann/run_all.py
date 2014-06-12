@@ -529,9 +529,6 @@ def run_step( runner, xnodes, run_name, db ) :
             # of predecessors, we can run this one
             if released == len(x.released) :
                 host, table, cmd = nodes.crack_name(x_name)
-                print
-                print 'cmd = %s' %cmd
-                print
 
                 # we are now ready to let it run.  If it is marked skipped, just say it ran really fast.
                 if x.skip :
