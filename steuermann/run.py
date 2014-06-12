@@ -151,6 +151,11 @@ class runner(object):
                 runname=run_name,
                 )
 
+            print
+            print 'script = %s' %script
+            print
+
+
             # also stick everything from env into args (if not already defined)
             for k, v in os.environ.items():
                 if k not in args.keys():
@@ -169,11 +174,6 @@ class runner(object):
                 run = args['local']
             else :
                 raise Exception()
-
-            print
-            print 'run = %s' %run
-            print
-
 
             t = [ ]
             for x in run :
