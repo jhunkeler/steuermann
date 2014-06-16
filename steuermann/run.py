@@ -164,7 +164,7 @@ class runner(object):
                     v = 'True'
                 if v == False:
                     v = 'False'
-                if not k == 'hostname' and not k == 'sm_node':
+                if not k == 'hostname' and not k == 'node':
                     args[k] = v
 
             if debug :
