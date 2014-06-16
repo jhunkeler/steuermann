@@ -158,12 +158,14 @@ class runner(object):
                     args[k] = v
 
             # we want things defined in the CONDITIONS block to be part of args
+            # (except for hostname)
             for k, v in nodes.saved_conditions.items():
                 if v == True:
                     v = 'True'
                 if v == False:
                     v = 'False'
-                args[k] = v
+                if not k == 'hostname':
+                    args[k] = v
 
             if debug :
                 print "ARGS"
