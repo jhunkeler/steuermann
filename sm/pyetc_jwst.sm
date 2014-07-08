@@ -11,7 +11,7 @@ TABLE run_tests HOST etcbrady
 
 TABLE run_tests HOST etccartier
 
-    CMD jwst_dev RUN "/data1/nightly/jwst_dev/run_tests.sh"
+    CMD jwst_dev RUN "/data1/nightly/jwst_dev/scamp/test_utilities/run_tests.sh"
 
 
 TABLE import_tests HOST ssb
