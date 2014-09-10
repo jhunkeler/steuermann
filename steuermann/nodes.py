@@ -3,7 +3,6 @@ Stuff related to the tree structure of the command set
 '''
 
 import fnmatch
-from run_all import allowed_flags
 import sys
 #import exyapps.runtime
 
