@@ -4,6 +4,7 @@ Stuff related to the tree structure of the command set
 
 import fnmatch
 import sys
+from . import allowed_flags
 #import exyapps.runtime
 
 
