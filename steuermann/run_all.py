@@ -18,6 +18,8 @@ import steuermann.config
 import pandokia.helpers.easyargs as easyargs
 import pandokia.text_table as text_table
 
+from . import allowed_flags
+
 
 try :
     import readline
