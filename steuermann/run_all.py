@@ -35,6 +35,15 @@ username=getpass.getuser()
 
 #####
 
+allowed_flags = { 
+    '--all' : '-a'      ,
+    '-a'    : ''        ,   # run all nodes non-interactively
+    '-r'    : '='       ,   # give run name
+    '-n'    : ''        ,   # do not actually execute any processes
+    '-h'    : '='       ,   # give hosts (*.ini) file
+}
+
+
 def main() :
 
     global xnodes
@@ -60,20 +69,15 @@ def main() :
     #                                # several times to get a list
     #        '--verbose' : '-v',     # arg is an alias for some other arg
 
-    allowed_flags = { 
-        '--all' : '-a'      ,
-        '-a'    : ''        ,   # run all nodes non-interactively
-        '-r'    : '='       ,   # give run name
-        '-n'    : ''        ,   # do not actually execute any processes
-        '-h'    : '='       ,   # give hosts (*.ini) file
-    }
-
     opt, args = easyargs.get(allowed_flags, allow_unexpected = True)
 
     all = opt['-a']
     no_run = opt['-n']
 
 
+    ''' 
+    NOTE: moving this functionality into nodes.py
+    
     # find any unknown arguments like --something=whatever, set as conditions
     arguments = sys.argv[1:]
     for a in arguments:
@@ -88,7 +92,7 @@ def main() :
                 a = a.lstrip('--')
                 k, v = a.split('=')
                 nodes.saved_conditions[k] = eval(v)
-
+    '''
 
     sm_files = [a for a in args if ('--' not in a and '=' not in a)]
     di_nodes = nodes.read_file_list( sm_files )

@@ -3,6 +3,8 @@ Stuff related to the tree structure of the command set
 '''
 
 import fnmatch
+from run_all import allowed_flags
+import sys
 #import exyapps.runtime
 
 
@@ -366,6 +368,21 @@ def read_file_list( file_list ) :
 
 saved_conditions = { 'True' : True, 'False' : False }
 
+# find any unknown arguments like --something=whatever, set as conditions
+arguments = sys.argv[1:]
+for a in arguments:
+    if '--' in a and '=' in a:
+        not_allowed_flag = True
+        for f in allowed_flags.keys():
+            if a.startswith(f):
+                not_allowed_flag = False
+                break
+        if not_allowed_flag:
+            a = a.lstrip('--')
+            k, v = a.split('=')
+            saved_conditions[k] = eval(v)
+
+
 def declare_conditions( text, filename ) :
     # the parameter "text" is the token that begins "CONDITION\n"
     # and ends "\nEND\n", with a block of python code in the middle.
@@ -377,22 +394,13 @@ def declare_conditions( text, filename ) :
     text = text.split('\n',1)[1]    # tear off "CONDITION\n"
     text = text.rsplit('\n',2)[0]   # tear off "END\n"
 
-    # if it is indented at all, compensate for the indent so the
-    # exec will work
-    if text.startswith(' ') or text.startswith('\t') :
-        text = 'if 1 :\n' + text
-
-    # exec it into cond first, and then move any entries that are unique
-    #   into saved_conditions; this allows us to specify conditions on the
-    #   command line and not have them overwritten by the same variable in
-    #   a CONDITIONS block
-    cond = {}
-    exec text in cond
-    for k, v in cond.items():
-        if k not in saved_conditions:
-            saved_conditions[k] = v
-
-    
+    for ln in text.split('\n'):
+        ln = ln.strip()
+        cond = saved_conditions.copy()
+        exec ln in cond
+        for k, v in cond.items():
+            if k not in saved_conditions:
+                saved_conditions[k] = v
 
 
 def check_condition( name, filename ) :
