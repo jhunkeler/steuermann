@@ -3,7 +3,7 @@
 #	su iraf -c ./install
 #
 
-N=17
+N=18
 
 here=`pwd`
 
