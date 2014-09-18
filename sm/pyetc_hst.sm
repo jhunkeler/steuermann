@@ -6,35 +6,13 @@ TABLE run_tests HOST etcbrady
 #    CMD dynamic RUN "/data1/nightly/dynamic/test-ppsetc -d stuff dynamic"
 
     CMD bit_prod RUN "/data1/nightly/hst_bit_prod/test-ppsetc -d production bit"
-    		AFTER OPT dynamic
-
-    CMD imagers_prod RUN "/data1/nightly/hst_imagers_prod/test-ppsetc -d production etc_hst_imagers"
-        AFTER bit_prod
-
-    CMD core_loose RUN "/data1/nightly/hst_core_loose/test-ppsetc -d loose etc_hst_core"
-        AFTER imagers_prod
-
-    CMD core_medium RUN "/data1/nightly/hst_core_medium/test-ppsetc -d medium etc_hst_core"
-        AFTER core_loose
-
-    CMD core_prod RUN "/data1/nightly/hst_core_prod/test-ppsetc -d production etc_hst_core"
-        AFTER core_medium
+		AFTER OPT dynamic
 
     CMD release_prod RUN "/data1/nightly/hst_release_prod/test-ppsetc -d production etc_hst_release"
-        AFTER core_prod
+        AFTER bit_prod
 
 #    CMD release_new_cdbs RUN "/data1/nightly/hst_release_new_cdbs/test-ppsetc -d new_cdbs etc_hst_release"
 #        AFTER release_prod
-
-    CMD spectro_loose RUN "/data1/nightly/hst_spectro_loose/test-ppsetc -d loose etc_hst_spectro"
-        AFTER release_prod
-        AFTER OPT release_new_cdbs
-
-    CMD spectro_medium RUN "/data1/nightly/hst_spectro_medium/test-ppsetc -d medium etc_hst_spectro"
-        AFTER spectro_loose
-
-    CMD spectro_prod RUN "/data1/nightly/hst_spectro_prod/test-ppsetc -d production etc_hst_spectro"
-        AFTER spectro_medium
 
 
 TABLE import_tests HOST ssb
