@@ -1,5 +1,3 @@
-IMPORT "init.sm"
-
 IMPORT "test_dev.sm"
 IMPORT "test_x.sm"
 
