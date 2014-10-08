@@ -3,9 +3,9 @@
 
 #TABLE run_tests HOST etcbrady
 
-#    CMD prototype_prod RUN "/data1/nightly/jwst_prototype_prod/test-ppsetc -d"
+#    CMD prototype_prod RUN "/data1/nightly/jwst_prototype_prod/nightly_test_runner -d"
 
-#    CMD bnc_dev RUN "/data1/nightly/jwst_bnc_dev/test-ppsetc -d dev bnc"
+#    CMD bnc_dev RUN "/data1/nightly/jwst_bnc_dev/nightly_test_runner -d dev bnc"
 #        AFTER prototype_prod
 
 
