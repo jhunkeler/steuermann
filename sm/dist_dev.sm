@@ -12,11 +12,11 @@ TABLE build_docs HOST jwcalibdev
         AFTER OPT test_dev/install_dev
 
 
-TABLE distribute HOST nott
+TABLE distribute HOST nott jwcalibdev
 
     IF ssbdev_dist:
     CMD sync_ssbdev RUN "synctool - ssbdev"
-        AFTER nott:test_dev/install_dev
+        AFTER test_dev/install_dev
 
     IF ssbdev_dist:
     CMD sync_envconfig RUN "synctool - envconfig.mac"

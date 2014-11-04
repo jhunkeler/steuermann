@@ -10,7 +10,7 @@ TABLE build_docs HOST jwcalibdev
     CMD jwst_x_docs RUN "build_jwst_docs x"
 
 
-TABLE distribute HOST nott
+TABLE distribute HOST nott jwcalibdev
 
     IF ssbx_dist:
     CMD sync_ssbx RUN "synctool - ssbx"
