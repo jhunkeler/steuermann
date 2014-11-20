@@ -1,5 +1,5 @@
 
-TABLE build_docs HOST cadeau
+TABLE build_docs HOST banana
 
     IF ssbx_dist:
     CMD stsci_python_x_docs RUN "build_sphinxdocs x"
