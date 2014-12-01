@@ -1,3 +1,8 @@
+TABLE cadeau nott
+
+    IF ssbx_dist:
+    CMD build_1.4.4.2_drizzlepac_addon RUN "/eng/ssb/auto/steuermann_scripts/make_opus_drizzlepac_addon"
+
 
 TABLE build_docs HOST banana
 
