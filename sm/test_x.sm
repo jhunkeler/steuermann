@@ -16,7 +16,7 @@ TABLE test_x HOST nott arzach banana
     IF ssbx_test:
     CMD test2.7.5 RUN "test_rt x 2.7.5"
         AFTER install_x
-        AFTER cadeau:test_x/contact
+        AFTER banana:test_x/contact
 
 TABLE test_x HOST jwcalibdev
 

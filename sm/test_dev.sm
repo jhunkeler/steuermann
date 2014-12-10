@@ -15,7 +15,7 @@ TABLE test_dev HOST nott arzach banana
     IF ssbdev_test:
     CMD test2.7.5 RUN "test_rt dev 2.7.5"
         AFTER install_dev
-        AFTER cadeau:test_dev/contact
+        AFTER banana:test_dev/contact
 
 TABLE test_dev HOST jwcalibdev
 
