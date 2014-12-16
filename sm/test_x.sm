@@ -1,5 +1,5 @@
 
-TABLE test_x HOST arzach banana nott jwcalibdev
+TABLE test_x HOST arzach banana nott jwcalibdev cadeau
 
     IF ssbx_test:
     CMD install_x RUN "install_ssb_ureka x"

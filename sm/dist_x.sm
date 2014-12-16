@@ -1,10 +1,10 @@
-TABLE banana nott
+TABLE cadeau nott
 
     IF ssbx_dist:
     CMD build_1.4.4.2_drizzlepac_addon RUN "/eng/ssb/auto/steuermann_scripts/make_opus_drizzlepac_addon"
 
 
-TABLE build_docs HOST banana
+TABLE build_docs HOST cadeau
 
     IF ssbx_dist:
     CMD stsci_python_x_docs RUN "build_sphinxdocs x"
@@ -15,7 +15,7 @@ TABLE build_docs HOST jwcalibdev
     CMD jwst_x_docs RUN "build_jwst_docs x"
 
 
-TABLE distribute HOST nott jwcalibdev banana
+TABLE distribute HOST nott jwcalibdev cadeau
 
     IF ssbx_dist:
     CMD sync_ssbx RUN "synctool - ssbx"
