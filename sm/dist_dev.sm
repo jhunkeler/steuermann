@@ -18,7 +18,3 @@ TABLE distribute HOST nott jwcalibdev cadeau
     CMD sync_ssbdev RUN "synctool - ssbdev"
         AFTER test_dev/install_dev
 
-    IF ssbdev_dist:
-    CMD sync_envconfig RUN "synctool - envconfig.mac"
-        AFTER sync_ssbdev
-
