@@ -8,10 +8,14 @@ TABLE run_tests HOST etcbrady
     CMD bnc_dev RUN "/data1/nightly/jwst_bnc_dev/nightly_test_runner -d dev bnc"
         AFTER prototype_prod
 
-
 TABLE run_tests HOST etccartier
 
     CMD jwst_dev RUN "/data1/nightly/jwst_dev/scamp/test_utilities/run_tests.sh"
+
+TABLE run_tests HOST etcdevens
+
+    CMD pandeia RUN "/data1/pandeia_nightly/master/devrun nightly"
+
 
 
 TABLE import_tests HOST ssb
@@ -21,6 +25,10 @@ TABLE import_tests HOST ssb
 
 	CMD import RUN "test_import pyetc-etccartier; test_expected etc_jwst_daily"
 		AFTER *:run_tests/*
+
+	CMD import RUN "test_import pyetc-etcdevens"
+		AFTER *:run_tests/*
+
 
 
 #TABLE pyetc_report HOST etcbrady

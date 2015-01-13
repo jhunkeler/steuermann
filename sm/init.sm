@@ -1,4 +1,4 @@
-TABLE init HOST banana cadeau arzach ssb jwcalibdev etcbrady etccartier nott
+TABLE init HOST banana cadeau arzach ssb jwcalibdev etcbrady etccartier etcdevens nott
 
 	CMD sendscripts LOCAL "/eng/ssb/auto/steuermann_scripts/init_sendscripts %(hostname)s %(workdir)s"
 
