@@ -20,13 +20,13 @@ TABLE run_tests HOST etcdevens
 
 TABLE import_tests HOST ssb
 
-	CMD import RUN "test_import pyetc-etcbrady; test_expected etc_jwst_daily"
+	CMD import_brady RUN "test_import pyetc-etcbrady; test_expected etc_jwst_daily"
 		AFTER *:run_tests/*
 
-	CMD import RUN "test_import pyetc-etccartier; test_expected etc_jwst_daily"
+	CMD import_cartier RUN "test_import pyetc-etccartier; test_expected etc_jwst_daily"
 		AFTER *:run_tests/*
 
-	CMD import RUN "test_import pyetc-etcdevens"
+	CMD import_devens RUN "test_import pyetc-etcdevens"
 		AFTER *:run_tests/*
 
 
