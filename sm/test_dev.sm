@@ -45,10 +45,10 @@ TABLE import_test_results HOST ssb
         AFTER dev.jwst.import
 
     IF ssbdev_test:
-    CMD dev.import RUN "test_import irafdev"
+    CMD dev.import RUN "test_import ssbdev"
         AFTER *:test_dev/*
 
     IF ssbdev_test:
-    CMD dev.expect RUN "test_expected irafdev daily_latest daily"
+    CMD dev.expect RUN "test_expected ssbdev daily_latest daily"
         AFTER dev.import
 
