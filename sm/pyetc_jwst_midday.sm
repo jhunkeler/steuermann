@@ -8,9 +8,6 @@
 #    CMD bnc_dev RUN "/data1/nightly/jwst_bnc_dev/nightly_test_runner -d dev bnc"
 #        AFTER prototype_prod
 
-#TABLE run_tests HOST etccartier
-#
-#    CMD jwst_dev RUN "/data1/nightly/jwst_dev/scamp/test_utilities/run_tests.sh"
 
 TABLE run_tests HOST etcdevens
 
