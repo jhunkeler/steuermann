@@ -5,8 +5,6 @@ TABLE run_tests HOST etcbrady
 
     CMD prototype_prod RUN "/data1/nightly/jwst_prototype_prod/test-ppsetc -d"
 
-    CMD bnc_dev RUN "/data1/nightly/jwst_bnc_dev/nightly_test_runner -d dev bnc"
-        AFTER prototype_prod
 
 TABLE run_tests HOST etcdevens
 
@@ -19,8 +17,8 @@ TABLE import_tests HOST ssb
 	CMD import_brady RUN "test_import pyetc-etcbrady; test_expected etc_jwst_daily"
 		AFTER *:run_tests/*
 
-	CMD import_cartier RUN "test_import pyetc-etccartier; test_expected etc_jwst_daily"
-		AFTER *:run_tests/*
+#	CMD import_cartier RUN "test_import pyetc-etccartier; test_expected etc_jwst_daily"
+#		AFTER *:run_tests/*
 
 	CMD import_devens RUN "test_import pyetc-etcdevens"
 		AFTER *:run_tests/*
