@@ -5,10 +5,10 @@ TABLE ok HOST ssb
 
 TABLE ok HOST etcbrady
     CMD pdk_ok RUN "/eng/ssb/auto/steuermann_scripts/okify_commit"
-        AFTER process_okify_tables
+        AFTER ssb:ok/process_okify_tables
 
 TABLE ok HOST etcdevens
 
 	CMD pdk_ok RUN "/eng/ssb/auto/steuermann_scripts/okify_commit"
-        AFTER process_okify_tables
+        AFTER ssb:ok/process_okify_tables
 
