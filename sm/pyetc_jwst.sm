@@ -10,6 +10,9 @@ TABLE run_tests HOST etcdevens
 
     CMD pandeia RUN "/data1/pandeia_nightly/master/devrun nightly"
 
+    CMD pandeia_lib_upgrade RUN "/data1/pandeia_nightly_lib_upgrade/lib_upgrade/devrun nightly"
+    	AFTER pandeia
+
 
 
 TABLE import_tests HOST ssb

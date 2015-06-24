@@ -8,13 +8,16 @@
 
 TABLE run_tests HOST etcdevens
 
-    CMD pandeia RUN "/data1/pandeia_nightly/master/devrun nightly"
+ #   CMD pandeia RUN "/data1/pandeia_nightly/master/devrun nightly"
+
+    CMD pandeia_lib_upgrade RUN "/data1/pandeia_nightly_lib_upgrade/lib_upgrade/devrun nightly"
+    	AFTER OPT pandeia
 
 
 TABLE import_tests HOST ssb
 
-	CMD import_brady RUN "test_import pyetc-etcbrady; test_expected etc_jwst_daily"
-		AFTER *:run_tests/*
+#	CMD import_brady RUN "test_import pyetc-etcbrady; test_expected etc_jwst_daily"
+#		AFTER *:run_tests/*
 
 #	CMD import_cartier RUN "test_import pyetc-etccartier; test_expected etc_jwst_daily"
 #		AFTER *:run_tests/*
