@@ -8,9 +8,9 @@
 
 TABLE run_tests HOST etcdevens
 
- #   CMD pandeia RUN "/data1/pandeia_nightly/master/devrun nightly"
+ #   CMD pandeia RUN "/data1/pandeia_nightly/master/devrun nightly master"
 
-    CMD pandeia_lib_upgrade RUN "/data1/pandeia_nightly_lib_upgrade/lib_upgrade/devrun nightly"
+    CMD pandeia_lib_upgrade RUN "/data1/pandeia_nightly_lib_upgrade/lib_upgrade/devrun nightly lib_upgrade"
     	AFTER OPT pandeia
 
 
