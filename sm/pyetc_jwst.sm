@@ -10,7 +10,7 @@ TABLE run_tests HOST etcdevens
 
     CMD pandeia RUN "/data1/pandeia_nightly/master/devrun nightly master"
 
-    CMD pandeia_lib_upgrade RUN "/data1/pandeia_nightly_lib_upgrade/lib_upgrade/devrun nightly lib_upgrade"
+    CMD pandeia_templating_refactor RUN "/data1/pandeia_nightly_templating_refactor/templating_refactor/devrun nightly templating_refactor"
     	AFTER pandeia
 
 
