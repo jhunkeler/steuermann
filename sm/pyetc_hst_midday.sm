@@ -3,16 +3,16 @@
 
 TABLE run_tests HOST etcbrady
 
-#    CMD dynamic RUN "/data1/nightly/dynamic/nightly_test_runner -d stuff dynamic"
+    CMD dynamic RUN "/data1/nightly/dynamic/nightly_test_runner -d stuff dynamic"
 
-    CMD bit_prod RUN "/data1/nightly/hst_bit_prod/nightly_test_runner -d production bit"
-	AFTER OPT dynamic
+#    CMD bit_prod RUN "/data1/nightly/hst_bit_prod/nightly_test_runner -d production bit"
+#	AFTER OPT dynamic
 
-    CMD release_prod RUN "/data1/nightly/hst_release_prod/nightly_test_runner -d production etc_hst_release"
-        AFTER bit_prod
+#    CMD release_prod RUN "/data1/nightly/hst_release_prod/nightly_test_runner -d production etc_hst_release"
+#        AFTER bit_prod
 
-    CMD release_ssbdev RUN "/data1/nightly/hst_release_ssbdev/nightly_test_runner -d ssbdev etc_hst_release"
-        AFTER release_prod
+#    CMD release_ssbdev RUN "/data1/nightly/hst_release_ssbdev/nightly_test_runner -d ssbdev etc_hst_release"
+#        AFTER release_prod
 
 #    CMD release_new_cdbs RUN "/data1/nightly/hst_release_new_cdbs/nightly_test_runner -d new_cdbs etc_hst_release"
 #        AFTER release_ssbdev
