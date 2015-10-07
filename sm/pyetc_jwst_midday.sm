@@ -8,7 +8,7 @@
 
 TABLE run_tests HOST etcdevens
 
-#   CMD pandeia RUN "eval `/data1/pandeia_nightly/Ureka/bin/ur-setup-real`; /data1/pandeia_nightly/master/devrun nightly master"
+   CMD pandeia RUN "eval `/data1/pandeia_nightly/Ureka/bin/ur-setup-real`; /data1/pandeia_nightly/master/devrun nightly master"
 
 #    CMD pandeia_templating_refactor RUN "/data1/pandeia_nightly_templating_refactor/templating_refactor/devrun nightly templating_refactor"
 #    	AFTER pandeia
