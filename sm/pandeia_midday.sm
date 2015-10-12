@@ -1,0 +1,8 @@
+####################
+####################
+
+TABLE run_tests HOST dljwetcv3
+
+    CMD pandeia_infrastructure RUN "sh; cd /etcdata/pandeia/infrastructure; . ./env.sh; ./src/pandeia/tools/test/run"
+
+
