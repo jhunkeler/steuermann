@@ -1,8 +1,19 @@
 ####################
 ####################
 
-TABLE run_tests HOST dljwetcv3
+TABLE installation HOST dljwetcv3
 
-    CMD pandeia_infrastructure RUN "sh; cd /etcdata/pandeia/infrastructure; . ./env.sh; ./src/pandeia/tools/test/run"
+    CMD install_infrastructure RUN "cd /etcdata/pandeia/infrastructure; ./run -crash -pull -install -start"
 
+
+TABLE tests HOST bond
+
+    CMD test_server RUN "cd /etcdata/pandeia/infrastructure; ./run_tests -server"
+        AFTER *:installation/*
+
+    CMD test_engine RUN "cd /etcdata/pandeia/infrastructure; ./run_tests -engine"
+        AFTER test_server
+
+    CMD test_client RUN "cd /etcdata/pandeia/infrastructure; ./run_tests -client"
+        AFTER test_engine
 
