@@ -8,7 +8,7 @@ TABLE installation HOST dljwetcv4
 TABLE installation HOST dljwetcv3
 
     CMD install_v3 RUN "/etcdata/pandeia/infrastructure/run -crash -pull -install -start"
-        AFTER install_v4
+        AFTER *:installation/install_v4
 
 
 TABLE tests HOST dljwetcv3
@@ -17,10 +17,10 @@ TABLE tests HOST dljwetcv3
         AFTER *:installation/*
 
     CMD test_engine RUN "/etcdata/pandeia/infrastructure/run_tests -engine"
-        AFTER test_server
+        AFTER *:tests/test_server
 
 TABLE tests HOST bond
 
     CMD test_client RUN "/etcdata/pandeia/infrastructure/run_tests -client"
-        AFTER test_engine
+        AFTER *:tests/test_engine
 
