@@ -19,8 +19,6 @@ TABLE tests HOST dljwetcv3
     CMD test_engine RUN "/etcdata/pandeia/infrastructure/run_tests -engine"
         AFTER *:tests/test_server
 
-TABLE tests HOST bond
-
     CMD test_client RUN "/etcdata/pandeia/infrastructure/run_tests -client"
         AFTER *:tests/test_engine
 
