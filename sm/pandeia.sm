@@ -3,11 +3,11 @@
 
 TABLE master_installation HOST dljwetcv4
 
-    CMD install_v4 RUN "/etcdata/pandeia/master/run -crash -setup"
+    CMD install_v4 RUN "/etcdata/pandeia/master/run -crash -pull -install"
 
 TABLE master_installation HOST dljwetcv3
 
-    CMD install_v3 RUN "/etcdata/pandeia/master/run -crash -setup -start"
+    CMD install_v3 RUN "/etcdata/pandeia/master/run -crash -pull -install -start"
         AFTER *:master_installation/install_v4
 
 
@@ -25,12 +25,12 @@ TABLE master_tests HOST dljwetcv3
 
 TABLE branch_test_installation HOST dljwetcv4
 
-    CMD install_v4 RUN "/etcdata/pandeia/branch_test/run -crash -setup"
+    CMD install_v4 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -install"
         AFTER *:master_tests/*
 
 TABLE branch_test_installation HOST dljwetcv3
 
-    CMD install_v3 RUN "/etcdata/pandeia/branch_test/run -crash -setup -start"
+    CMD install_v3 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -install -start"
         AFTER *:branch_test_installation/install_v4
 
 

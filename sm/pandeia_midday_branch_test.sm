@@ -3,11 +3,11 @@
 
 TABLE branch_test_installation HOST dljwetcv4
 
-    CMD install_v4 RUN "/etcdata/pandeia/branch_test/run -crash -setup"
+    CMD install_v4 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -install"
 
 TABLE branch_test_installation HOST dljwetcv3
 
-    CMD install_v3 RUN "/etcdata/pandeia/branch_test/run -crash -setup -start"
+    CMD install_v3 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -install -start"
         AFTER *:branch_test_installation/install_v4
 
 
