@@ -3,22 +3,16 @@
 
 TABLE branch_test_installation HOST dljwetcv4
 
-    CMD install_v4 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -install"
+    CMD install_v4 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -setup"
 
 TABLE branch_test_installation HOST dljwetcv3
 
-    CMD install_v3 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -install -start"
+    CMD install_v3 RUN "/etcdata/pandeia/branch_test/run -crash -pull-force -setup -start"
         AFTER *:branch_test_installation/install_v4
 
 
 TABLE branch_test_tests HOST dljwetcv3
 
-    CMD test_server RUN "/etcdata/pandeia/branch_test/run_tests -server"
-        AFTER *:branch_test_installation/*
-
-    CMD test_engine RUN "/etcdata/pandeia/branch_test/run_tests -engine"
-        AFTER *:branch_test_tests/test_server
-
     CMD test_client RUN "/etcdata/pandeia/branch_test/run_tests -client"
-        AFTER *:branch_test_tests/test_engine
+        AFTER *:branch_test_installation/*
 
