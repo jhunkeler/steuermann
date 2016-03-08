@@ -13,6 +13,14 @@ TABLE branch_test_installation HOST dljwetcv3
 
 TABLE branch_test_tests HOST dljwetcv3
 
-    CMD test_client RUN "/etcdata/pandeia/branch_test/run_tests -client"
+    CMD test_server RUN "/etcdata/pandeia/branch_test/run_tests -server"
         AFTER *:branch_test_installation/*
 
+    CMD test_engine RUN "/etcdata/pandeia/branch_test/run_tests -engine"
+        AFTER *:branch_test_tests/test_server
+
+    CMD test_client RUN "/etcdata/pandeia/branch_test/run_tests -client"
+        AFTER *:branch_test_tests/test_engine
+
+    CMD test_final RUN "/etcdata/pandeia/branch_test/run_tests -final"
+        AFTER *:branch_test_tests/test_client

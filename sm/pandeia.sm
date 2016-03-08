@@ -22,6 +22,9 @@ TABLE master_tests HOST dljwetcv3
     CMD test_client RUN "/etcdata/pandeia/master/run_tests -client"
         AFTER *:master_tests/test_engine
 
+    CMD test_final RUN "/etcdata/pandeia/master/run_tests -final"
+        AFTER *:master_tests/test_client
+
 
 TABLE branch_test_installation HOST dljwetcv4
 
@@ -44,3 +47,6 @@ TABLE branch_test_tests HOST dljwetcv3
 
     CMD test_client RUN "/etcdata/pandeia/branch_test/run_tests -client"
         AFTER *:branch_test_tests/test_engine
+
+    CMD test_final RUN "/etcdata/pandeia/branch_test/run_tests -final"
+        AFTER *:branch_test_tests/test_client
