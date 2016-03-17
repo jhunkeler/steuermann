@@ -50,3 +50,8 @@ TABLE branch_test_tests HOST dljwetcv3
 
     CMD test_final RUN "/etcdata/pandeia/branch_test/run_tests -final"
         AFTER *:branch_test_tests/test_client
+
+TABLE test_expected HOST ssb
+
+    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected etc_jwst_daily"
+        AFTER *:*/*
