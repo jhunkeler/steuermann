@@ -11,6 +11,11 @@ TABLE master_installation HOST dljwetcv3
         AFTER *:master_installation/install_v4
 
 
+TABLE master_tests HOST bond
+
+    CMD test_client RUN "/Users/Shared/pandeia/tests/go master"
+        AFTER *:master_tests/test_engine
+
 TABLE master_tests HOST dljwetcv3
 
     CMD test_server RUN "/etcdata/pandeia/master/run_tests -server"
@@ -18,9 +23,6 @@ TABLE master_tests HOST dljwetcv3
 
     CMD test_engine RUN "/etcdata/pandeia/master/run_tests -engine"
         AFTER *:master_tests/test_server
-
-    CMD test_client RUN "/etcdata/pandeia/master/run_tests -client"
-        AFTER *:master_tests/test_engine
 
     CMD test_final RUN "/etcdata/pandeia/master/run_tests -final"
         AFTER *:master_tests/test_client
@@ -37,6 +39,11 @@ TABLE branch_test_installation HOST dljwetcv3
         AFTER *:branch_test_installation/install_v4
 
 
+TABLE branch_test_tests HOST bond
+
+    CMD test_client RUN "/Users/Shared/pandeia/tests/go branch_test"
+        AFTER *:branch_test_tests/test_engine
+
 TABLE branch_test_tests HOST dljwetcv3
 
     CMD test_server RUN "/etcdata/pandeia/branch_test/run_tests -server"
@@ -44,9 +51,6 @@ TABLE branch_test_tests HOST dljwetcv3
 
     CMD test_engine RUN "/etcdata/pandeia/branch_test/run_tests -engine"
         AFTER *:branch_test_tests/test_server
-
-    CMD test_client RUN "/etcdata/pandeia/branch_test/run_tests -client"
-        AFTER *:branch_test_tests/test_engine
 
     CMD test_final RUN "/etcdata/pandeia/branch_test/run_tests -final"
         AFTER *:branch_test_tests/test_client

@@ -11,6 +11,12 @@ TABLE master_installation HOST dljwetcv3
         AFTER *:master_installation/install_v4
 
 
+TABLE master_tests HOST bond
+
+    CMD test_client RUN "/Users/Shared/pandeia/tests/go master"
+        AFTER OPT *:master_tests/test_engine
+        AFTER OPT *:master_tests/test_server
+
 TABLE master_tests HOST dljwetcv3
 
     CMD test_server RUN "/etcdata/pandeia/master/run_tests -server"
@@ -18,9 +24,6 @@ TABLE master_tests HOST dljwetcv3
 
 #    CMD test_engine RUN "/etcdata/pandeia/master/run_tests -engine"
 #        AFTER *:master_tests/test_server
-
-#    CMD test_client RUN "/etcdata/pandeia/master/run_tests -client"
-#        AFTER *:master_tests/test_engine
 
     CMD test_final RUN "/etcdata/pandeia/master/run_tests -final"
         AFTER OPT *:master_tests/test_server
