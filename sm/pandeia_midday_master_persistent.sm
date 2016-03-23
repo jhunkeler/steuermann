@@ -1,0 +1,36 @@
+####################
+####################
+
+TABLE master_persistent_installation HOST dljwetcv4
+
+    CMD install_v4 RUN "/etcdata/pandeia/master_persistent/run -crash -pull -install"
+
+TABLE master_persistent_installation HOST dljwetcv3
+
+    CMD install_v3 RUN "/etcdata/pandeia/master_persistent/run -crash -pull -install -start"
+        AFTER *:master_persistent_installation/install_v4
+
+
+TABLE master_persistent_tests HOST bond
+
+    CMD test_client RUN "/Users/Shared/pandeia/tests/go master_persistent"
+        AFTER OPT *:master_persistent_tests/test_engine
+        AFTER OPT *:master_persistent_tests/test_server
+
+TABLE master_persistent_tests HOST dljwetcv3
+
+    CMD test_server RUN "/etcdata/pandeia/master_persistent/run_tests -server"
+        AFTER *:master_persistent_installation/*
+
+#    CMD test_engine RUN "/etcdata/pandeia/master_persistent/run_tests -engine"
+#        AFTER *:master_persistent_tests/test_server
+
+    CMD test_final RUN "/etcdata/pandeia/master_persistent/run_tests -final"
+        AFTER OPT *:master_persistent_tests/test_server
+        AFTER OPT *:master_persistent_tests/test_engine
+        AFTER OPT *:master_persistent_tests/test_client
+
+TABLE test_expected HOST ssb
+
+    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected etc_jwst_daily"
+        AFTER *:*/*
