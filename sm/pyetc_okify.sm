@@ -3,12 +3,11 @@ TABLE ok HOST ssb
 
 	CMD process_okify_tables RUN "/eng/ssb/auto/steuermann_scripts/process_okify_tables"
 
-TABLE ok HOST etcbrady
-    CMD pdk_ok RUN "/eng/ssb/auto/steuermann_scripts/okify_commit"
-        AFTER ssb:ok/process_okify_tables
+#TABLE ok HOST etcbrady
+#    CMD pdk_ok RUN "/eng/ssb/auto/steuermann_scripts/okify"
+#        AFTER ssb:ok/process_okify_tables
 
-TABLE ok HOST etcdevens
-
-	CMD pdk_ok RUN "/eng/ssb/auto/steuermann_scripts/okify_commit"
-        AFTER ssb:ok/process_okify_tables
+#TABLE ok HOST etcdevens
+#	CMD pdk_ok RUN "/eng/ssb/auto/steuermann_scripts/okify"
+#        AFTER ssb:ok/process_okify_tables
 
