@@ -1,0 +1,4 @@
+TABLE conda_testing HOST nott
+
+    CMD run_tests RUN "/eng/ssb/auto/astroconda/tests_dev27.sh"
+
