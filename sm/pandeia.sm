@@ -23,8 +23,8 @@ TABLE master_tests HOST dljwetcv3
     CMD test_server RUN "/etcdata/pandeia/master/run_tests -server"
         AFTER *:master_installation/*
 
-#    CMD test_engine RUN "/etcdata/pandeia/master/run_tests -engine"
-#        AFTER *:master_tests/test_server
+    CMD test_engine RUN "/etcdata/pandeia/master/run_tests -engine"
+        AFTER *:master_tests/test_server
 
     CMD test_final RUN "/etcdata/pandeia/master/run_tests -final"
         AFTER *:master_tests/test_client
