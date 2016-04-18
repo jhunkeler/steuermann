@@ -1,6 +1,13 @@
-TABLE conda_testing HOST nott
+TABLE conda_testing HOST nott banana
 
-    CMD dev_tests RUN "/eng/ssb/auto/astroconda/tests_dev27.sh"
-    CMD public_tests RUN "/eng/ssb/auto/astroconda/tests_public27.sh"
+    CMD update_packages RUN "/eng/ssb/auto/astroconda/bin/update_all.sh"
+
+TABLE conda_testing HOST nott banana
+
+    CMD dev_tests RUN "/eng/ssb/auto/astroconda/bin/tests_dev27.sh"
+        AFTER *:conda_testing/update_packages
+
+    CMD public_tests RUN "/eng/ssb/auto/astroconda/bin/tests_public27.sh"
+        AFTER *:conda_testing/dev_tests
 
 
