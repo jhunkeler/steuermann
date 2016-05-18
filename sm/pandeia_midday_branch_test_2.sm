@@ -1,0 +1,35 @@
+####################
+####################
+
+TABLE branch_test_2_installation HOST dljwetcv8
+
+    CMD install_v8 RUN "/etcdata/pandeia/branch_test_2/run -crash -pull-force -setup"
+
+TABLE branch_test_2_installation HOST dljwetcv7
+
+    CMD install_v7 RUN "/etcdata/pandeia/branch_test_2/run -crash -pull-force -setup -start"
+        AFTER *:branch_test_2_installation/install_v4
+
+
+TABLE branch_test_2_tests HOST bond
+
+    CMD test_client RUN "/Users/Shared/pandeia/tests/go branch_test"
+        AFTER *:branch_test_2_installation/*
+
+
+TABLE branch_test_2_tests HOST dljwetcv7
+
+    CMD test_server RUN "/etcdata/pandeia/branch_test_2/run_tests -server"
+        AFTER *:branch_test_2_installation/*
+
+    CMD test_engine RUN "/etcdata/pandeia/branch_test_2/run_tests -engine"
+        AFTER *:branch_test_2_tests/test_server
+
+    CMD test_final RUN "/etcdata/pandeia/branch_test_2/run_tests -final"
+        AFTER *:branch_test_2_tests/test_engine
+
+
+TABLE test_expected HOST ssb
+
+    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected etc_jwst_daily"
+        AFTER *:*/*

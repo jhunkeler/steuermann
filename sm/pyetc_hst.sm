@@ -14,8 +14,8 @@ TABLE run_tests HOST etcbrady
     CMD release_ssbdev RUN "/data1/nightly/hst_release_ssbdev/nightly_test_runner -d ssbdev etc_hst_release"
         AFTER release_prod
 
-#    CMD release_new_cdbs RUN "/data1/nightly/hst_release_new_cdbs/nightly_test_runner -d new_cdbs etc_hst_release"
-#        AFTER release_ssbdev
+    CMD release_new_cdbs RUN "/data1/nightly/hst_release_new_cdbs/nightly_test_runner -d new_cdbs etc_hst_release"
+        AFTER release_ssbdev
 
 
 TABLE import_tests HOST ssb
