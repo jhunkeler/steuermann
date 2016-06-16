@@ -30,5 +30,5 @@ TABLE branch_test_tests HOST dljwetcv3
 
 TABLE test_expected HOST ssb
 
-    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected etc_jwst_daily"
+    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected pandeia_midday"
         AFTER *:*/*

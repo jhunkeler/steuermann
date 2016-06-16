@@ -1,0 +1,35 @@
+####################
+####################
+
+TABLE branch_test_3_installation HOST dljwetcv8
+
+    CMD install_v8 RUN "/etcdata/pandeia/branch_test_3/run stop setup_secondary"
+
+TABLE branch_test_3_installation HOST dljwetcv7
+
+    CMD install_v7 RUN "/etcdata/pandeia/branch_test_3/run stop setup"
+        AFTER *:branch_test_3_installation/install_v4
+
+
+TABLE branch_test_3_tests HOST bond
+
+    CMD test_client RUN "/Users/Shared/pandeia/tests/go branch_test"
+        AFTER *:branch_test_3_installation/*
+
+
+TABLE branch_test_3_tests HOST dljwetcv7
+
+    CMD test_server RUN "/etcdata/pandeia/branch_test_3/run_tests -server"
+        AFTER *:branch_test_3_installation/*
+
+    CMD test_engine RUN "/etcdata/pandeia/branch_test_3/run_tests -engine"
+        AFTER *:branch_test_3_tests/test_server
+
+    CMD test_final RUN "/etcdata/pandeia/branch_test_3/run_tests -final"
+        AFTER *:branch_test_3_tests/test_engine
+
+
+TABLE test_expected HOST ssb
+
+    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected pandeia_midday"
+        AFTER *:*/*
