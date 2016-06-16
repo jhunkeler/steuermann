@@ -7,7 +7,7 @@ TABLE branch_test_3_installation HOST dljwetcv8
 
 TABLE branch_test_3_installation HOST dljwetcv7
 
-    CMD install_v7 RUN "/etcdata/pandeia/branch_test_3/run stop setup"
+    CMD install_v7 RUN "/etcdata/pandeia/branch_test_3/run stop setup start"
         AFTER *:branch_test_3_installation/install_v8
 
 
