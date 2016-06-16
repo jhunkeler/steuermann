@@ -15,8 +15,6 @@ TABLE master_tests HOST bond
 
     CMD test_client RUN "/Users/Shared/pandeia/tests/go master"
 	AFTER *:master_installation/*
-        AFTER OPT *:master_tests/test_engine
-        AFTER OPT *:master_tests/test_server
 
 TABLE master_tests HOST dljwetcv3
 
