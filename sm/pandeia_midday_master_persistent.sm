@@ -3,11 +3,11 @@
 
 TABLE master_persistent_installation HOST dljwetcv4
 
-    CMD install_v4 RUN "/etcdata/pandeia/master_persistent/run -crash -pull -install"
+    CMD install_v4 RUN "/etcdata/pandeia/master_persistent/run stop pull install"
 
 TABLE master_persistent_installation HOST dljwetcv3
 
-    CMD install_v3 RUN "/etcdata/pandeia/master_persistent/run -crash -pull -install -start"
+    CMD install_v3 RUN "/etcdata/pandeia/master_persistent/run stop pull install start"
         AFTER *:master_persistent_installation/install_v4
 
 
