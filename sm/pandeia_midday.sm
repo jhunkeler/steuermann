@@ -7,7 +7,7 @@ TABLE master_installation HOST dljwetcv4
 
 TABLE master_installation HOST dljwetcv3
 
-    CMD install_v3 RUN "/etcdata/pandeia/master/run stop pull install start"
+    CMD install_v3 RUN "/etcdata/pandeia/master/run stop pull install init_db start"
         AFTER *:master_installation/install_v4
 
 
