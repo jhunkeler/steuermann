@@ -30,7 +30,3 @@ TABLE master_persistent_tests HOST dljwetcv3
         AFTER OPT *:master_persistent_tests/test_engine
         AFTER OPT *:master_persistent_tests/test_client
 
-TABLE test_expected HOST ssb
-
-    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected etc_jwst_daily"
-        AFTER *:*/*

@@ -28,8 +28,3 @@ TABLE branch_test_3_tests HOST dljwetcv7
     CMD test_final RUN "/etcdata/pandeia/branch_test_3/run_tests -final"
         AFTER *:branch_test_3_tests/test_engine
 
-
-TABLE test_expected HOST ssb
-
-    CMD expected RUN "/eng/ssb/auto/steuermann_scripts/test_expected pandeia_midday"
-        AFTER *:*/*
