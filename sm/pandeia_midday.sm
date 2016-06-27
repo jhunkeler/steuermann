@@ -11,10 +11,10 @@ TABLE master_installation HOST dljwetcv3
         AFTER *:master_installation/install_v4
 
 
-TABLE master_tests HOST bond
+TABLE master_tests HOST ssb
 
-    CMD test_client RUN "/Users/Shared/pandeia/tests/go master"
-	AFTER *:master_installation/*
+    CMD test_client RUN "ssh etc_client@bond 'export sm_run=%(runname)s; /Users/Shared/pandeia/tests/go master'"
+	    AFTER *:master_installation/*
 
 TABLE master_tests HOST dljwetcv3
 
