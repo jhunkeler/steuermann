@@ -13,7 +13,7 @@ TABLE branch_test_2_installation HOST dljwetcv7
 
 TABLE branch_test_2_tests HOST bond
 
-    CMD test_client RUN "/Users/Shared/pandeia/tests/go branch_test"
+    CMD test_client RUN "/Users/Shared/pandeia/tests/go branch_test_2"
         AFTER *:branch_test_2_installation/*
 
 
