@@ -13,7 +13,7 @@ TABLE master_persistent_installation HOST dljwetcv3
 
 TABLE master_persistent_tests HOST bond
 
-    CMD test_client RUN "/Users/Shared/pandeia/tests/go master_persistent"
+    CMD test_client RUN "ssh etc_client@bond 'export sm_run=%(runname)s; /Users/Shared/pandeia/tests/go master_persistent'"
         AFTER OPT *:master_persistent_tests/test_engine
         AFTER OPT *:master_persistent_tests/test_server
 

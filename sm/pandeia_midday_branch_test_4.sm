@@ -13,7 +13,7 @@ TABLE branch_test_4_installation HOST dljwetcv7
 
 TABLE branch_test_4_tests HOST bond
 
-    CMD test_client RUN "/Users/Shared/pandeia/tests/go branch_test"
+    CMD test_client RUN "ssh etc_client@bond 'export sm_run=%(runname)s; /Users/Shared/pandeia/tests/go branch_test_4'"
         AFTER *:branch_test_4_installation/*
 
 
