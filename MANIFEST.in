@@ -1,2 +1,3 @@
+include RELIC-INFO
 include *
 recursive-include * *
