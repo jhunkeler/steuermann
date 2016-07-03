@@ -57,26 +57,13 @@ classifiers = [
     'Topic :: System :: Distributed Computing',
     ]
 
-
-
 command_list = [ 'smc', 'smcron', 'steuermann_report.cgi' ]
-args = {
-    'name':             'steuermann',
-    'version' :         version,
-    'description' :     "Steuermann Continuous Integration Control System",
-    'long_description': long_desc,
-    'author' :          "Mark Sienkiewicz",
-    'author_email' :    "help@stsci.edu",
-    'url' :             'https://svn.stsci.edu/trac/ssb/etal/wiki/Steuermann',
-    'scripts' :         ['scripts/' + x for x in command_list ],
-    'package_dir' :     { 'steuermann' : 'steuermann', },
-    'license':          'BSD',
-    'packages':         [ 'steuermann' ],
-    'package_data':     { 'steuermann' : [ '*.sql', '*.ini', ], },
-    'classifiers':      classifiers,
-}
+
+with open('requirements.txt', 'r') as req:
+    install_requires = [ pkg.rstrip() for pkg in req ]
 
 os.system('make')
+
 setup(
     name = 'steuermann',
     version = version.pep386,
@@ -85,6 +72,7 @@ setup(
     author = 'Mark Sienkiewicz',
     author_email = 'help@stsci.edu',
     url = 'https://svn.stsci.edu/trac/ssb/etal/wiki/Steuermann',
+    install_requires = install_requires,
     scripts = ['scripts/' + x for x in command_list ],
     packages = find_packages(),
     classifiers = classifiers
