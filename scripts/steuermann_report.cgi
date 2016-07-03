@@ -1,4 +1,4 @@
-#! python
+#!/usr/bin/env python
 
 import cgi
 import cgitb
@@ -7,12 +7,9 @@ import sys
 import re
 import datetime
 import pandokia.text_table
-
-STEUERMANN_DIR_HERE
-sys.path.insert(0, addpath)
-
 import steuermann.config
 import steuermann.run_all
+
 
 cgitb.enable()
 
