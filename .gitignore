@@ -3,6 +3,6 @@ relic/
 */version.py
 build/
 dist/
-sr.db
+*.db
 *.egg*
 
