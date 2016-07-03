@@ -11,7 +11,6 @@ if not os.path.exists(config_dir):
 
 try:
     sys.path.insert(1, config_dir)
-    print(sys.path)
     import config
 except ImportError:
     # We don't care if this config does exist, we have further options to test
