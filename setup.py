@@ -1,5 +1,29 @@
 import distutils.core
 import os
+import subprocess
+import sys
+from setuptools import setup, find_packages, Extension
+
+
+if os.path.exists('relic'):
+    sys.path.insert(1, 'relic')
+    import relic.release
+else:
+    try:
+        import relic.release
+    except ImportError:
+        try:
+            subprocess.check_call(['git', 'clone',
+                'https://github.com/jhunkeler/relic.git'])
+            sys.path.insert(1, 'relic')
+            import relic.release
+        except subprocess.CalledProcessError as e:
+            print(e)
+            exit(1)
+
+
+version = relic.release.get_info()
+relic.release.write_template(version, 'steuermann')
 
 long_desc = '''
 Steuermann is a control system for continuous integration.  You write
@@ -34,21 +58,8 @@ classifiers = [
     ]
 
 
-os.system('make')
-
-
-f=open('steuermann/__init__.py','r')
-for x in f :
-    if x.startswith('__version__') :
-        version = x.split("'")[1]
-        break
-f.close()
-
 
 command_list = [ 'smc', 'smcron', 'steuermann_report.cgi' ]
-use_usr_bin_env = [ ]
-dir_set = 'addpath = "%s"\n'
-
 args = {
     'name':             'steuermann',
     'version' :         version,
@@ -65,37 +76,17 @@ args = {
     'classifiers':      classifiers,
 }
 
-d = distutils.core.setup(
-    **args
+os.system('make')
+setup(
+    name = 'steuermann',
+    version = version.pep386,
+    description = 'Steuermann Continuous Integration Control System',
+    long_description = long_desc,
+    author = 'Mark Sienkiewicz',
+    author_email = 'help@stsci.edu',
+    url = 'https://svn.stsci.edu/trac/ssb/etal/wiki/Steuermann',
+    scripts = ['scripts/' + x for x in command_list ],
+    packages = find_packages(),
+    classifiers = classifiers
 )
-
-
-def fix_script(name) :
-    fname = script_dir + "/" + name
-
-    f=open(fname,"r")
-    l = f.readlines()
-    if name in use_usr_bin_env :
-        l[0] = '#!/usr/bin/env python\n'
-    for count, line in enumerate(l) :
-        if line.startswith("STEUERMANN_DIR_HERE") :
-            l[count] = dir_set % lib_dir
-    f.close()
-
-    f=open(fname,"w")
-    f.writelines(l)
-    f.close()
-
-if 'install' in d.command_obj :
-    # they did an install
-    script_dir = d.command_obj['install'].install_scripts
-    lib_dir    = d.command_obj['install'].install_lib
-    print 'scripts went to', script_dir
-    print 'python  went to', lib_dir
-    for x in command_list :
-        fix_script(x)
-    print 'set path = ( %s $path )' % script_dir
-    print 'setenv PYTHONPATH  %s:$PYTHONPATH' % lib_dir
-else :
-    print "no install"
 
