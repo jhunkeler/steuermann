@@ -51,7 +51,7 @@ parser specfile:
     ##
     #
     rule table_section:
-        DEBUG string {{ print "-->debug: %s"%string }}
+        DEBUG string {{ print("-->debug: %s"%string) }}
         | hostgroup_def
         | CONDITIONS {{ nodes.declare_conditions( CONDITIONS, self._scanner.filename ) }}
         | TABLE tablename {{ table_name = tablename }} HOST {{ hostlist = [ ] }}
@@ -141,7 +141,7 @@ parser specfile:
             )
                 {{ rl[name] = ans }} 
         ) *
-            {{ print rl ; return rl }}
+            {{ print(rl) ; return rl }}
 
     ##
     # in the AFTER clause, you can say OPT to mean the node is optional (not an error if it does not exist)
