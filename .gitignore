@@ -5,4 +5,5 @@ build/
 dist/
 *.db
 *.egg*
+*/specfile.py
 
