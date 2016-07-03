@@ -7,25 +7,27 @@ import time
 import sys
 import os.path
 import datetime
-
-import run
-import report
-import nodes
 import getpass
-
-import steuermann.config
 
 import pandokia.helpers.easyargs as easyargs
 import pandokia.text_table as text_table
 
+from . import config
+from . import run
+from . import report
+from . import nodes
 from . import allowed_flags
 
 
-try :
+try:
     import readline
 except ImportError :
     readline = None
 
+try:
+    input = raw_input
+except NameError:
+    raw_input = input
 
 # global dicts for storing common resource info
 #   populated in main() from hosts INI file
@@ -108,7 +110,7 @@ def main() :
     # parse common resources from hosts INI file
     get_common_resources(hosts_ini)
 
-    db = steuermann.config.open_db()
+    db = config.open_db()
 
     if all :
         run_all(xnodes, run_name, hosts_ini, db)
@@ -273,6 +275,10 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
         try :
             l = raw_input("smc>")
         except EOFError :
+            print('')
+            break
+        except KeyboardInterrupt:
+            print('')
             break
 
         l = l.strip()
@@ -613,7 +619,7 @@ def run_step( runner, xnodes, run_name, db ) :
             workdir = args['workdir']
             hostname = args['hostname']
             src = os.path.join(workdir, run_name, who_exited[0])
-            dst = os.path.join(steuermann.config.host_logs, run_name, who_exited[0])
+            dst = os.path.join(config.host_logs, run_name, who_exited[0])
 
             try:
                 os.system('mkdir -p %s' %os.path.dirname(dst))
@@ -674,7 +680,7 @@ def info_callback_depth( db, run, tablename, host, cmd ) :
 
 #####
 def make_log_file_name( run_name, table, host, cmd ) :
-        return '%s/run/%s/%s/%s/%s.log'%(steuermann.config.logdir, run_name, table, host, cmd)
+        return '%s/run/%s/%s/%s/%s.log'%(config.logdir, run_name, table, host, cmd)
 
 
 if __name__ == '__main__' :

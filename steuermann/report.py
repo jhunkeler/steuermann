@@ -7,7 +7,11 @@ import time
 import sys
 import pandokia.text_table as text_table
 import pandokia.common
-import StringIO
+
+try:
+    from io import StringIO
+except ImportError:
+    import StringIO
 
 # maybe the output is html 3.2 - in any case, it is way simpler than
 # more recent standards.

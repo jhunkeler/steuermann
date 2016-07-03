@@ -2,7 +2,7 @@
 # Parse a Steuermann Spec file
 #
 # This is an exyapps grammer in specfile.exy
-import nodes
+from . import nodes
 
 %%
 parser specfile:

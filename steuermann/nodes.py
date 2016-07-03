@@ -327,7 +327,7 @@ def compute_depths(nodes) :
 
 #####
 
-import specfile
+from . import specfile
 
 current_file_name = None
 

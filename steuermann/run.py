@@ -29,9 +29,15 @@ import os.path
 import traceback
 import sys
 import errno
-import ConfigParser
 import re
-import nodes
+
+from . import nodes
+
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser
+
 
 def config_yes_no(d,which) :
     if not which in d :
