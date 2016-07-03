@@ -1,5 +1,0 @@
-TABLE assemble HOST arzach
-
-	CMD dev.astrolib RUN "assemble_astrolib"
-		AFTER init/*
-

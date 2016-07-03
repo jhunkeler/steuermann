@@ -1,9 +1,0 @@
-CONDITIONS
-	ssbdev_build = False
-	ssbdev_test = False
-	ssbdev_dist = False
-
-	ssbx_build = False
-	ssbx_test = False
-	ssbx_dist = False
-END
