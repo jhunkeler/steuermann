@@ -1,8 +1,36 @@
-db_creds = '/ssbwebv1/data2/steuermann/steuermann.db'
+from __future__ import print_function
+import os
+import sys
 
-def open_db() :
+_sys = sys.path
+config_dir = os.path.join(os.path.expanduser('~'), '.steuermann', 'default')
+user_config = os.path.join(config_dir, 'config.py')
+
+if not os.path.exists(user_config):
+    os.mkdir(config_dir)
+
+try:
+    sys.path.insert(1, os.path.dirname(user_config))
+    import config
+except ImportError:
+    # We don't care if this config does exist, we have further options to test
+    if 'STEUERMANN_CONFIG' in os.environ:
+        user_config = os.path.abspath(os.environ['STEUERMANN_CONFIG'])
+        sys.path = _sys
+        sys.path.insert(1, os.path.dirname(user_config))
+        try:
+            import config
+        except ImportError:
+            print('FATAL: Missing config (i.e. {0})'.format(user_config))
+            exit(1)
+
+
+db_creds = config.db_creds
+
+
+def open_db():
     import sqlite3
     return sqlite3.connect(db_creds)
 
-logdir = '/ssbwebv1/data2/steuermann/logs'
-host_logs = '/ssbwebv1/data2/steuermann/host_logs'
+logdir = config.logdir
+host_logs = config.host_logs
