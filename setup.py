@@ -1,6 +1,7 @@
-import distutils.core
+import exyapps
 import os
 import subprocess
+import sqlite3
 import sys
 from setuptools import setup, find_packages, Extension
 
@@ -62,7 +63,23 @@ command_list = [ 'smc', 'smcron', 'steuermann_report.cgi' ]
 with open('requirements.txt', 'r') as req:
     install_requires = [ pkg.rstrip() for pkg in req ]
 
-os.system('make')
+# Create database from template
+db_script = open(os.path.join('steuermann', 'db.sql'), 'r').read()
+db_output = 'steuermann.db'
+
+if os.path.exists(db_output):
+    os.unlink(db_output)
+
+db = sqlite3.connect(db_output)
+db.executescript(db_script)
+
+# Generate specfile
+exy_specfile = os.path.join('steuermann', 'specfile.exy')
+from exyapps import main as exyapps
+import exyapps.grammar as g2
+exyapps.flags = {}
+exyapps.grammar = g2
+exyapps.generate(exy_specfile, None, dump=0, **exyapps.flags)
 
 setup(
     name = 'steuermann',
