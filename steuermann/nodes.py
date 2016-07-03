@@ -64,11 +64,11 @@ class command_tree(object):
 
         if not before in self.node_index :
             if required :
-                print "error: %s happens after non-existant %s - line %s"%(after,before,line)
+                print("error: %s happens after non-existant %s - line %s"%(after,before,line))
             return
 
         if not after in self.node_index :
-            print "error: after node %s does not exist %s"%(after,line)
+            print("error: after node %s does not exist %s"%(after,line))
             return
 
         # tell the after node that the other one comes first
@@ -95,7 +95,7 @@ class command_tree(object):
 
                 if command in self.node_index :
                     # bug: should be error
-                    print "# warning: %s already used on line %s"%(command,self.node_index[command].input_line)
+                    print("# warning: %s already used on line %s"%(command,self.node_index[command].input_line))
 
                 # create the node
                 self.node_index[command]=node(command, script, script_type, nice_pos( current_file_name, pos), resources )
@@ -270,7 +270,7 @@ def nice_pos( filename, yapps_pos ) :
 def c_d_fn(x,depth) :
 
     if x.in_recursion :
-        print "error: loop detected at",x.name
+        print("error: loop detected at",x.name)
         return
 
     # print '>',"  "*depth, depth, x.name
@@ -282,7 +282,7 @@ def c_d_fn(x,depth) :
 
     if depth > 100 :
         # bug: proxy for somebody wrote a loop
-        print "error: depth > 100, node = ",x.name
+        print("error: depth > 100, node = ",x.name)
         return
 
     x.in_recursion = 1
@@ -350,7 +350,7 @@ def read_file_list( file_list ) :
             continue
         imported[current_file_name] = 1
 
-        print "READING ",current_file_name
+        print("READING ",current_file_name)
         # read/parse
         sc = specfile.specfileScanner( open(current_file_name,'r').read() )
         p = specfile.specfile( scanner=sc, data=di )
@@ -397,7 +397,7 @@ def declare_conditions( text, filename ) :
     for ln in text.split('\n'):
         ln = ln.strip()
         cond = saved_conditions.copy()
-        exec ln in cond
+        exec(ln, cond)
         for k, v in cond.items():
             if k not in saved_conditions:
                 saved_conditions[k] = v
@@ -440,5 +440,5 @@ def get_hostgroup( name ) :
 if __name__=='__main__':
     import sys
     n = read_file_list( sys.argv[1:] )
-    print show_nodes(n.node_index)
+    print(show_nodes(n.node_index))
 

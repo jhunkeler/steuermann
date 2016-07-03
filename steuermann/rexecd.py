@@ -17,7 +17,7 @@ import urllib
 import urlparse
 
 os.chdir('/')
-print os.getcwd()
+print(os.getcwd())
 
 #####
 #
@@ -44,7 +44,7 @@ class my_handler( CGIHTTPServer.CGIHTTPRequestHandler ) :
         CGIHTTPServer.CGIHTTPRequestHandler.__init__(self, request, client_address, server)
 
     def reject_client(self) :
-        print self.client_address
+        print(self.client_address)
         if not ( self.client_address[0] in valid_client_ip ) :
             self.bad_client('a')
             return 1
@@ -66,7 +66,7 @@ class my_handler( CGIHTTPServer.CGIHTTPRequestHandler ) :
 
         path = self.path
 
-        print "GET",path
+        print("GET",path)
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
@@ -96,7 +96,7 @@ class my_handler( CGIHTTPServer.CGIHTTPRequestHandler ) :
         if self.reject_client() :
             return
 
-        print self.path
+        print(self.path)
 
 
         length = int(self.headers['Content-Length'])
@@ -104,14 +104,14 @@ class my_handler( CGIHTTPServer.CGIHTTPRequestHandler ) :
         d = urlparse.parse_qs(data)
 
         for x in sorted([ x for x in d]) :
-            print x,d[x]
+            print(x,d[x])
 
         if d['password'][0] != password :
             self.bad_client('p')
             return
 
         dirname = d['dirname'][0]
-        print "CD",dirname
+        print("CD",dirname)
         os.chdir(dirname)
 
         if self.path == 'upload' :
@@ -165,7 +165,7 @@ windows = platform.system() == 'Windows'
 def run_child(path, wfile) :
     env = os.environ
     cmd = urllib.unquote_plus(path)
-    print "COMMAND",cmd
+    print("COMMAND",cmd)
 
     # bug: implement timeouts
     if windows :
@@ -184,7 +184,7 @@ def run_child(path, wfile) :
         # subprocess does not tell you if there was a core
         # dump, but there is nothing we can do about it.
 
-    print "COMMAND EXIT:",status,t_status
+    print("COMMAND EXIT:",status,t_status)
 
 
 def subprocess_windows(cmd, wfile, env ) :
@@ -222,12 +222,12 @@ def run( args = [ ] ) :
 
     port = 7070
 
-    print "http://%s:%s/"%(str(ip),str(port))
+    print("http://%s:%s/"%(str(ip),str(port)))
 
     httpd = MultiThreadedHTTPServer( (ip, port) , my_handler)
 
     sa = httpd.socket.getsockname()
-    print "Serving HTTP on", sa[0], "port", sa[1], "..."
+    print("Serving HTTP on", sa[0], "port", sa[1], "...")
     while 1 :
         httpd.handle_request()
 

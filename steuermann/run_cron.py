@@ -16,8 +16,8 @@ class fakenode(object):
 def main() :
 
     if len(sys.argv) < 4 :
-        print "smcron host name command"
-        print "(from ",sys.argv,")"
+        print("smcron host name command")
+        print("(from ",sys.argv,")")
         sys.exit(1)
 
     host = sys.argv[1]

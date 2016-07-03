@@ -219,7 +219,7 @@ def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) 
 def main() :
     import steuermann.config
     db = steuermann.config.open_db()
-    print report_html( db, 'arf2011-08-30 16:52:23.928381' )
+    print(report_html( db, 'arf2011-08-30 16:52:23.928381' ))
 
 if __name__ == '__main__' :
     main()

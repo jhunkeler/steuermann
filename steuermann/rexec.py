@@ -39,9 +39,9 @@ def run( host, cmd, password, directory ):
     req = urllib2.Request(url, data)
     try :
         f = urllib2.urlopen(req)
-    except urllib2.HTTPError, e:
-        print "HTTP ERROR",e.code
-        print e.read()
+    except urllib2.HTTPError as e:
+        print("HTTP ERROR",e.code)
+        print(e.read())
         return 1
     while 1 :
         s = f.read(2048)
@@ -64,11 +64,11 @@ def upload( host, filename, password, directory) :
     req = urllib2.Request(url, data)
     try :
         f = urllib2.urlopen(req)
-    except urllib2.HTTPError, e:
-        print "HTTP ERROR",e.code
-        print e.read()
+    except urllib2.HTTPError as e:
+        print("HTTP ERROR",e.code)
+        print(e.read())
         return 1
-    print f.read()
+    print(f.read())
     f.close()
     return 0
 
@@ -86,7 +86,7 @@ if __name__ == '__main__' :
         password = open(opt['-f'],'r').readline().strip()
 
     if not ( '-h' in opt ) :
-        print "must give host name with -h"
+        print("must give host name with -h")
         sys.exit(2)
     host = opt['-h']
     if '-d' in opt :
@@ -97,7 +97,7 @@ if __name__ == '__main__' :
     if opt['-u'] :
         ex = 0
         for x in args :
-            print "UPLOAD", x
+            print("UPLOAD", x)
             ex |= upload(host = host , filename=x, directory=directory, password=password)
         sys.exit(ex)
     else :

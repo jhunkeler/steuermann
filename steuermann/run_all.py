@@ -120,7 +120,7 @@ def main() :
 def get_common_resources(hosts_ini):
 
     if not os.path.exists(hosts_ini):
-        print 'ERROR - %s does not exist'
+        print('ERROR - %s does not exist')
         sys.exit(1)
 
     file = open(hosts_ini)
@@ -150,11 +150,11 @@ def get_common_resources(hosts_ini):
 #
 
 def find_wild_names( xnodes, name ) :
-    print "find_wild",name
+    print("find_wild",name)
     l = [ ]
     for x in xnodes :
         if nodes.wildcard_name( name, x ) :
-            print "...",x
+            print("...",x)
             l.append(x)
     return l
 #
@@ -168,22 +168,22 @@ def do_flag( xnodes, name, recursive, fn, verbose ) :
         name = '*:' + name
     if ( '*' in name )  or ( '?' in name ) or ( '[' in name ) :
         if verbose :
-            print '  '*verbose, "wild",name
+            print('  '*verbose, "wild",name)
         for x in xnodes :
             if nodes.wildcard_name( name, x ) :
                 if verbose :
-                    print '  '*verbose, "match",x
+                    print('  '*verbose, "match",x)
                 do_flag( xnodes, x, recursive, fn, verbose )
     elif name in xnodes :
         if verbose :
-            print '  '*verbose, "found",name
+            print('  '*verbose, "found",name)
         fn(xnodes[name])
         if recursive :
             for y in xnodes[name].predecessors : 
                 do_flag( xnodes, y.name, recursive, fn, verbose )
     else :
             if verbose :
-                print '  '*verbose, "not in list", name
+                print('  '*verbose, "not in list", name)
 
 def set_want( node ) :
     # if we said we want it, mark it as wanted and don't skip
@@ -215,13 +215,13 @@ def cmd_flagging( l, xnodes, func ) :
 
 #
 def print_node(xnodes, x, print_recursive, print_all, indent=0, print_cmd=1):
-    print ' '*indent, xnodes[x].wanted, xnodes[x].finished, xnodes[x].skip, xnodes[x].depth,  x
+    print(' '*indent, xnodes[x].wanted, xnodes[x].finished, xnodes[x].skip, xnodes[x].depth,  x)
     if print_cmd :
-        print ' '*indent, "       CMD", xnodes[x].script_type, xnodes[x].script
+        print(' '*indent, "       CMD", xnodes[x].script_type, xnodes[x].script)
     if print_all :
         l = [ a.name for a in xnodes[x].predecessors ]
-        print ' '*indent, "       AFTER", '  '.join(l)
-        print ' '*indent, "       RESOURCES", ' '.join([ "%s=%s"%(aa, xnodes[x].resources[aa]) for aa in sorted(xnodes[x].resources) ])
+        print(' '*indent, "       AFTER", '  '.join(l))
+        print(' '*indent, "       RESOURCES", ' '.join([ "%s=%s"%(aa, xnodes[x].resources[aa]) for aa in sorted(xnodes[x].resources) ]))
         if print_recursive :
             for x in l :
                 print_node( xnodes, x, print_recursive, print_all, indent=indent+8)
@@ -265,7 +265,7 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
         xnodes[x].wanted   = 0
         xnodes[x].skip     = 1
 
-    print "Defaulting all to SKIP"
+    print("Defaulting all to SKIP")
 
     keep_running = 0
 
@@ -283,26 +283,26 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
             n = ''
 
         if n == '?' :
-            print helpstr
+            print(helpstr)
 
         elif n == 'd' :
             run.debug=0
             if len(l) > 1 :
                 for x in l[1:] :
-                    print "XXXXXXXXXX"
-                    print "SECTION",x
-                    print runner.get_host_info(x)
-                    print ""
+                    print("XXXXXXXXXX")
+                    print("SECTION",x)
+                    print(runner.get_host_info(x))
+                    print("")
             else :
                 for x in runner.cfg.sections() :
-                    print "XXXXXXXXXX"
-                    print "SECTION",x
-                    print runner.get_host_info(x)
-                    print ""
+                    print("XXXXXXXXXX")
+                    print("SECTION",x)
+                    print(runner.get_host_info(x))
+                    print("")
             run.debug=0
 
         elif n == 'report' :
-            print report.report_text( db, run_name )
+            print(report.report_text( db, run_name ))
 
         elif n == 'hostgroups' or n == 'hostgroup' or n == 'hg' :
             print_hostgroups()
@@ -311,10 +311,10 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
             print_conditions()
 
         elif n == 'wr' :
-            print report.report_text( db, run_name, info_callback_want )
+            print(report.report_text( db, run_name, info_callback_want ))
 
         elif n == 'dr' :
-            print report.report_text( db, run_name, info_callback_depth )
+            print(report.report_text( db, run_name, info_callback_depth ))
 
         elif n == 'pre' :
             pre_cmd( l[1:], xnodes )
@@ -326,13 +326,13 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
             cmd_flagging( l, xnodes, set_skip )
 
         elif n == 'reset' :
-            print "marking all as not finished"
+            print("marking all as not finished")
             for x in xnodes :
                 xnodes[x].finished = 0
             
             run_name = org_run_name + '.%d'%run_count
             run_count = run_count + 1
-            print "new run name",run_name
+            print("new run name",run_name)
             register_database(db, run_name, xnodes)
 
         elif n == 'list' :
@@ -356,14 +356,14 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
                 if not no_sleep :
                     time.sleep(1)
                 if keypress() :
-                    print "wait interrupted (processes continue)"
+                    print("wait interrupted (processes continue)")
                     break
 
         else :
-            print "unrecognized"
+            print("unrecognized")
 
         if keep_running :
-            print "run step"
+            print("run step")
             ( runner, keep_running, no_sleep ) = run_step( runner, xnodes, run_name, db )
 
             if len(runner.all_procs) == 0 :
@@ -371,11 +371,11 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
                 ( runner, keep_running, no_sleep ) = run_step( runner, xnodes, run_name, db )
 
             if not keep_running :
-                    print 'all done'
+                    print('all done')
 
             else :
                 if len(runner.all_procs) == 0 :
-                    print "no processes running - some prereq not satisfiable"
+                    print("no processes running - some prereq not satisfiable")
         
 
 #
@@ -403,8 +403,8 @@ def match_all_nodes( l, xnodes ) :
 def pre_cmd( l, xnodes ) :
 
     for x in match_all_nodes( l, xnodes ) :
-        print "-----"
-        print x
+        print("-----")
+        print(x)
         print_pre(x, xnodes, 1)
             
 
@@ -412,7 +412,7 @@ def print_pre(who, xnodes, depth) :
     pre = xnodes[who].predecessors 
     for x in pre :
         x = x.name
-        print '  '*depth+ x
+        print('  '*depth+ x)
         print_pre( x, xnodes, depth+1)
 
 #
@@ -458,7 +458,7 @@ def run_all(xnodes, run_name, hosts_ini, db) :
             if len(runner.all_procs) == 0 :
                 none_running += 1
                 if none_running > 5 :
-                    print "No processes running - some prereq missing"
+                    print("No processes running - some prereq missing")
                     break
             else :
                 none_running = 0
@@ -552,7 +552,7 @@ def run_step( runner, xnodes, run_name, db ) :
 
                         tmp = runner.run(x, run_name, no_run=no_run, logfile_name = make_log_file_name(run_name, host, table, cmd) ) 
                         # print "STARTED",x_name
-                    except run.run_exception, e :
+                    except run.run_exception as e :
                         now = str(datetime.datetime.now())
                         db.execute("UPDATE sm_status SET start_time=?, end_time=?, status='E', notes=? WHERE ( run=? AND host=? AND tablename=? AND cmd=? )",
                                 ( now, now, repr(e), run_name, host, table, cmd ) )
@@ -574,7 +574,7 @@ def run_step( runner, xnodes, run_name, db ) :
                             # hit resource cap - not run, but try again later
                             pass
                         else :
-                            print "WARNING: runner.run() returned unknown code %s"%str(tmp)
+                            print("WARNING: runner.run() returned unknown code %s"%str(tmp))
 
                     db.commit()
 
@@ -587,7 +587,7 @@ def run_step( runner, xnodes, run_name, db ) :
                 break
 
             # something exited; no sleep, keep running
-            print "SOMETHING EXITED", who_exited
+            print("SOMETHING EXITED", who_exited)
             no_sleep = 1
             keep_running = 1
 
@@ -618,19 +618,19 @@ def run_step( runner, xnodes, run_name, db ) :
             try:
                 os.system('mkdir -p %s' %os.path.dirname(dst))
             except:
-                print 'mkdir -p %s failed' %os.path.dirname(dst)
+                print('mkdir -p %s failed' %os.path.dirname(dst))
             try:
                 os.system('scp -r %s:%s %s 2> /dev/null' %(hostname, src, dst))
             except:
-                print 'scp failed'
+                print('scp failed')
 
             logs_exist = 0
             if not os.path.exists(dst):
-                print 'WARNING - %s does not exist' %dst
+                print('WARNING - %s does not exist' %dst)
             else:
                 if len(os.listdir(dst)) > 0:
                     logs_exist = 1
-                    print 'FOUND SOME LOGS'
+                    print('FOUND SOME LOGS')
 
 
             # update node record in database
@@ -682,19 +682,19 @@ if __name__ == '__main__' :
 
 #####
 def print_hostgroups() :
-    print ""
+    print("")
     l = sorted( [ x for x in nodes.hostgroups ] )
     for x in l :
-        print "%s:"%x
+        print("%s:"%x)
         l1 = sorted( [ y for y in nodes.hostgroups[x] ] )
         for y in l1 :
-            print "    %s"%y
-        print ""
+            print("    %s"%y)
+        print("")
 
 #####
 def print_conditions() :
     boring = { }
-    exec 'pass' in boring
+    exec('pass', boring)
     l = sorted( [ x for x in nodes.saved_conditions ] )
     row = 0
 
@@ -711,7 +711,7 @@ def print_conditions() :
         tt.set_value(row,1,str(v))
         row = row + 1
 
-    print tt.get_rst()
+    print(tt.get_rst())
 
 #####
 def list_cmd(l) :
@@ -724,7 +724,7 @@ def list_cmd(l) :
     if len(l) > 0 and l[0] == '-c' :
         l = l[1:]
         print_cmd = 1
-        print "YOW"
+        print("YOW")
     else :
         print_cmd = 0
 
@@ -742,8 +742,8 @@ def list_cmd(l) :
             all = all + find_wild_names( xnodes, x )
 
     all = sorted(all)
-    print "recursive",print_recursive
-    print "w f s name"
+    print("recursive",print_recursive)
+    print("w f s name")
     for x in all :
         print_node(xnodes, x, print_recursive, all, print_cmd=print_cmd)
 

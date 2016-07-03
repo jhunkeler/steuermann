@@ -195,7 +195,7 @@ class Scanner(object):
         file,line,p = pos
         if file != self.filename:
             if self.stack: return self.stack.print_line_with_pointer(pos,length=length,out=out)
-            print >>out, "(%s: not in input buffer)" % file
+            print("(%s: not in input buffer)" % file, file=out)
             return
 
         text = self.input
@@ -218,7 +218,7 @@ class Scanner(object):
                     break
                 spos = cr+1
         else:
-            print >>out, "(%s:%d not in input buffer)" % (file,origline)
+            print("(%s:%d not in input buffer)" % (file,origline), file=out)
             return
 
         # Now try printing part of the line
@@ -247,8 +247,8 @@ class Scanner(object):
             p = p - 7
 
         # Now print the string, along with an indicator
-        print >>out, '> ',text
-        print >>out, '> ',' '*p + '^'
+        print('> ',text, file=out)
+        print('> ',' '*p + '^', file=out)
 
     def grab_input(self):
         """Get more input if possible."""
@@ -436,14 +436,14 @@ def print_error(err, scanner, max_ctx=None):
         pos = scanner.get_pos()
 
     file_name, line_number, column_number = pos
-    print >>sys.stderr, '%s:%d:%d: %s' % (file_name, line_number, column_number, err.msg)
+    print('%s:%d:%d: %s' % (file_name, line_number, column_number, err.msg), file=sys.stderr)
 
     scanner.print_line_with_pointer(pos)
 
     context = err.context
     token = None
     while context:
-        print >>sys.stderr, 'while parsing %s%s:' % (context.rule, tuple(context.args))
+        print('while parsing %s%s:' % (context.rule, tuple(context.args)), file=sys.stderr)
         if context.token:
             token = context.token
         if token:
@@ -457,11 +457,11 @@ def print_error(err, scanner, max_ctx=None):
 def wrap_error_reporter(parser, rule, *args,**kw):
     try:
         return getattr(parser, rule)(*args,**kw)
-    except SyntaxError, e:
+    except SyntaxError as e:
         print_error(e, parser._scanner)
     except NoMoreTokens:
-        print >>sys.stderr, 'Could not complete parsing; stopped around here:'
-        print >>sys.stderr, parser._scanner
+        print('Could not complete parsing; stopped around here:', file=sys.stderr)
+        print(parser._scanner, file=sys.stderr)
 ###### end of runtime.py
 
 class specfileScanner(Scanner):
@@ -521,7 +521,7 @@ class specfile(Parser):
         if _token == 'DEBUG':
             DEBUG = self._scan('DEBUG', context=_context)
             string = self._scan('string', context=_context)
-            print "-->debug: %s"%string
+            print("-->debug: %s"%string)
         elif _token == 'HOSTGROUP':
             hostgroup_def = self.hostgroup_def(_context)
         elif _token == 'CONDITIONS':
@@ -652,7 +652,7 @@ class specfile(Parser):
                 RES_AVAILABLE = self._scan('RES_AVAILABLE', context=_context)
                 ans = 'available'
             rl[name] = ans
-        print rl ; return rl
+        print(rl) ; return rl
 
     def optword(self, _parent=None):
         _context = self.Context(_parent, self._scanner, 'optword', [])

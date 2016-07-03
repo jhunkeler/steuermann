@@ -11,7 +11,7 @@ Requires graphviz and pygraphviz
 
 
 if len(sys.argv) < 2:
-    print 'ERROR - missing argument(s)'
+    print('ERROR - missing argument(s)')
     sys.exit(1)
 
 sm_files = sys.argv[1:]

@@ -95,10 +95,10 @@ class runner(object):
 
             try :
                 args = self.get_host_info(node.host)
-            except Exception, e :
+            except Exception as e :
                 log_traceback()
-                print "ERROR: do not know how to run on %s"%node.host
-                print e
+                print("ERROR: do not know how to run on %s"%node.host)
+                print(e)
                 raise
 
             if ( config_yes_no(args,'disable') ) :
@@ -134,9 +134,9 @@ class runner(object):
 
 
             if debug :
-                print "run",node.name
+                print("run",node.name)
             if debug :
-                print "....%s:%s/%s\n"%(node.host, node.table, node.cmd)
+                print("....%s:%s/%s\n"%(node.host, node.table, node.cmd))
 
             node.running = 1
 
@@ -168,9 +168,9 @@ class runner(object):
                     args[k] = v
 
             if debug :
-                print "ARGS"
+                print("ARGS")
                 for x in sorted([x for x in args]) :
-                    print '%s=%s'%(x,args[x])
+                    print('%s=%s'%(x,args[x]))
 
             args['script'] = args['script'] % args
 
@@ -189,11 +189,11 @@ class runner(object):
             run = t
 
             if debug :
-                print "RUN",run
+                print("RUN",run)
 
             try :
                 os.makedirs( os.path.dirname(logfile_name) )
-            except OSError, e :
+            except OSError as e :
                 if e.errno == errno.EEXIST :
                     pass
                 else :
@@ -211,7 +211,7 @@ class runner(object):
             
             # start running the process
             if debug :
-                print "RUN",run
+                print("RUN",run)
             p = subprocess.Popen(
                 args=run,
                 stdout=logfile,
@@ -230,7 +230,7 @@ class runner(object):
 
             return 'R'
 
-        except Exception, e :
+        except Exception as e :
             log_traceback()
             txt= "ERROR RUNNING %s"%node.name
             raise run_exception(txt)
@@ -252,7 +252,7 @@ class runner(object):
 
         if debug :
             hostname = args['hostname']
-            print "finish %s %s %d"%(hostname,node_name,n)
+            print("finish %s %s %d"%(hostname,node_name,n))
 
         # note the termination of the process at the end of the log file
         logfile  = self.all_procs[node_name].logfile
@@ -262,7 +262,7 @@ class runner(object):
 
         # note the completion of the command
         if debug :
-            print "finish",node.name
+            print("finish",node.name)
         node.running = 0
         node.finished = 1
         node.exit_status = status
@@ -302,10 +302,10 @@ class runner(object):
 
     def display_procs( self ) :
         # display currently active child processes
-        print "procs:"
+        print("procs:")
         for x in sorted(self.all_procs) :
-            print "    ",x
-        print ""
+            print("    ",x)
+        print("")
 
     #####
 
@@ -328,7 +328,7 @@ class runner(object):
                     d[name] = value
             return d
         except ConfigParser.NoSectionError :
-            print "No config section in hosts.ini: %s"%section
+            print("No config section in hosts.ini: %s"%section)
             return { }
 
 
@@ -338,7 +338,7 @@ class runner(object):
             pass
             # print 'READING HOST INFO FROM %s' %filename
         else:
-            print 'ERROR - %s does not exist' %filename
+            print('ERROR - %s does not exist' %filename)
             sys.exit(1)
 
         # read the config file
@@ -376,20 +376,20 @@ def log_traceback() :
     # strings.  I want each line of output logged separately so the log
     # file remains easy to process, so I reverse engineered this out of
     # the logging module.
-    print "LOG TRACEBACK:"
+    print("LOG TRACEBACK:")
     try:
         etype, value, tb = sys.exc_info()
         tbex = traceback.extract_tb( tb )
-        print tbex
+        print(tbex)
         for filename, lineno, name, line in tbex :
-            print '%s:%d, in %s'%(filename,lineno,name)
+            print('%s:%d, in %s'%(filename,lineno,name))
             if line:
-                print '    %s'%line.strip()
+                print('    %s'%line.strip())
 
         for x in  traceback.format_exception_only( etype, value ) :
-            print ": %s",x
+            print(": %s",x)
 
-        print "---"
+        print("---")
 
     finally:
         # If you don't clear these guys, you can make loops that
