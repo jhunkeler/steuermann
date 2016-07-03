@@ -6,23 +6,27 @@ _sys = sys.path
 config_dir = os.path.join(os.path.expanduser('~'), '.steuermann', 'default')
 user_config = os.path.join(config_dir, 'config.py')
 
-if not os.path.exists(user_config):
-    os.mkdir(config_dir)
+if not os.path.exists(config_dir):
+    os.makedirs(config_dir, mode=0o700)
 
 try:
-    sys.path.insert(1, os.path.dirname(user_config))
+    sys.path.insert(1, config_dir)
+    print(sys.path)
     import config
 except ImportError:
     # We don't care if this config does exist, we have further options to test
-    if 'STEUERMANN_CONFIG' in os.environ:
+    try:
         user_config = os.path.abspath(os.environ['STEUERMANN_CONFIG'])
         sys.path = _sys
-        sys.path.insert(1, os.path.dirname(user_config))
+        sys.path.insert(1, config_dir)
         try:
             import config
         except ImportError:
             print('FATAL: Missing config (i.e. {0})'.format(user_config))
             exit(1)
+    except KeyError:
+        print("steuermann has not been configured yet... exiting.")
+        exit(1)
 
 
 db_creds = config.db_creds
