@@ -1,29 +1,26 @@
-Steuermann 2.0
---
+# Steuermann 2.0
 
 How to pronounce the name:
 	http://www.forvo.com/word/steuer-/#de
 	http://www.forvo.com/word/mann/#de
 
 
-To install:
+## To install:
 
-	requires exyapps, pandokia
-		( https://svn.stsci.edu/svn/ssb/etal/ )
+	* requires exyapps, pandokia
 
-	make
-		# compiles the parser
-
+    ```
 	python setup.py install
-		# installs
+    ```
 
 	Put the installed script steuermann_report.cgi on your web server.
-	It remembers where the rest was installed.
 
-To run:
+## To run:
 
-	requires pandokia
+	* requires pandokia
 
+    ```
 	smc [ -a ] [ -r run_name ] file.sm
+    ```
 
 
