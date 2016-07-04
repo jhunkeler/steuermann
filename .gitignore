@@ -6,4 +6,5 @@ dist/
 *.db
 *.egg*
 */specfile.py
+*.pyc
 __pycache__
