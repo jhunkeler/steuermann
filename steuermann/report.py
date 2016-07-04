@@ -11,7 +11,7 @@ import pandokia.common
 try:
     from io import StringIO
 except ImportError:
-    import StringIO
+    from StringIO import StringIO
 
 # maybe the output is html 3.2 - in any case, it is way simpler than
 # more recent standards.
@@ -170,7 +170,7 @@ def report_text( db, run_name, info_callback = info_callback_status ) :
 
     raw = raw_report( db, run_name, info_callback )
 
-    s = StringIO.StringIO()
+    s = StringIO()
 
     table_list = get_table_list(db, run_name)
 
@@ -196,7 +196,7 @@ def report_text( db, run_name, info_callback = info_callback_status ) :
 def report_html( db, run_name, info_callback = info_callback_status, hlevel=1 ) :
     raw = raw_report( db, run_name, info_callback )
 
-    s = StringIO.StringIO()
+    s = StringIO()
     s.write('<h%d>%s</h%d>\n'%(hlevel,run_name,hlevel))
 
     hlevel = hlevel + 1

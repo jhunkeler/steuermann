@@ -237,7 +237,11 @@ class node(object) :
 # debug - make a string representation of all the nodes
 
 def show_nodes( node_index ) :
-    import cStringIO as StringIO
+    try:
+        from io import StringIO
+    except ImportError:
+        from cStringIO import StringIO
+
     s = StringIO.StringIO()
     for x in sorted( [ x for x in node_index ] ) :    
         x = node_index[x]
