@@ -206,35 +206,35 @@ class runner(object):
                     raise
 
             # open the log file, write initial notes
-            logfile=open(logfile_name,"w")
-            logfile.write('%s %s\n'%(datetime.datetime.now(),run))
-            logfile.flush()
+            with open(logfile_name,"w") as logfile:
+                logfile.write('%s %s\n'%(datetime.datetime.now(),run))
+                logfile.flush()
 
-            # debug - just say the name of the node we would run
+                # debug - just say the name of the node we would run
 
-            if ( no_run ) :
-                run = [ 'echo', 'disable run - node=', node.name ]
-            
-            # start running the process
-            if debug :
-                print("RUN",run)
-            p = subprocess.Popen(
-                args=run,
-                stdout=logfile,
-                stderr=subprocess.STDOUT,
-                shell=False, close_fds=True
-            )
+                if ( no_run ) :
+                    run = [ 'echo', 'disable run - node=', node.name ]
 
-            # remember the popen object for the process; remember the open log file
-            n = struct()
-            n.proc = p
-            n.logfile = logfile
-            n.logfile_name = logfile_name
+                # start running the process
+                if debug :
+                    print("RUN",run)
+                p = subprocess.Popen(
+                    args=run,
+                    stdout=logfile,
+                    stderr=subprocess.STDOUT,
+                    shell=False, close_fds=True
+                )
 
-            # remember the process is running
-            self.all_procs[node.name] = n
+                # remember the popen object for the process; remember the open log file
+                n = struct()
+                n.proc = p
+                n.logfile = logfile
+                n.logfile_name = logfile_name
 
-            return 'R'
+                # remember the process is running
+                self.all_procs[node.name] = n
+
+                return 'R'
 
         except Exception as e :
             log_traceback()
@@ -262,7 +262,7 @@ class runner(object):
 
         # note the termination of the process at the end of the log file
         logfile  = self.all_procs[node_name].logfile
-        logfile.seek(0,2)   # end of file
+        logfile.seek(0, os.SEEK_END)   # end of file
         logfile.write('\n%s exit=%s\n'%(datetime.datetime.now(),status))
         logfile.close()
 
