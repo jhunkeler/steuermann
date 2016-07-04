@@ -1,4 +1,4 @@
-# Steuermann 2.0
+# Steuermann
 
 ## How to pronounce the name:
 
