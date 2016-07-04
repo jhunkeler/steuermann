@@ -60,6 +60,9 @@ def main() :
     
     hosts_ini = os.path.join(os.path.dirname(__file__), 'hosts.ini')
 
+    if os.path.exists(steuermann.config.hosts_config):
+        hosts_ini = steuermann.config.hosts_config
+
     runner = steuermann.run.runner( nodes = { node.name : node }, hosts_ini = hosts_ini )
 
     logname = logfile_name = steuermann.config.logdir + '/cron/' + logfile
