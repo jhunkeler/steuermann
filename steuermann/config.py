@@ -5,6 +5,7 @@ import sys
 _sys = sys.path
 config_dir = os.path.join(os.path.expanduser('~'), '.steuermann', 'default')
 user_config = os.path.join(config_dir, 'config.py')
+hosts_config = os.path.join(config_dir, 'hosts.ini')
 
 if not os.path.exists(config_dir):
     os.makedirs(config_dir, mode=0o700)
