@@ -87,7 +87,7 @@ def validate_name(form):
             run, host, table, cmd ) )
     x = c.fetchone()
     if x is None :
-        print "No such record in database",run,host,table,cmd
+        print("No such record in database",run,host,table,cmd)
         sys.exit(0)
 
     return run, host, table, cmd, x
@@ -102,10 +102,10 @@ else :
     action = 'index'
 
 if action == 'index' :
-    print html_header % { 'title' : 'Steuermann' }
-    print "<a href=%s?action=runs>runs</a><br>"%cginame
-    print "<a href=%s?action=crons>crons</a><br>"%cginame
-    print html_trailer
+    print(html_header % { 'title' : 'Steuermann' })
+    print("<a href=%s?action=runs>runs</a><br>"%cginame)
+    print("<a href=%s?action=crons>crons</a><br>"%cginame)
+    print(html_trailer)
     sys.exit(0)
 
     
@@ -113,7 +113,7 @@ if action == 'index' :
 # list the runs
 
 elif action == 'crons' :
-    print html_header % { 'title' : 'Steuermann List' }
+    print(html_header % { 'title' : 'Steuermann List' })
     db = steuermann.config.open_db()
     c = db.cursor()
 
@@ -150,16 +150,16 @@ elif action == 'crons' :
             # tt.set_value(row, 'delete', 'arf')
             pass 
 
-    print tt.get_html()
-    print html_trailer
+    print(tt.get_html())
+    print(html_trailer)
     sys.exit(0)
 
 elif action == 'runs' :
-    print html_header % { 'title' : 'Steuermann List' }
-    print 'sort: '
+    print(html_header % { 'title' : 'Steuermann List' })
+    print('sort: ')
     for x in ( 'name_asc', 'name_desc', 'time_asc', 'time_desc' ) :
-        print "<a href=%s?action=runs&order=%s>%s</a>"%(cginame,x,x)
-    print "<br><br>"
+        print("<a href=%s?action=runs&order=%s>%s</a>"%(cginame,x,x))
+    print("<br><br>")
     db = steuermann.config.open_db()
     c = db.cursor()
     order='create_time DESC'
@@ -176,7 +176,7 @@ elif action == 'runs' :
             order ='create_time DESC'
 
     c.execute('SELECT run, create_time, errors FROM sm_runs ORDER BY %s'%order)
-    print "<table>"
+    print("<table>")
     for run, create_time, errors in c :
         if errors is None :
             c2 = db.cursor()
@@ -187,23 +187,23 @@ elif action == 'runs' :
             # the sm_runs table and then invalidating it any time we add
             # to the sm_status, but it is so fast that I don't need that
             # optimization right now.
-        print "<tr>"
-        print "<td>"
+        print("<tr>")
+        print("<td>")
         if run.startswith('daily_20') or run.startswith('sun_20') or run.startswith('thu_20'):
-            print "<a style='color:#CF5300;' href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
+            print("<a style='color:#CF5300;' href=%s?action=status&run=%s>%s</a>"%(cginame, run, run))
         elif run.startswith('etc_hst_daily') or run.startswith('etc_jwst_daily'):
-            print "<a style='color:green;' href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
+            print("<a style='color:green;' href=%s?action=status&run=%s>%s</a>"%(cginame, run, run))
         else:
-            print "<a href=%s?action=status&run=%s>%s</a>"%(cginame, run, run)
-        print "</td>"
-        print "<td>%s</td>"%errors
-        print "<td>"
+            print("<a href=%s?action=status&run=%s>%s</a>"%(cginame, run, run))
+        print("</td>")
+        print("<td>%s</td>"%errors)
+        print("<td>")
         if permission_modify :
-            print "<a href=%s?action=delete&run=%s>delete</a>"%(cginame, run)
-        print "</td>"
-        print "</tr>"
-    print "</table>"
-    print html_trailer
+            print("<a href=%s?action=delete&run=%s>delete</a>"%(cginame, run))
+        print("</td>")
+        print("</tr>")
+    print("</table>")
+    print(html_trailer)
     sys.exit(0)
 
 ##########
@@ -211,24 +211,24 @@ elif action == 'runs' :
 #
 elif action == 'delete' :
     if permission_modify :
-        print 'content-type: text/plain\n'
+        print('content-type: text/plain\n')
         in_run = form['run'].value
         db = steuermann.config.open_db()
         in_run = normalize_run_name(db,in_run)
         c = db.cursor()
         c1 = db.cursor()
-        print "RUN=",in_run
+        print("RUN=",in_run)
         c.execute("SELECT run FROM sm_runs WHERE run LIKE ?",(in_run,))
         for run, in c :
-            print "echo run ",run
+            print("echo run ",run)
             filename = '%s/run/%s'%(steuermann.config.logdir,run)
-            print "rm -rf ",filename
+            print("rm -rf ",filename)
         c.execute("DELETE FROM sm_runs WHERE run LIKE ?",(in_run,))
         c.execute("DELETE FROM sm_status WHERE run LIKE ?",(in_run,))
         db.commit()
 
-        print ""
-        print "Database record deleted, but not log files"
+        print("")
+        print("Database record deleted, but not log files")
         sys.exit(0)
 
 ##########
@@ -238,18 +238,18 @@ elif action == 'status' :
     db = steuermann.config.open_db()
     import steuermann.report
     steuermann.report.cginame = cginame
-    print html_header % { 'title' : 'Steuermann Status' }
-    print ''
+    print(html_header % { 'title' : 'Steuermann Status' })
+    print('')
     run = form['run'].value
     run = normalize_run_name(db,run)
-    print steuermann.report.report_html( db, run, info_callback=steuermann.report.info_callback_gui )
-    print html_trailer
+    print(steuermann.report.report_html( db, run, info_callback=steuermann.report.info_callback_gui ))
+    print(html_trailer)
     sys.exit(0)
     
 
 elif action == 'cronlog' :
-    print 'content-type: text/plain'
-    print ''
+    print('content-type: text/plain')
+    print('')
     host  = form['host'].value
     name  = form['name'].value
     decol = form['decol'].value
@@ -258,13 +258,13 @@ elif action == 'cronlog' :
 
     c.execute("SELECT host, name, decollision, start_time, end_time, status, logfile FROM sm_crons WHERE host = ? AND name = ? and decollision = ?", (host, name, decol) )
     for host, name, decollision, start_time, end_time, status, logfile in c :
-        print "----------"
-        print "%s: %s\n"%(host,name)
-        print "decol=%s"%decollision
-        print start_time
-        print end_time
-        print "status=",status
-        print "----------"
+        print("----------")
+        print("%s: %s\n"%(host,name))
+        print("decol=%s"%decollision)
+        print(start_time)
+        print(end_time)
+        print("status=",status)
+        print("----------")
         f=open( steuermann.config.logdir + '/cron/' + logfile,"r")
         sys.stdout.write(f.read())
         f.close()
@@ -274,31 +274,31 @@ elif action == 'cronlog' :
 # log means show the result of a particular node from a run
 #
 elif action == 'log' :
-    print 'content-type: text/plain'
-    print ''
+    print('content-type: text/plain')
+    print('')
 
     run, host, table, cmd, x = validate_name(form)
     
     status, start_time, end_time, notes = x
 
-    print "%s %s:%s/%s"%(run, host, table, cmd)
-    print "status: %s"%status
-    print ""
-    print "start: %s"%start_time
-    print "end  : %s"%end_time
+    print("%s %s:%s/%s"%(run, host, table, cmd))
+    print("status: %s"%status)
+    print("")
+    print("start: %s"%start_time)
+    print("end  : %s"%end_time)
     start_time = sqltime(start_time)
     end_time = sqltime(end_time)
     if isinstance(end_time,datetime.datetime) and isinstance(end_time,datetime.datetime) :
         try :
-            print "dur  : %s"%(end_time-start_time)
+            print("dur  : %s"%(end_time-start_time))
         except Exception :
             pass
 
     if not notes is None :
-        print "notes:"
+        print("notes:")
         for x in [ '    ' + x for x in notes.split('\n') ] :
-            print x
-    print ""
+            print(x)
+    print("")
     loglist = [ steuermann.run_all.make_log_file_name( run, host, table, cmd),
         # compat mode until we delete the old files
         '%s/%s/%s:%s.%s.log'%(steuermann.config.logdir,run,host,table,cmd),
@@ -314,7 +314,7 @@ elif action == 'log' :
             f = None
         
     if f :
-        print "--------------------"
+        print("--------------------")
         while 1 :
             x = f.read(65536)
             if x == '' :
@@ -322,8 +322,8 @@ elif action == 'log' :
             x = x.replace('\0','')
             sys.stdout.write(x)
     else :
-        print "No log file found.  tried "
-        print loglist
+        print("No log file found.  tried ")
+        print(loglist)
 
     sys.exit(0)
 
@@ -331,12 +331,12 @@ elif action == 'log' :
 elif action == 'run_log':
     run, host, table, cmd, x = validate_name(form)
 
-    print html_header %{'title': form['name'].value}
+    print(html_header %{'title': form['name'].value})
 
     host_logs = steuermann.config.host_logs
     run_logs = os.path.join(host_logs, form['name'].value)
-    print run_logs
-    print '<br/><br/>'
+    print(run_logs)
+    print('<br/><br/>')
 
     tb = pandokia.text_table.text_table()
 
@@ -347,9 +347,9 @@ elif action == 'run_log':
             )
         tb.set_value(row,1, size)
 
-    print tb.get_html()
+    print(tb.get_html())
 
-    print html_trailer
+    print(html_trailer)
 
     sys.exit(0)
 
@@ -361,18 +361,18 @@ elif action == 'show_run_log':
     host_logs = steuermann.config.host_logs
     log = os.path.join(host_logs, form['name'].value, log_name)
 
-    print 'content-type: text/plain'
-    print
-    print log
-    print '#'*len(log)
-    print
-    print
+    print('content-type: text/plain')
+    print()
+    print(log)
+    print('#'*len(log))
+    print()
+    print()
 
     if not os.path.exists(log):
-        print 'ERROR - %s does not exist' %log
+        print('ERROR - %s does not exist' %log)
     else:
         file = open(log)
-        print file.read()
+        print(file.read())
         file.close()
 
     sys.exit(0)
@@ -382,23 +382,23 @@ elif action == 'show_run_log':
 # info means show information about the system
 #
 elif action == 'info' :
-    print html_header % { 'title': 'Steuermann Info' }
-    print 'db credentials: ',steuermann.config.db_creds,'<br>'
-    print 'logdir: ',steuermann.config.logdir,'<br>'
+    print(html_header % { 'title': 'Steuermann Info' })
+    print('db credentials: ',steuermann.config.db_creds,'<br>')
+    print('logdir: ',steuermann.config.logdir,'<br>')
     db = steuermann.config.open_db()
     cur = db.cursor()
     cur.execute("select count(*) from sm_status")
     l = cur.fetchone()
-    print "database records: %s\n"%l[0],'<br>'
+    print("database records: %s\n"%l[0],'<br>')
     cur.execute("select count(*) from sm_runs")
     l = cur.fetchone()
-    print "runs: %s\n"%l[0],'<br>'
-    print html_trailer
+    print("runs: %s\n"%l[0],'<br>')
+    print(html_trailer)
     sys.exit(0)
 
 ##########
 
-print html_header
-print ''
-print 'no recognized action?'
-print html_trailer
+print(html_header)
+print('')
+print('no recognized action?')
+print(html_trailer)
