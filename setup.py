@@ -92,6 +92,9 @@ setup(
     install_requires = install_requires,
     scripts = ['scripts/' + x for x in command_list ],
     packages = find_packages(),
+    package_data = {
+        '': '*.ini'
+    },
     classifiers = classifiers
 )
 
