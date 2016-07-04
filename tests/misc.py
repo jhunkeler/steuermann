@@ -1,5 +1,5 @@
 
-import nodes
+from steuermann import nodes
 
 yes_list = (
     ( 'a:b/c', 'a:b/c' ),
