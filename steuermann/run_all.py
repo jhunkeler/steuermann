@@ -91,7 +91,7 @@ def main() :
                 nodes.saved_conditions[k] = eval(v)
     '''
 
-    sm_files = [a for a in args if ('--' not in a and '=' not in a)]
+    sm_files = [os.path.abspath(a) for a in args if ('--' not in a and '=' not in a)]
     di_nodes = nodes.read_file_list( sm_files )
     xnodes = di_nodes.node_index
 
