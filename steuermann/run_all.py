@@ -107,6 +107,10 @@ def main() :
     else :
         hosts_ini = os.path.join(os.path.dirname(__file__), 'hosts.ini')
 
+        # Use a user-defined config if it exists
+        if os.path.exists(config.hosts_config):
+            hosts_ini = config.hosts_config
+
     # parse common resources from hosts INI file
     get_common_resources(hosts_ini)
 
