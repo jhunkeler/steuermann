@@ -126,7 +126,7 @@ def main() :
 def get_common_resources(hosts_ini):
 
     if not os.path.exists(hosts_ini):
-        print('ERROR - %s does not exist')
+        print('ERROR - %s does not exist' % hosts_ini)
         sys.exit(1)
 
     file = open(hosts_ini)
