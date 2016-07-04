@@ -103,9 +103,9 @@ Mark
 
 The new HOSTGROUP feature works like this:
 
+```
 # defines a set of conditions - each condition is a python function in a
 # CONDITIONS block
-```
 CONDITIONS 
     # for a function, the truth value is the return value
     def foo() : return True def bar() : return False
