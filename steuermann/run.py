@@ -20,7 +20,7 @@ on process exit.
 #
 # When the process finishes, release the resource reservation.
 #
-
+from __future__ import print_function
 import subprocess
 import time
 import datetime
@@ -46,6 +46,13 @@ def config_yes_no(d,which) :
     return s.strip()[0].lower() in ( 'y', 't', '1' )
 
 debug=0
+
+if 'STEUERMANN_DEBUG' in os.environ:
+    try:
+        debug = int(os.environ['STEUERMANN_DEBUG'])
+    except ValueError:
+        print('STEUERMANN_DEBUG expects an integer value', file=sys.stderr)
+        exit(1)
 
 ##### 
 
@@ -206,35 +213,35 @@ class runner(object):
                     raise
 
             # open the log file, write initial notes
-            with open(logfile_name,"w") as logfile:
-                logfile.write('%s %s\n'%(datetime.datetime.now(),run))
-                logfile.flush()
+            logfile = open(logfile_name, "w")
+            logfile.write('%s %s\n'%(datetime.datetime.now(),run))
+            logfile.flush()
 
-                # debug - just say the name of the node we would run
+            # debug - just say the name of the node we would run
 
-                if ( no_run ) :
-                    run = [ 'echo', 'disable run - node=', node.name ]
+            if ( no_run ) :
+                run = [ 'echo', 'disable run - node=', node.name ]
 
-                # start running the process
-                if debug :
-                    print("RUN",run)
-                p = subprocess.Popen(
-                    args=run,
-                    stdout=logfile,
-                    stderr=subprocess.STDOUT,
-                    shell=False, close_fds=True
-                )
+            # start running the process
+            if debug :
+                print("RUN",run)
+            p = subprocess.Popen(
+                args=run,
+                stdout=logfile,
+                stderr=subprocess.STDOUT,
+                shell=False, close_fds=True
+            )
 
-                # remember the popen object for the process; remember the open log file
-                n = struct()
-                n.proc = p
-                n.logfile = logfile
-                n.logfile_name = logfile_name
+            # remember the popen object for the process; remember the open log file
+            n = struct()
+            n.proc = p
+            n.logfile = logfile
+            n.logfile_name = logfile_name
 
-                # remember the process is running
-                self.all_procs[node.name] = n
+            # remember the process is running
+            self.all_procs[node.name] = n
 
-                return 'R'
+            return 'R'
 
         except Exception as e :
             log_traceback()
@@ -258,7 +265,7 @@ class runner(object):
 
         if debug :
             hostname = args['hostname']
-            print("finish %s %s %d"%(hostname,node_name,n))
+            print("finish %s %s"%(hostname,node_name))
 
         # note the termination of the process at the end of the log file
         logfile  = self.all_procs[node_name].logfile
