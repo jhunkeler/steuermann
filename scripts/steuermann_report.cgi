@@ -64,7 +64,7 @@ def sqltime(arg) :
 ##########
 
 def normalize_run_name(db, name) :
-    
+
     if name == 'daily_latest' :
         c = db.execute("SELECT max(run) FROM sm_runs WHERE run like 'daily_%'")
         run, = c.fetchone()
@@ -108,7 +108,7 @@ if action == 'index' :
     print(html_trailer)
     sys.exit(0)
 
-    
+
 ##########
 # list the runs
 
@@ -148,7 +148,7 @@ elif action == 'crons' :
         tt.set_value(row, 'status',     status)
         if permission_modify :
             # tt.set_value(row, 'delete', 'arf')
-            pass 
+            pass
 
     print(tt.get_html())
     print(html_trailer)
@@ -232,7 +232,7 @@ elif action == 'delete' :
         sys.exit(0)
 
 ##########
-# 
+#
 
 elif action == 'status' :
     db = steuermann.config.open_db()
@@ -245,7 +245,7 @@ elif action == 'status' :
     print(steuermann.report.report_html( db, run, info_callback=steuermann.report.info_callback_gui ))
     print(html_trailer)
     sys.exit(0)
-    
+
 
 elif action == 'cronlog' :
     print('content-type: text/plain')
@@ -278,7 +278,7 @@ elif action == 'log' :
     print('')
 
     run, host, table, cmd, x = validate_name(form)
-    
+
     status, start_time, end_time, notes = x
 
     print("%s %s:%s/%s"%(run, host, table, cmd))
@@ -312,7 +312,7 @@ elif action == 'log' :
             break
         except IOError:
             f = None
-        
+
     if f :
         print("--------------------")
         while 1 :
