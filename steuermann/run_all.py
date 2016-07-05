@@ -68,7 +68,7 @@ def main() :
 
     opt, args = easyargs.get(allowed_flags, allow_unexpected = True)
 
-    all = opt['-a']
+    do_all = opt['-a']
     no_run = opt['-n']
 
 
@@ -116,7 +116,7 @@ def main() :
 
     db = config.open_db()
 
-    if all :
+    if do_all:
         run_all(xnodes, run_name, hosts_ini, db)
     else :
         run_interactive( xnodes, run_name, hosts_ini, db )
@@ -129,9 +129,9 @@ def get_common_resources(hosts_ini):
         print('ERROR - %s does not exist' % hosts_ini)
         sys.exit(1)
 
-    file = open(hosts_ini)
-    lines = [ln.strip() for ln in file.readlines()]
-    file.close()
+    fp = open(hosts_ini)
+    lines = [ln.strip() for ln in fp.readlines()]
+    fp.close()
 
     resource_lines = []
     in_resources = False
@@ -393,7 +393,7 @@ def run_interactive( xnodes, run_name, hosts_ini, db) :
 def match_all_nodes( l, xnodes ) :
 
     # all will be the list of all nodes that we want to process
-    all = [ ]
+    matches = [ ]
 
     # for all the names they said on the command line
     for x in l :
@@ -404,9 +404,9 @@ def match_all_nodes( l, xnodes ) :
         # find all the nodes that match the pattern
         for y in xnodes :
             if nodes.wildcard_name( x, y ) :
-                all.append(y)
+                matches.append(y)
 
-    return sorted(all)
+    return sorted(matches)
 
 #
 
@@ -561,7 +561,7 @@ def run_step( runner, xnodes, run_name, db ) :
                                 common_resources_avail[res] -= amount
 
                         tmp = runner.run(x, run_name, no_run=no_run, logfile_name = make_log_file_name(run_name, host, table, cmd) ) 
-                        # print "STARTED",x_name
+                        print("STARTED {0}".format(run_name))
                     except run.run_exception as e :
                         now = str(datetime.datetime.now())
                         db.execute("UPDATE sm_status SET start_time=?, end_time=?, status='E', notes=? WHERE ( run=? AND host=? AND tablename=? AND cmd=? )",
@@ -593,7 +593,7 @@ def run_step( runner, xnodes, run_name, db ) :
         # if anything has exited, we process it and update the status in the database
         while 1 :
             who_exited = runner.poll() 
-            if not who_exited :
+            if not who_exited:
                 break
 
             # something exited; no sleep, keep running
@@ -745,15 +745,15 @@ def list_cmd(l) :
         print_recursive=0
 
     if len(l) == 0 :
-        all = [ x for x in xnodes ]
+        nodes = [ x for x in xnodes ]
     else :
-        all = [ ]
+        nodes = [ ]
         for x in l :
-            all = all + find_wild_names( xnodes, x )
+            nodes = nodes + find_wild_names( xnodes, x )
 
-    all = sorted(all)
+    nodes = sorted(nodes)
     print("recursive",print_recursive)
     print("w f s name")
-    for x in all :
-        print_node(xnodes, x, print_recursive, all, print_cmd=print_cmd)
+    for x in nodes:
+        print_node(xnodes, x, print_recursive, nodes, print_cmd=print_cmd)
 
