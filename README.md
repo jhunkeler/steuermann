@@ -19,7 +19,7 @@ Put the installed script, `steuermann_report.cgi`, on your web server.
 
 ```bash
 # Create default configuration directory
-mkdir ~/.steuermann/default
+mkdir -p ~/.steuermann/default
 
 # Copy default hosts.ini template
 cp steuermann/hosts.ini ~/.steuermann/default
