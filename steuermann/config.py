@@ -33,6 +33,12 @@ except ImportError:
         exit(1)
 
 print("Using: {0}".format(config_dir))
+
+try:
+    auth_users = config.auth_users
+except NameError:
+    auth_users = ()
+
 db_creds = config.db_creds
 
 

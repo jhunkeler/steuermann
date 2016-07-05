@@ -9,14 +9,14 @@ import datetime
 import pandokia.text_table
 import steuermann.config
 import steuermann.run_all
+import steuermann.config
 
 
 cgitb.enable()
 
 form = cgi.FieldStorage(keep_blank_values=1)
 cginame = os.getenv("SCRIPT_NAME")
-
-auth_users = ( 'sienkiew', 'cslocum' )
+auth_users = steuermann.config.auth_users
 
 permission_modify=0
 if 'REMOTE_USER' in os.environ :
