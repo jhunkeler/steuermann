@@ -51,7 +51,7 @@ if 'STEUERMANN_DEBUG' in os.environ:
     try:
         debug = int(os.environ['STEUERMANN_DEBUG'])
     except ValueError:
-        print('STEUERMANN_DEBUG expects an integer value', file=sys.stderr)
+        print('STEUERMANN_DEBUG expects an integer value (0=off, 1=on)', file=sys.stderr)
         exit(1)
 
 ##### 
