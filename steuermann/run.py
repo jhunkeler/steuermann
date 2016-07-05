@@ -148,7 +148,6 @@ class runner(object):
 
             if debug :
                 print("run",node.name)
-            if debug :
                 print("....%s:%s/%s\n"%(node.host, node.table, node.cmd))
 
             node.running = 1
