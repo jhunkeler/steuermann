@@ -462,6 +462,7 @@ def run_all(xnodes, run_name, hosts_ini, db) :
 
     while 1 :
         ( runner, keep_running, no_sleep ) = run_step( runner, xnodes, run_name, db )
+
         if not keep_running :
             break
         if not no_sleep :
@@ -596,8 +597,14 @@ def run_step( runner, xnodes, run_name, db ) :
             if not who_exited:
                 break
 
+            if who_exited[1] != 0:
+                print('TASK FAILURE: {0} (exit: {1})'.format(who_exited[0], who_exited[1]))
+                for task, knodes in runner.node_index.items():
+                    print('TASK SKIPPED: {0} (on behalf of {1})'.format(task, who_exited[0]))
+                    knodes.skip = 1
+
             # something exited; no sleep, keep running
-            print("SOMETHING EXITED", who_exited)
+            print("TASK EXITED: {0}".format(who_exited[0]))
             no_sleep = 1
             keep_running = 1
 
@@ -647,6 +654,7 @@ def run_step( runner, xnodes, run_name, db ) :
             db.execute("UPDATE sm_status SET end_time = ?, status = ?, logs = ?  WHERE ( run = ? AND host = ? AND tablename = ? AND cmd = ? )",
                     ( str(datetime.datetime.now()), who_exited[1], logs_exist, run_name, x_host, x_table, x_cmd ) )
             db.commit()
+
 
         return ( runner, keep_running, no_sleep )
 
